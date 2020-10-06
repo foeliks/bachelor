@@ -1,1 +1,1 @@
-Test
+Hier entsteht ein Full-Stack Projekt für eine spielerische JavaScript Lernplattform
