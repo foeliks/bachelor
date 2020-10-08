@@ -1,9 +1,15 @@
-FROM node:10
- 
-WORKDIR /usr/src/app
- 
-COPY package*.json ./
- 
+# pull official base image
+FROM node:latest
+
+# set working directory
+WORKDIR /app
+
+# install app dependencies
+COPY package*.json /app/
 RUN npm install
 
-COPY . ./
+# add app
+COPY . /app/
+
+# start app
+CMD ["npm", "start"]   
