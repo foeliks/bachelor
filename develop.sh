@@ -13,6 +13,9 @@ echo "2. Installation Nodejs/Reactjs"
 apt install npm
 npm install -g create-react-app
 
+echo "3. Installation "
+?
+
 echo "3. Installation Docker"
 apt install docker docker-compose 
 systemctl start docker
