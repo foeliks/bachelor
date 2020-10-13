@@ -5,3 +5,9 @@ Alle Docker Container stoppen
 
 Docker Daemon starten
     sudo systemctl start docker
+
+Benutzer hinzufügen:
+INSERT INTO users (email, password) VALUES (
+  'johndoe@mail.com',
+  crypt('johnspassword', gen_salt('bf'))
+);
