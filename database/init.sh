@@ -2,8 +2,8 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    drop table if exists users, categories, knowledge, tasks, progress, diary;
-    
+    drop table if exists users, categories, knowledge, tasks, progress, diary;   
+
     create table if not exists users (
     	user_id serial,
     	email text not null unique,
@@ -33,6 +33,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	description text not null,
     	optional bool default false,
     	correct_solution text,
+		multiple_choice bool default false,
     	primary key (task_id)
     );
 
@@ -42,7 +43,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	solved bool,
     	num_tries integer,
     	user_solution text,
-    	primary key (user_id, task_id, solved)
+    	primary key (user_id, task_id, num_tries)
     );
 
     create table if not exists diary (
