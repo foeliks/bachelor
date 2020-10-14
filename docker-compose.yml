@@ -8,8 +8,9 @@ services:
     env_file:
       - database/database.env # configure postgres
     volumes:
-      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
-      # - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
+      # - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+      - ./database/import/:/tmp/:rw
+      - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       
     ports:
       - 5433:5432
