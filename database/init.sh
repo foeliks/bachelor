@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     
@@ -149,6 +148,12 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	\$\$
 	language plpgsql;
 
+
+	-- UPDATE SERIAL COUNTER
+	select setval('users_user_id_seq', max(user_id)) from users;
+	select setval('categories_category_id_seq', max(category_id)) from categories;
+	select setval('knowledge_knowledge_id_seq', max(knowledge_id)) from knowledge;
+	select setval('tasks_task_id_seq', max(task_id)) from tasks;
 
 
 	-- CREATE TRIGGER FOR EXPORT DATA INTO CSV 
