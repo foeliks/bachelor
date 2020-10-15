@@ -1,14 +1,13 @@
-# docker-compose.yml
 version: '3'
 services:
   database:
     container_name: database
-    image: postgres:latest # use latest official postgres version
+    image: postgres:latest
     restart: always
     env_file:
-      - database/database.env # configure postgres
+      - ./database/database.env
     volumes:
-      # - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+      # - database-data:/var/lib/postgresql/data/
       - ./database/import/:/tmp/:rw
       - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       
@@ -30,6 +29,8 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
+    env_file: 
+      - ./frontend/frontend.env
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -38,5 +39,5 @@ services:
     stdin_open: true
     command: npm start
 
-volumes:
-  database-data: # named volumes can be managed easier using docker-compose
+# volumes:
+#   database-data:
