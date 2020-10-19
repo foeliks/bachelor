@@ -12,6 +12,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	email text not null unique,
     	password text not null,
 		admin bool default false,
+		serious_game bool default false,
     	primary key (user_id)
     );
 

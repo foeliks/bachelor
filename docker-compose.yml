@@ -23,7 +23,7 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - "database"
+      - frontend
 
 
   frontend:
@@ -38,6 +38,8 @@ services:
       - 3000:3000
     stdin_open: true
     command: npm start
+    depends_on:
+      - database
 
 # volumes:
 #   database-data:
