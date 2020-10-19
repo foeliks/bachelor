@@ -76,11 +76,11 @@ WSGI_APPLICATION = 'composeexample.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'rainbow_database',
-        'USER': 'unicorn_user',
-        'PASSWORD': 'magical_password',
+        'NAME': 'robob',
+        'USER': 'master_bot',
+        'PASSWORD': 'gamification',
         'HOST': 'database',
-        'PORT': 5432, # 8001
+        'PORT': 5432, 
     }
 }
 
