@@ -1,2 +1,1 @@
-task_id,category_id,knowledge_id,description,optional,solution,multiple_choice
-1,1,1,test,t,a,t
+task_id,category,knowledge,description,optional,solution,multiple_choice

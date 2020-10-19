@@ -1,2 +1,1 @@
-user_id,task_id,solved,num_tries,user_solution
-1,1,f,1,b
+user_id,task,solved,num_tries,user_solution

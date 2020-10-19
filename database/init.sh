@@ -1,37 +1,54 @@
 #!/bin/bash
 
+# drop table if exists users, categories, narrators, conversations, knowledge, tasks, progress, diary;   
+
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     
-	drop table if exists users, categories, knowledge, tasks, progress, diary;   
-
+	
 	-- CREATE TABLES
 
     create table users (
     	user_id serial,
     	email text not null unique,
     	password text not null,
+		admin bool default false,
     	primary key (user_id)
     );
 
     create table categories (
     	category_id serial,
     	title text not null,
-    	description text not null,
+    	description text,
     	primary key (category_id)
     );
 
+	create table narrators (
+		narrator_id serial,
+		name text,
+		primary key(narrator_id)
+	);
+
+	create table conversations (
+		conversation_id serial,
+		content text,
+		narrator integer references narrators (narrator_id),
+		next integer references conversations (conversation_id),
+		primary key (conversation_id)
+	);
+
     create table knowledge (
     	knowledge_id serial,
-    	category_id integer references categories (category_id),
+    	category integer references categories (category_id),
     	description text not null,
     	optional bool default false,
+		conversation integer references conversations (conversation_id),
     	primary key (knowledge_id)
     );
 
     create table tasks (
     	task_id serial,
-    	category_id integer references categories (category_id),
-    	knowledge_id integer references knowledge (knowledge_id),
+    	category integer references categories (category_id),
+    	knowledge integer references knowledge (knowledge_id),
     	description text not null,
     	optional bool default false,
     	solution text,
@@ -41,17 +58,17 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
     create table progress (
     	user_id integer references users (user_id),
-    	task_id integer references tasks (task_id),
+    	task integer references tasks (task_id),
     	solved bool,
     	num_tries integer,
     	user_solution text,
-    	primary key (user_id, task_id, num_tries)
+    	primary key (user_id, task, num_tries)
     );
 
     create table diary (
     	user_id integer references users (user_id),
-    	knowledge_id integer references knowledge (knowledge_id),
-    	primary key (knowledge_id, user_id)
+    	knowledge integer references knowledge (knowledge_id),
+    	primary key (knowledge, user_id)
     );
 
 
@@ -84,6 +101,36 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 		exception
 			when undefined_file then
 				raise notice '/tmp/categories.csv was not found.';
+	end;
+	\$\$
+	language plpgsql;
+
+	do
+	\$\$
+	begin
+		copy narrators
+		from '/tmp/narrators.csv'
+		delimiter ','
+		csv header;
+
+		exception
+			when undefined_file then
+				raise notice '/tmp/narrators.csv was not found.';
+	end;
+	\$\$
+	language plpgsql;
+
+	do
+	\$\$
+	begin
+		copy conversations
+		from '/tmp/conversations.csv'
+		delimiter ','
+		csv header;
+
+		exception
+			when undefined_file then
+				raise notice '/tmp/conversations.csv was not found.';
 	end;
 	\$\$
 	language plpgsql;
@@ -152,6 +199,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	-- UPDATE SERIAL COUNTER
 	select setval('users_user_id_seq', max(user_id)) from users;
 	select setval('categories_category_id_seq', max(category_id)) from categories;
+	select setval('narrators_narrator_id_seq', max(narrator_id)) from narrators;
+	select setval('conversations_conversation_id_seq', max(conversation_id)) from conversations;
 	select setval('knowledge_knowledge_id_seq', max(knowledge_id)) from knowledge;
 	select setval('tasks_task_id_seq', max(task_id)) from tasks;
 
@@ -160,6 +209,8 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 
 	drop trigger if exists users_trigger on users;
 	drop trigger if exists categories_trigger on categories;
+	drop trigger if exists narrator_trigger on narrators;
+	drop trigger if exists conversations_trigger on conversations;
 	drop trigger if exists knowledge_trigger on knowledge;
 	drop trigger if exists tasks_trigger on tasks;
 	drop trigger if exists progress_trigger on progress; 
@@ -204,6 +255,46 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	on categories
 	for each statement 
 	execute procedure categories_export();
+
+	create or replace function narrators_export()
+		returns trigger 
+		language plpgsql
+		as 
+	\$\$
+	begin
+		copy narrators
+		to '/tmp/narrators.csv'
+		delimiter ','
+		csv header;
+		return null;
+	end;
+	\$\$;
+
+	create trigger narrators_trigger
+	after insert or delete or update
+	on narrators
+	for each statement 
+	execute procedure narrators_export();
+
+	create or replace function conversations_export()
+		returns trigger 
+		language plpgsql
+		as 
+	\$\$
+	begin
+		copy conversations
+		to '/tmp/conversations.csv'
+		delimiter ','
+		csv header;
+		return null;
+	end;
+	\$\$;
+
+	create trigger conversations_trigger
+	after insert or delete or update
+	on conversations
+	for each statement 
+	execute procedure conversations_export();
 
 	create or replace function knowledge_export()
 		returns trigger 

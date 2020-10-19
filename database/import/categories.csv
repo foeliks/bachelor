@@ -1,2 +1,10 @@
 category_id,title,description
-1,test,das ist ein Test
+1,Datentypen,
+2,Variablen,
+3,Kontrollstrukturen,
+4,Schnittstelle zum Webbrowser,
+5,Objekte,
+6,Ereignisse,
+7,AJAX,
+8,CORS,
+9,Random,

@@ -1,2 +1,1 @@
-user_id,email,password
-1,test-email@cool.de,sicherespasswort
+user_id,email,password,admin
