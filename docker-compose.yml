@@ -20,6 +20,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/code
+      - ./backend/init.sh:/docker-entrypoint.sh
     ports:
       - 8000:8000
     depends_on:
@@ -29,8 +30,6 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
-    env_file: 
-      - ./frontend/frontend.env
     volumes:
       - ./frontend:/app
       - /app/node_modules
