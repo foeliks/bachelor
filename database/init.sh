@@ -7,7 +7,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	
 	-- CREATE TABLES
 
-    create table users (
+    create table if not exists users (
     	user_id serial,
     	email text not null unique,
     	password text not null,
@@ -16,20 +16,20 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	primary key (user_id)
     );
 
-    create table categories (
+    create table if not exists categories (
     	category_id serial,
     	title text not null,
     	description text,
     	primary key (category_id)
     );
 
-	create table narrators (
+	create table if not exists narrators (
 		narrator_id serial,
 		name text,
 		primary key(narrator_id)
 	);
 
-	create table conversations (
+	create table if not exists conversations (
 		conversation_id serial,
 		content text,
 		narrator integer references narrators (narrator_id),
@@ -37,7 +37,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 		primary key (conversation_id)
 	);
 
-    create table knowledge (
+    create table if not exists knowledge (
     	knowledge_id serial,
     	category integer references categories (category_id),
     	description text not null,
@@ -46,7 +46,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	primary key (knowledge_id)
     );
 
-    create table tasks (
+    create table if not exists tasks (
     	task_id serial,
     	category integer references categories (category_id),
     	knowledge integer references knowledge (knowledge_id),
@@ -57,7 +57,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	primary key (task_id)
     );
 
-    create table progress (
+    create table if not exists progress (
     	user_id integer references users (user_id),
     	task integer references tasks (task_id),
     	solved bool,
@@ -66,7 +66,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     	primary key (user_id, task, num_tries)
     );
 
-    create table diary (
+    create table if not exists diary (
     	user_id integer references users (user_id),
     	knowledge integer references knowledge (knowledge_id),
     	primary key (knowledge, user_id)
