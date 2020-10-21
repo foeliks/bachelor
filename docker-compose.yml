@@ -8,8 +8,8 @@ services:
       - ./database/database.env
     volumes:
       # - database-data:/var/lib/postgresql/data/
-      - ./database/import/:/tmp/:rw
-      - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./database/import/:/tmp/
+      # - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       
     ports:
       - 5433:5432
@@ -20,6 +20,8 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/code
+    entrypoint:
+      /docker-entrypoint.sh
     ports:
       - 8000:8000
     depends_on:
@@ -29,8 +31,6 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
-    env_file: 
-      - ./frontend/frontend.env
     volumes:
       - ./frontend:/app
       - /app/node_modules
