@@ -19,7 +19,7 @@ from rest_framework import routers
 from robob import views
 
 router = routers.DefaultRouter()
-router.register(r'robob', views.CategoriesView, 'robob')
+router.register(r'categories', views.CategoriesView, 'categories')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
