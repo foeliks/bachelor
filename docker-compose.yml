@@ -24,8 +24,8 @@ services:
       /docker-entrypoint.sh
     ports:
       - 8000:8000
-    # depends_on:
-    #   - frontend
+    depends_on:
+      - frontend
 
 
   frontend:

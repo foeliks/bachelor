@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'robob',
     'rest_framework',
+    'corsheaders',
+    'robob',
 ]
 
 MIDDLEWARE = [
@@ -124,3 +125,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CORS WHITELIST frontend
+CORS_ORIGIN_WHITELIST = (
+     'localhost:3000/'
+ )
