@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('username', models.CharField(max_length=150, unique=True)),
                 ('first_name', models.CharField(max_length=150)),
                 ('last_name', models.CharField(max_length=150)),
-                ('email', models.CharField(max_length=254)),
+                ('email', models.CharField(max_length=254, unique=True)),
                 ('is_staff', models.BooleanField()),
                 ('is_active', models.BooleanField()),
                 ('date_joined', models.DateTimeField()),
