@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Layout,
     PageHeader,
@@ -7,43 +7,62 @@ import {
     Input,
     Button
 } from 'antd';
-import axios from 'axios';
 
 
 function Login() {
 
     const [tab, setTab] = useState(0);
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(
+        localStorage.getItem('token') ? true : false
+    );
+    const [username, setUsername] = useState('');
+
+    useEffect(() => {
+        if (loggedIn) {
+            fetch('http://localhost:8000/robob/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            })
+                .then(res => res.json())
+                .then(json => {
+                    setUsername(json.username)
+                });
+        }
+    });
 
 
     const onFinishLogin = (data) => {
-        axios({
-            method: 'post',
-            url: 'http://localhost:8000/token-auth/',
+        fetch('http://localhost:8000/token-auth/', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(data)
+            body: JSON.stringify(data)
         })
-        .then(res => {
-          localStorage.setItem('token', res.token);
-          setLoggedIn(true);
-        })
-        .catch(error => console.log(error));
+            .then(res => res.json())
+            .then(json => {
+                localStorage.setItem('token', json.token);
+                setLoggedIn(true);
+                setUsername(json.user.username);
+            })
+            .catch(error => console.log(error));;
 
     }
     const onFinishRegister = data => {
-        axios({
-            method: 'post',
-            url: 'http://localhost:8000/robob/users/',
+        fetch('http://localhost:8000/robob/users/', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify(data)
-        }).then(res => {
-          localStorage.setItem('token', res.token);
-          setLoggedIn(true);
-        }).catch(error => console.log(error));
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(json => {
+                localStorage.setItem('token', json.token);
+                setLoggedIn(true);
+                setUsername(json.user.username);
+            }).catch(error => console.log(error));
     }
     const layout = {
         labelCol: {
@@ -73,21 +92,21 @@ function Login() {
                             message: 'Bitte geben Sie Ihren Benutzernamen ein!'
                         }
                     ]
-            }>
-                <Input/>
+                }>
+                <Input />
             </Form.Item>
             <Form.Item label="Passwort" name="password"
                 rules={
                     [{
-                            required: true,
-                            message: 'Bitte geben Sie ein Passwort ein!'
-                        }]
-            }>
-                <Input.Password/>
+                        required: true,
+                        message: 'Bitte geben Sie ein Passwort ein!'
+                    }]
+                }>
+                <Input.Password />
             </Form.Item>
             <Form.Item wrapperCol={
                 {
-                    ... layout.wrapperCol,
+                    ...layout.wrapperCol,
                     offset: 6
                 }
             }>
@@ -109,8 +128,8 @@ function Login() {
                             message: 'Die eingegebene Email-Adresse ist ungültig'
                         }
                     ]
-            }>
-                <Input/>
+                }>
+                <Input />
             </Form.Item>
             <Form.Item label="Benutzername" name="username"
                 rules={
@@ -120,17 +139,17 @@ function Login() {
                             message: 'Bitte geben Sie Ihren Benutzernamen ein!'
                         }
                     ]
-            }>
-                <Input/>
+                }>
+                <Input />
             </Form.Item>
             <Form.Item label="Passwort" name="password"
                 rules={
                     [{
-                            required: true,
-                            message: 'Bitte geben Sie ein Passwort ein!'
-                        }]
-            }>
-                <Input.Password/>
+                        required: true,
+                        message: 'Bitte geben Sie ein Passwort ein!'
+                    }]
+                }>
+                <Input.Password />
             </Form.Item>
             <Form.Item label="Passwort wiederholen" name="repeatPassword"
                 rules={
@@ -138,7 +157,7 @@ function Login() {
                         {
                             required: true,
                             message: 'Bitte wiederholen Sie Ihr Passwort!'
-                        }, ({getFieldValue}) => (
+                        }, ({ getFieldValue }) => (
                             {
                                 validator(rule, value) {
                                     if (!value || getFieldValue('password') === value) {
@@ -149,12 +168,12 @@ function Login() {
                             }
                         )
                     ]
-            }>
-                <Input.Password/>
+                }>
+                <Input.Password />
             </Form.Item>
             <Form.Item wrapperCol={
                 {
-                    ... layout.wrapperCol,
+                    ...layout.wrapperCol,
                     offset: 6
                 }
             }>
@@ -172,16 +191,16 @@ function Login() {
                 }
             }
             style={
-                {margin: "8px"}
-        }>
+                { margin: "8px" }
+            }>
             {
-            contentList[tab]
-        } </Card>
+                contentList[tab]
+            } </Card>
     );
     const logged_in_comp = (
         <Button onClick={() => {
-          localStorage.removeItem('token');
-          setLoggedIn(false);
+            localStorage.removeItem('token');
+            setLoggedIn(false);
         }}>Logout</Button>
     )
 
@@ -193,6 +212,12 @@ function Login() {
                     title="Authentifizierung"
                 />
                 <div>{loggedIn ? logged_in_comp : logged_out_comp}</div>
+                <Button onClick={() => {
+                    console.log(localStorage.getItem('token'));
+                }}>
+                    Print Token
+            </Button>
+                <Button href='/categories'>Categories</Button>
             </Layout.Content>
         </Layout>
     );
