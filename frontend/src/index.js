@@ -8,9 +8,11 @@ import {
 } from 'react-router-dom';
 import 'antd/dist/antd.css'
 // import './index.css';
-import Home from './home/Home.js';
-import Login from './auth/Login.js';
-import Categories from './categories/Categories.js';
+import {
+  Home,
+  Login,
+  Categories
+ } from './components';
 
 ReactDOM.render(
   <React.StrictMode>
