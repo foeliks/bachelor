@@ -1,3 +1,3 @@
-id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined
-2,pbkdf2_sha256$216000$SrJECzmAm1va$I7Hs394vob83FUuqFrHXcZiNB1A/TyLLokENGPzoixc=,2020-10-20 16:43:45.374109+00,t,root,"","",felix.sager@alumni.fh-aachen.de,t,t,2020-10-20 13:34:47.841661+00
-3,pbkdf2_sha256$216000$WxTEQ0oZt318$wD+xzcYDBxNfoYwNPmpyNZMaz2ec52cW31+H/4+4Nvc=,,f,test,"","",test@test.de,f,t,2020-10-23 10:01:08.4208+00
+id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined,game_mode
+2,pbkdf2_sha256$216000$SrJECzmAm1va$I7Hs394vob83FUuqFrHXcZiNB1A/TyLLokENGPzoixc=,2020-10-20 16:43:45.374109+00,t,root,"","",felix.sager@alumni.fh-aachen.de,t,t,2020-10-20 13:34:47.841661+00,t
+3,pbkdf2_sha256$216000$WxTEQ0oZt318$wD+xzcYDBxNfoYwNPmpyNZMaz2ec52cW31+H/4+4Nvc=,,f,test,"","",test@test.de,f,t,2020-10-23 10:01:08.4208+00,t

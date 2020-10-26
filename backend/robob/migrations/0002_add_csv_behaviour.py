@@ -12,6 +12,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
+			-- UPDATE auth_user
+
+			alter table auth_user add game_mode boolean default false;
+
+			
+
             -- CREATE TABLES
 
             create table if not exists categories (

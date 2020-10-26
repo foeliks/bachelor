@@ -1,24 +1,41 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
-    Button
+    PageHeader
 } from 'antd';
+import PageLayout from './PageLayout';
 
-function Categories() {
-    axios
-        .get('http://localhost:8000/api/categories/')
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err))
+function Categories(props) {
+    const [categories, setCategories] = useState([]);
+    const history = useHistory();
+    const [loggedIn, setLoggedIn] = useState(props.values.loggedIn)
+    useEffect(() => {
+        fetch('http://localhost:8000/api/categories/', {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => res.json())
+            .then(json => setCategories(json))
+            .catch(err => {
+                console.log(err);
+                setCategories([]);
+                localStorage.removeItem('token');
+                props.functions.setLoggedIn(false);
+                history.push("/");
+            })
+    }, [])
     return (
         <div>
-            <h1>Categories</h1>
-            <Button onClick={()=>{
-                console.log(localStorage.getItem('token'));
-            }}>
-                Print Token
-            </Button>
+            <PageHeader title="Themen" />
+            <ul>
+                {props.values.loggedIn && categories.map(element => {
+                    return <li key={element.id}>{element.title}</li>
+                })}
+            </ul>
         </div>
     );
+
 }
 
 export default Categories;

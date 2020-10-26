@@ -19,6 +19,7 @@ class AuthUser(models.Model):
     is_staff = models.BooleanField()
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
+    plays_game = models.BooleanField()
 
     class Meta:
         managed = False

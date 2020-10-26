@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Layout,
     PageHeader,
@@ -9,28 +9,10 @@ import {
 } from 'antd';
 
 
-function Login() {
+function Login(props) {
 
     const [tab, setTab] = useState(0);
-    const [loggedIn, setLoggedIn] = useState(
-        localStorage.getItem('token') ? true : false
-    );
-    const [username, setUsername] = useState('');
-
-    useEffect(() => {
-        if (loggedIn) {
-            fetch('http://localhost:8000/robob/current_user/', {
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
-                }
-            })
-                .then(res => res.json())
-                .then(json => {
-                    setUsername(json.username)
-                });
-        }
-    });
-
+    
 
     const onFinishLogin = (data) => {
         fetch('http://localhost:8000/token-auth/', {
@@ -43,8 +25,7 @@ function Login() {
             .then(res => res.json())
             .then(json => {
                 localStorage.setItem('token', json.token);
-                setLoggedIn(true);
-                setUsername(json.user.username);
+                props.functions.setLoggedIn(true);
             })
             .catch(error => console.log(error));;
 
@@ -60,8 +41,7 @@ function Login() {
             .then(res => res.json())
             .then(json => {
                 localStorage.setItem('token', json.token);
-                setLoggedIn(true);
-                setUsername(json.user.username);
+                props.functions.setLoggedIn(true);
             }).catch(error => console.log(error));
     }
     const layout = {
@@ -190,9 +170,7 @@ function Login() {
                     setTab(key);
                 }
             }
-            style={
-                { margin: "8px" }
-            }>
+            >
             {
                 contentList[tab]
             } </Card>
@@ -200,7 +178,7 @@ function Login() {
     const logged_in_comp = (
         <Button onClick={() => {
             localStorage.removeItem('token');
-            setLoggedIn(false);
+            props.functions.setLoggedIn(false);
         }}>Logout</Button>
     )
 
@@ -209,16 +187,10 @@ function Login() {
             <Layout.Content>
                 <PageHeader className="site-page-header"
                     // onBack={() => null}
-                    title="Authentifizierung"
+                    title="Melde dich an, um anzufangen"
                 />
-                <div>{loggedIn ? logged_in_comp : logged_out_comp}</div>
-                <Button onClick={() => {
-                    console.log(localStorage.getItem('token'));
-                }}>
-                    Print Token
-            </Button>
-                <Button href='/categories'>Categories</Button>
-            </Layout.Content>
+                <div>{props.values.loggedIn ? logged_in_comp : logged_out_comp}</div>
+            </ Layout.Content>
         </Layout>
     );
 }
