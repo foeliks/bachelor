@@ -10,17 +10,16 @@ import { TwitterOutlined, InstagramOutlined } from '@ant-design/icons';
 import Login from './Login';
 
 function Home(props) {
-
+    const title = `Willkommen bei Robob${props.values.loggedIn ? `, ${props.values.username}`: ""}!` ;
     return (
         <div>
-            <PageHeader title="Willkommen bei Robob" />
+            <PageHeader title={title}/>
 
             <p>
                 Hier kannst Du die Grundlagen in JavaScript erlernen! Dazu hast Du die Wahl zwischen zwei Lernmethoden:
                 </p>
 
             <Row gutter={16}>
-
                 <Col span={12}>
                     <Card title="Serious Game">
                         <ul>

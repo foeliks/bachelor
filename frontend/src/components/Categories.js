@@ -1,30 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import {
     PageHeader
 } from 'antd';
-import PageLayout from './PageLayout';
 
 function Categories(props) {
     const [categories, setCategories] = useState([]);
-    const history = useHistory();
-    const [loggedIn, setLoggedIn] = useState(props.values.loggedIn)
+
     useEffect(() => {
         fetch('http://localhost:8000/api/categories/', {
             headers: {
                 Authorization: `JWT ${localStorage.getItem('token')}`
             }
         })
-            .then(res => res.json())
-            .then(json => setCategories(json))
-            .catch(err => {
-                console.log(err);
-                setCategories([]);
-                localStorage.removeItem('token');
-                props.functions.setLoggedIn(false);
-                history.push("/");
+            .then(res => {
+                if(res.status !== 200){
+                    setCategories([]);
+                    props.functions.logOut();
+                }
+                else {
+                    res.json()
+                    .then(json => {
+                        setCategories(json);
+                        props.functions.setRedirect(false);
+                    })
+                }
             })
-    }, [])
+            .catch(error => console.log(error))
+    }, [props.functions])
+
     return (
         <div>
             <PageHeader title="Themen" />
@@ -35,6 +38,7 @@ function Categories(props) {
             </ul>
         </div>
     );
+
 
 }
 

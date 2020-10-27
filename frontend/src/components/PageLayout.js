@@ -19,7 +19,7 @@ function PageLayout(props) {
 
     const Children = () => {
         return <div>{React.cloneElement(props.children, {...props})}</div>
-    } 
+    }
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -32,7 +32,7 @@ function PageLayout(props) {
                     <Menu.Item key="2" onClick={() => history.push("/categories")}>
                         Übersicht
                     </Menu.Item>
-                    <Menu.Item key="3" href="/" onClick={() => props.functions.signOut()}>
+                    <Menu.Item key="3" href="/" onClick={() => props.functions.logOut()}>
                         Abmelden
                     </Menu.Item>
 

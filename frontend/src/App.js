@@ -3,8 +3,7 @@ import 'antd/dist/antd.css'
 import {
     BrowserRouter as Router,
     Route,
-    Redirect,
-    useHistory
+    Redirect
 } from 'react-router-dom';
 import {
     Home,
@@ -17,50 +16,67 @@ function App() {
         localStorage.getItem('token') ? true : false
     );
     const [username, setUsername] = useState('');
-    const history = useHistory();
+    const [redirect, setRedirect] = useState(false);
 
-    // useEffect(() => {
-    //     if (loggedIn) {
-    //         fetch('http://localhost:8000/robob/current_user/', {
-    //             headers: {
-    //                 Authorization: `JWT ${localStorage.getItem('token')}`
-    //             }
-    //         })
-    //             .then(res => res.json())
-    //             .then(json => {
-    //                 setUsername(json.username)
-    //             });
-    //     }
-    // });
+    const logOut = () => {
+        localStorage.removeItem('token');
+        setLoggedIn(false);
+        setRedirect(true);
+    }
 
     useEffect(() => {
         if (loggedIn) {
-            fetch('http://localhost:8000/token-auth-refresh/', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    'token': localStorage.getItem('token')
+            if (username === '') {
+                fetch('http://localhost:8000/robob/current_user/', {
+                    headers: {
+                        Authorization: `JWT ${localStorage.getItem('token')}`
+                    }
                 })
-            })
-                .then(res => res.json())
-                .then(json => localStorage.setItem('token', json.token))
-                .catch(error => {
-                    localStorage.removeItem('token');
-                    setLoggedIn(false);
-                    history.push("/");
+                    .then(res => res.json())
+                    .then(json => {
+                        setUsername(json.username)
+                    })
+                    .catch(error => console.log(error));
+            }
+            else {
+                fetch('http://localhost:8000/token-auth-refresh/', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        'token': localStorage.getItem('token')
+                    })
                 })
+                    .then(res => {
+                        if (res.status !== 200) {
+                            console.log(res);
+                            logOut();
+                        }
+                        else {
+                            res.json()
+                                .then(json => {
+                                    localStorage.setItem('token', json.token)
+                                    setRedirect(false);
+                                })
+                        }
+                    })
+                    .catch(error => console.log(error));
+            }
         }
     });
 
+
     const values = {
         loggedIn: loggedIn,
-        username: username
+        username: username,
+        redirect: redirect
     }
     const functions = {
         setLoggedIn: setLoggedIn,
-        setUsername: setUsername
+        setUsername: setUsername,
+        setRedirect: setRedirect,
+        logOut: logOut
     }
     return (
         <Router>
@@ -70,11 +86,10 @@ function App() {
                 </PageLayout>
             </Route>
             <Route path='/categories' >
-                {loggedIn ?
+                {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Categories />
-                    </PageLayout>
-                    : <Redirect to="/" />}
+                    </PageLayout>}
             </Route>
         </Router>
     );
