@@ -22,6 +22,7 @@ function App() {
         localStorage.removeItem('token');
         setLoggedIn(false);
         setRedirect(true);
+        setUsername('');
     }
 
     useEffect(() => {
@@ -36,7 +37,10 @@ function App() {
                     .then(json => {
                         setUsername(json.username)
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        console.log(error)
+                        logOut()
+                    });
             }
             else {
                 fetch('http://localhost:8000/token-auth-refresh/', {
@@ -61,7 +65,10 @@ function App() {
                                 })
                         }
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => {
+                        console.log(error)
+                        logOut()
+                    });
             }
         }
     });
@@ -85,7 +92,7 @@ function App() {
                     <Home />
                 </PageLayout>
             </Route>
-            <Route path='/categories' >
+            <Route path='/overview' >
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Categories />

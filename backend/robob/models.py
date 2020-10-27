@@ -19,7 +19,7 @@ class AuthUser(models.Model):
     is_staff = models.BooleanField()
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
-    plays_game = models.BooleanField()
+    game_mode = models.BooleanField()
 
     class Meta:
         managed = False
@@ -100,13 +100,13 @@ class Tasks(models.Model):
         db_table = 'tasks'
 
 
-class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    email = models.TextField(unique=True)
-    password = models.TextField()
-    admin = models.BooleanField(blank=True, null=True)
-    serious_game = models.BooleanField(blank=True, null=True)
+# class Users(models.Model):
+#     user_id = models.AutoField(primary_key=True)
+#     email = models.TextField(unique=True)
+#     password = models.TextField()
+#     admin = models.BooleanField(blank=True, null=True)
+#     serious_game = models.BooleanField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'users'
+#     class Meta:
+#         managed = False
+#         db_table = 'users'

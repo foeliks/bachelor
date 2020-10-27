@@ -63,11 +63,11 @@ class Migration(migrations.Migration):
 
             create table if not exists progress (
             	user_id integer references auth_user (id),
-            	task integer references tasks (id),
+            	task_id integer references tasks (id),
             	solved bool,
             	num_tries integer,
             	user_solution text,
-            	primary key (user_id, task, num_tries)
+            	primary key (user_id, task_id, num_tries)
             );
 
             create table if not exists diary (

@@ -4,11 +4,6 @@ from django.contrib.auth.models import User
 from .models import Categories
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = ('id', 'title')
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -38,4 +33,8 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         model = User
         fields = ('token', 'email', 'username', 'password')
 
-
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ['id', 'title']
+   

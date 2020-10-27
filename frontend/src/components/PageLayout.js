@@ -14,7 +14,7 @@ function PageLayout(props) {
 
     useEffect(() => {
         window.location.pathname === "/" ? setSelected("1") : 
-            window.location.pathname === "/categories" && setSelected("2")
+            window.location.pathname === "/overview" && setSelected("2")
     }, []);
 
     const Children = () => {
@@ -29,7 +29,7 @@ function PageLayout(props) {
                     <Menu.Item key="1" onClick={() => history.push("/")}>
                         Startseite als Logo
                     </Menu.Item>
-                    <Menu.Item key="2" onClick={() => history.push("/categories")}>
+                    <Menu.Item key="2" onClick={() => history.push("/overview")}>
                         Übersicht
                     </Menu.Item>
                     <Menu.Item key="3" href="/" onClick={() => props.functions.logOut()}>

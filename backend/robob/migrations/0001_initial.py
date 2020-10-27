@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField()),
                 ('is_active', models.BooleanField()),
                 ('date_joined', models.DateTimeField()),
-                ('plays_game', models.BooleanField())
+                ('game_mode', models.BooleanField())
             ],
             options={
                 'db_table': 'auth_user',

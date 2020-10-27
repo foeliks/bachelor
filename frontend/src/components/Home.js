@@ -41,7 +41,7 @@ function Home(props) {
                         <a target="blank" href="https://www.instagram.com/it_fenix_"><InstagramOutlined /></a>
                 <a target="blank" href="https://www.twitter.com/it_fenix_"><TwitterOutlined /></a>
             </p>
-            {props.values.loggedIn ? <Button href="/categories" type="primary">Los geht's</Button> : <Login values={props.values} functions={props.functions} />}
+            {props.values.loggedIn ? <Button href="/overview" type="primary">Los geht's</Button> : <Login values={props.values} functions={props.functions} />}
         </div>
     );
 }
