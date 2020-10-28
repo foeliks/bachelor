@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import 'antd/dist/antd.css'
+import 'antd/dist/antd.css';
+import './App.css';
 import {
     BrowserRouter as Router,
     Route,
@@ -7,8 +8,9 @@ import {
 } from 'react-router-dom';
 import {
     Home,
-    Categories,
-    PageLayout
+    Overview,
+    PageLayout,
+    Task
 } from './components';
 
 function App() {
@@ -95,7 +97,13 @@ function App() {
             <Route path='/overview' >
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
-                        <Categories />
+                        <Overview />
+                    </PageLayout>}
+            </Route>
+            <Route path='/categories/:categoryId'>
+                {redirect ? <Redirect to="/" /> :
+                    <PageLayout values={values} functions={functions} >
+                        <Task />
                     </PageLayout>}
             </Route>
         </Router>
