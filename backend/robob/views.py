@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.views import View
+from django.http import HttpResponse
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -10,8 +11,11 @@ from .serializers import UserSerializer, UserSerializerWithToken
 
 @api_view(['GET'])
 def current_user(request):
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    user = AuthUser.objects.get(username=request.user)
+    return Response({
+        'username': user.username,
+        'game_mode': user.game_mode
+    })
 
 
 @permission_classes([permissions.AllowAny,])
@@ -67,10 +71,10 @@ class CategoriesProgress(APIView):
 
 class TaskView(APIView):
     def get(self, request, format=None, **kwargs):
-        user = AuthUser.objects.get(username=request.user)
-        category_id = kwargs["category_id"]
         result = {}
         try:
+            user = AuthUser.objects.get(username=request.user)
+            category_id = kwargs["category_id"]
             category = Categories.objects.get(id=category_id)
             all_tasks = Tasks.objects.filter(category=category)
             for task in all_tasks:
@@ -88,3 +92,37 @@ class TaskView(APIView):
             print(e)
 
         return Response(result)
+
+class ChangeGameModeView(APIView):
+    def post(self, request, format=None, **kwargs):
+        try:
+            user = AuthUser.objects.get(username=request.user)
+            if kwargs["game_mode"] != user.game_mode:
+                user.game_mode = kwargs["game_mode"]
+                user.save()
+            return HttpResponse(200)
+        except Exception as e:
+            print(e)
+            return HttpResponse(400)
+
+
+class AddSolution(APIView):
+    def post(self, request, format=None, **kwargs):
+        try:
+            user = AuthUser.objects.get(username=request.user)
+            task = Tasks.objects.get(id=request.data["task_id"])
+            print(request.data)
+            print(request.data["solution"])
+            print(task.solution)
+            print(request.data["solution"] == task.solution)
+            solved = task.solution == request.data["solution"]
+            try:
+                num_tries = Progress.objects.filter(user=user, task=task).order_by('-num_tries')[0].num_tries + 1
+                Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
+                return HttpResponse(200)
+            except:
+                progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
+                return HttpResponse(200)
+        except Exception as e:
+            print(e)
+            return HttpResponse(400)

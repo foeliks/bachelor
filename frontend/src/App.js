@@ -18,6 +18,7 @@ function App() {
         localStorage.getItem('token') ? true : false
     );
     const [username, setUsername] = useState('');
+    const [gameMode, setGameMode] = useState(0);
     const [redirect, setRedirect] = useState(false);
 
     const logOut = () => {
@@ -38,6 +39,7 @@ function App() {
                     .then(res => res.json())
                     .then(json => {
                         setUsername(json.username)
+                        json.game_mode === false ? setGameMode(0) : setGameMode(1)
                     })
                     .catch(error => {
                         console.log(error)
@@ -75,16 +77,27 @@ function App() {
         }
     });
 
+    useEffect(() => {
+        fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
+            method: 'post',
+            headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+            }
+        }).catch(error => console.log(error))
+    }, [gameMode])
+
 
     const values = {
         loggedIn: loggedIn,
         username: username,
-        redirect: redirect
+        redirect: redirect,
+        gameMode: gameMode
     }
     const functions = {
         setLoggedIn: setLoggedIn,
         setUsername: setUsername,
         setRedirect: setRedirect,
+        setGameMode: setGameMode,
         logOut: logOut
     }
     return (

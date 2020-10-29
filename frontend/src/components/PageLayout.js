@@ -27,7 +27,7 @@ function PageLayout(props) {
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" selectedKeys={[selected]}>
                     <Menu.Item key="1" onClick={() => history.push("/")}>
-                        Startseite als Logo
+                        Startseite
                     </Menu.Item>
                     <Menu.Item key="2" onClick={() => history.push("/overview")}>
                         Übersicht

@@ -1,2 +1,2 @@
 id,category_id,knowledge_id,description,optional,solution,multiple_choice
-1,9,,<h1>kleiner Test</h1>,f,,f
+1,9,,Geben Sie den Wert 2 zurück,f,2,f
