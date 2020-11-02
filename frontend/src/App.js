@@ -87,7 +87,7 @@ function App() {
                 }
             }).catch(error => console.log(error))
         }
-    }, [gameMode])
+    }, [gameMode, loggedIn])
 
 
     const values = {
@@ -116,7 +116,7 @@ function App() {
                         <Overview />
                     </PageLayout>}
             </Route>
-            <Route path='/categories/:categoryId'>
+            <Route path='/task/:taskId'>
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Task />

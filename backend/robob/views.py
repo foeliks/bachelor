@@ -69,25 +69,43 @@ class CategoriesProgress(APIView):
         
         return Response(result)
 
+class NextTaskView(APIView):
+    def get(self, request, format=None, **kwargs):
+        result = {
+            "task_with_optional": 0,
+            "task_without_optional": 0
+            }
+        try:
+            user = AuthUser.objects.get(username=request.user)
+            all_tasks = Tasks.objects.all()
+            for task in all_tasks:
+                solved_tasks = map(lambda x: x.task.id, list(Progress.objects.filter(solved=True, task=task, user=user)))
+                all_tasks = all_tasks.exclude(id__in=solved_tasks)
+                if len(all_tasks) > 0:
+                    chosen = all_tasks[0]
+                    if(result ["task_with_optional"] == 0):
+                        result["task_with_optional"] = chosen.id
+                    if chosen.optional == False:
+                        result["task_without_optional"] = chosen.id
+                        return Response(result)
+                    
+
+        except Exception as e:
+            print(e)
+
+        return Response(result)
+
 class TaskView(APIView):
     def get(self, request, format=None, **kwargs):
         result = {}
         try:
-            user = AuthUser.objects.get(username=request.user)
-            category_id = kwargs["category_id"]
-            category = Categories.objects.get(id=category_id)
-            all_tasks = Tasks.objects.filter(category=category)
-            for task in all_tasks:
-                solved_tasks = map(lambda x: x.task.id, list(Progress.objects.filter(solved=True, task=task, user=user)))
-                all_tasks.exclude(id__in=solved_tasks)
-                if len(all_tasks) > 0:
-                    chosen = all_tasks[0]
-                    result = {
-                        "id": chosen.id,
-                        "description": chosen.description,
-                        "optional": chosen.optional,
-                        "multiple_choice": chosen.multiple_choice
-                    }
+            task = Tasks.objects.get(id=kwargs["task_id"])
+            result = {
+                "id": task.id,
+                "description": task.description,
+                "optional": task.optional,
+                "multiple_choice": task.multiple_choice
+            }
         except Exception as e:
             print(e)
 

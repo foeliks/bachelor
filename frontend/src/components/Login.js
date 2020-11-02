@@ -23,7 +23,6 @@ function Login(props) {
         else if (window.innerWidth >= 1300 && useTabs === true) {
             setUseTabs(false)
         }
-        console.log(window.innerWidth)
     }
 
     useEffect(() => window.addEventListener('resize', onResize));

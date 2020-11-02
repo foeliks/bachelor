@@ -12,7 +12,7 @@ import {
 
 
 function Task(props) {
-    const { categoryId } = useParams();
+    const { taskId } = useParams();
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
     const [textarea, setTextarea] = useState("");
@@ -21,7 +21,8 @@ function Task(props) {
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
-        fetch(`http://localhost:8000/robob/task/${categoryId}`, {
+
+        fetch(`http://localhost:8000/robob/task/${taskId}`, {
             headers: {
                 'Authorization': `JWT ${localStorage.getItem('token')}`
             }
@@ -39,13 +40,14 @@ function Task(props) {
                 }
             })
             .catch(error => console.log(error))
-    }, [props.functions, categoryId])
+
+    }, [props.functions, taskId])
 
     const submitCode = () => {
         let userSolution = "";
         try {
             const runCode = new Function(textarea);
-            userSolution = runCode() == undefined ? "" : String(runCode());
+            userSolution = runCode() === undefined ? "" : String(runCode());
             setCodeFailed(false);
         }
         catch (error) {
@@ -54,28 +56,28 @@ function Task(props) {
         }
         setSubmitted(false)
         setCodeResult(userSolution);
-        
+
         fetch(`http://localhost:8000/robob/add-solution/`, {
-                method: 'post',
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "task_id": task.id,
-                    "solution": userSolution,
-                    "user_solution": textarea
-                })
+            method: 'post',
+            headers: {
+                'Authorization': `JWT ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "task_id": task.id,
+                "solution": userSolution,
+                "user_solution": textarea
             })
-                .then(res => {
-                    if (res.status !== 200) {
-                        props.functions.logOut();
-                    }
-                    else {
-                        console.log(res)
-                    }
-                })
-                .catch(error => console.log(error))
+        })
+            .then(res => {
+                if (res.status !== 200) {
+                    props.functions.logOut();
+                }
+                else {
+                    console.log(res)
+                }
+            })
+            .catch(error => console.log(error))
     }
 
     if (props.values.gameMode) {
@@ -114,7 +116,7 @@ function Task(props) {
                         <p>{codeResult}</p>
                     </Card>
                 </div>}
-            <Row justify="space-between">
+            <Row style={{marginTop: "10px"}} justify="space-between">
                 <Col>
                     <Button
                         type="primary"
