@@ -78,12 +78,15 @@ function App() {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
-            method: 'post',
-            headers: {
-                Authorization: `JWT ${localStorage.getItem('token')}`
-            }
-        }).catch(error => console.log(error))
+        if (loggedIn) {
+
+            fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
+                method: 'post',
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).catch(error => console.log(error))
+        }
     }, [gameMode])
 
 
