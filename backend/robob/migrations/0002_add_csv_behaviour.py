@@ -58,6 +58,8 @@ class Migration(migrations.Migration):
             	optional bool default false,
             	solution text,
 	        	multiple_choice bool default false,
+				placeholder_before text default '',
+				placeholder_after text default '',
             	primary key (id)
             );
 

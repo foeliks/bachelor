@@ -6,6 +6,10 @@ import {
     Button,
     Checkbox
 } from 'antd';
+import {
+    StarOutlined,
+    StarFilled,
+} from '@ant-design/icons';
 
 function Categories(props) {
 
@@ -72,14 +76,21 @@ function Categories(props) {
                                         <Button href={`/task/${task.id}`} style={task.solved ? { backgroundColor: 'green', color: 'white' } : {}} >
                                             Aufgabe {task.id}{task.optional ? " (optional)" : ""}
                                         </Button>
-                                        <br/>
+                                        {task.solved ? <div style={{ float: "right" }}>
+
+                                            {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
+                                            {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
+                                            <StarFilled />
+                                        </div> : <div />}
+                                        <br />
                                     </div>
-                            )})}
+                                )
+                            })}
                         </Collapse.Panel>)
                 })}
             </Collapse>
             <Checkbox disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
-            <br/>
+            <br />
             <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Fortsetzen</Button>
         </div>
     );

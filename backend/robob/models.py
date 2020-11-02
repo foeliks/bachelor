@@ -94,6 +94,8 @@ class Tasks(models.Model):
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
     multiple_choice = models.BooleanField(blank=True, null=True)
+    placeholder_before = models.TextField()
+    placeholder_after = models.TextField()
 
     class Meta:
         managed = False

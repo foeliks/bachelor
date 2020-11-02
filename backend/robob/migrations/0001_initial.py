@@ -101,6 +101,8 @@ class Migration(migrations.Migration):
                 ('password', models.TextField()),
                 ('admin', models.BooleanField(blank=True, null=True)),
                 ('serious_game', models.BooleanField(blank=True, null=True)),
+                ('placeholder_before', models.TextField(blank=True, null=True)),
+                ('placeholder_after', models.TextField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'users',

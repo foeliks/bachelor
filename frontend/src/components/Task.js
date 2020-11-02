@@ -34,9 +34,7 @@ function Task(props) {
                 }
                 else {
                     res.json()
-                        .then(json => {
-                            setTask(json);
-                        })
+                        .then(json => setTask(json))
                 }
             })
             .catch(error => console.log(error))
@@ -45,8 +43,9 @@ function Task(props) {
 
     const submitCode = () => {
         let userSolution = "";
+        const completeCode = task.placeholder_before + '\n' + textarea + '\n' + task.placeholder_after;
         try {
-            const runCode = new Function(textarea);
+            const runCode = new Function(completeCode);
             userSolution = runCode() === undefined ? "" : String(runCode());
             setCodeFailed(false);
         }
@@ -66,15 +65,15 @@ function Task(props) {
             body: JSON.stringify({
                 "task_id": task.id,
                 "solution": userSolution,
-                "user_solution": textarea
+                "user_solution": completeCode
             })
         })
             .then(res => {
-                if (res.status !== 200) {
-                    props.functions.logOut();
+                if (res.status === 220) {
+                    alert("SUCCESS!")
                 }
-                else {
-                    console.log(res)
+                else if (res.status !== 200) {
+                    props.functions.logOut();
                 }
             })
             .catch(error => console.log(error))
@@ -87,36 +86,46 @@ function Task(props) {
     }
     return (
         <div>
-            <PageHeader title="Aufgabe" />
-            <Card>
+            <PageHeader title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`} />
+            <Card style={{ marginBottom: "10px" }}>
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>
             {!task.multiple_choice &&
                 <div>
-                    <Input.TextArea style={
+                    <Card style={
                         hackerMode ? {
                             color: 'green',
                             backgroundColor: 'black',
                             fontFamily: 'Hack'
-                        } : { fontFamily: 'Hack' }}
-                        onKeyDown={(event) => {
-                            if (event.keyCode === 9) {
-                                event.preventDefault();
-                                const cursor = event.target.selectionEnd;
-                                event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                                event.target.selectionEnd = cursor + 1;
-                            }
-                        }}
-                        onChange={() => setTextarea(document.getElementById("textarea").value)}
-                        autoFocus
-                        spellCheck={false}
-                        id="textarea"
-                        rows={5} />
-                    <Card style={submitted ? codeFailed ? { backgroundColor: 'red' } : { backgroundColor: 'green' } : {}}>
+                        } : { fontFamily: 'Hack' }}>
+                        <p>{task.placeholder_before}</p>
+                        <Input.TextArea style={
+                            hackerMode ? {
+                                color: 'green',
+                                backgroundColor: 'black',
+                                fontFamily: 'Hack'
+                            } : { fontFamily: 'Hack' }}
+                            onKeyDown={(event) => {
+                                if (event.keyCode === 9) {
+                                    event.preventDefault();
+                                    const cursor = event.target.selectionEnd;
+                                    event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                                    event.target.selectionEnd = cursor + 1;
+                                }
+                            }}
+                            onChange={() => setTextarea(document.getElementById("textarea").value)}
+                            autoFocus
+                            spellCheck={false}
+                            id="textarea"
+                            rows={5} />
+
+                        <p>{task.placeholder_after}</p>
+                    </Card>
+                    <Card style={submitted && codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
                         <p>{codeResult}</p>
                     </Card>
                 </div>}
-            <Row style={{marginTop: "10px"}} justify="space-between">
+            <Row style={{ marginTop: "10px" }} justify="space-between">
                 <Col>
                     <Button
                         type="primary"
@@ -133,7 +142,7 @@ function Task(props) {
                     }} />
                 </Col>
             </Row>
-        </div>
+        </div >
     );
 }
 
