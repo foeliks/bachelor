@@ -9,7 +9,10 @@ import {
     Row,
     Col
 } from 'antd';
-
+import {
+    StarOutlined,
+    StarFilled,
+} from '@ant-design/icons';
 
 function Task(props) {
     const { taskId } = useParams();
@@ -19,6 +22,7 @@ function Task(props) {
     const [codeFailed, setCodeFailed] = useState(false);
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
 
@@ -69,8 +73,13 @@ function Task(props) {
             })
         })
             .then(res => {
-                if (res.status === 220) {
-                    alert("SUCCESS!")
+                if (res.status === 202) {
+                    setSuccess(true);
+                    res.json().then(json => {
+                        let new_task = task;
+                        new_task.stars = json.stars;
+                        setTask(new_task);
+                    })
                 }
                 else if (res.status !== 200) {
                     props.functions.logOut();
@@ -79,14 +88,30 @@ function Task(props) {
             .catch(error => console.log(error))
     }
 
+    const successScreen = (
+        <h1>Test</h1>
+    )
+
     if (props.values.gameMode) {
         return (
-            <h1>Hier kommt das Spiel hin</h1>
+            <Card style={{backgroundColor: 'light-green'}}>
+                <h1>Geschafft!</h1>
+
+            </Card>
         )
     }
+    
     return (
         <div>
-            <PageHeader title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`} />
+            <Row justify="space-between" align="middle">
+                <PageHeader title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`} />
+                {task.stars > 0 ? <div>
+                    {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
+                    {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
+                    <StarFilled />
+                </div> : <div />}
+            </Row>
+            {success ? successScreen : <div />}
             <Card style={{ marginBottom: "10px" }}>
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>

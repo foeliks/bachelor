@@ -32,7 +32,10 @@ function PageLayout(props) {
                     <Menu.Item key="2" onClick={() => history.push("/overview")}>
                         Übersicht
                     </Menu.Item>
-                    <Menu.Item key="3" href="/" onClick={() => props.functions.logOut()}>
+                    <Menu.Item key="3" onClick={() => history.push("/diary")}>
+                        Tagebuch
+                    </Menu.Item>
+                    <Menu.Item key="4" href="/" onClick={() => props.functions.logOut()}>
                         Abmelden
                     </Menu.Item>
 

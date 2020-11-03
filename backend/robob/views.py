@@ -10,6 +10,23 @@ from rest_framework.views import APIView
 from .models import Categories, AuthUser, Tasks, Progress
 from .serializers import UserSerializer, UserSerializerWithToken
 
+def get_stars(username, task):
+    user_tries = Progress.objects.filter(solved=True, task=task, user__username=username).aggregate(Min('num_tries'))["num_tries__min"]
+    first_solution_per_user = Progress.objects.filter(solved=True, task=task).order_by('user__id', 'num_tries').distinct('user__id').only('num_tries')
+    sums = 0
+
+    for first_solution in first_solution_per_user:
+        sums += first_solution.num_tries
+
+    avg = sums / len(first_solution_per_user)
+
+    if user_tries < avg * 2/3 or user_tries == 1:
+        return 3
+    elif user_tries >= avg * 4/3:
+        return 1
+    
+    return 2
+
 @api_view(['GET'])
 def current_user(request):
     user = AuthUser.objects.get(username=request.user)
@@ -24,17 +41,19 @@ class UserList(APIView):
 
     def post(self, request, format=None):
         serializer = UserSerializerWithToken(data=request.data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoriesProgress(APIView):
     def get(self, request, format=None):
         result = []
+
         try:
-            user = AuthUser.objects.get(username=request.user)
             categories = Categories.objects.all()
             progress = {}
 
@@ -42,29 +61,17 @@ class CategoriesProgress(APIView):
                 tasks = []
                 all_tasks = Tasks.objects.filter(category=category).order_by('id')
                 finished_tasks = 0
+
                 for task in all_tasks:
                     solved = False
-                    solved_tasks = Progress.objects.filter(solved=True, task=task, user=user)
+                    solved_tasks = Progress.objects.filter(solved=True, task=task, user__username=request.user)
                     stars = 0
+
                     if solved_tasks.aggregate(Count('num_tries'))["num_tries__count"] >= 1:
                         finished_tasks += 1
                         solved = True
                         user_tries = solved_tasks.aggregate(Min('num_tries'))["num_tries__min"]
-                        
-                        first_solution_per_user = Progress.objects.filter(solved=True, task=task).order_by('user__id', 'num_tries').distinct('user__id').only('num_tries')
-                        sums = 0
-                        for first_solution in first_solution_per_user:
-                            sums += first_solution.num_tries
-
-                        avg = sums / len(first_solution_per_user)
-
-                        if user_tries < avg * 2/3 or user_tries == 1:
-                            stars = 3
-                        elif user_tries >= avg * 4/3:
-                            stars = 1
-                        else:
-                            stars = 2
-
+                        stars = get_stars(request.user,task)
 
                     tasks.append({
                         "id": task.id,
@@ -74,6 +81,7 @@ class CategoriesProgress(APIView):
                     })
 
                 progress = 100
+
                 if(len(all_tasks) != 0):
                     progress = finished_tasks/len(all_tasks) * 100
 
@@ -95,18 +103,20 @@ class NextTaskView(APIView):
             "task_with_optional": 0,
             "task_without_optional": 0
             }
+
         try:
-            user = AuthUser.objects.get(username=request.user)
             all_tasks = Tasks.objects.all()
+
             for task in all_tasks:
-                solved_tasks = Progress.objects.filter(solved=True, task=task, user=user).only("id")
+                solved_tasks = Progress.objects.filter(solved=True, task=task, user__username=request.user).only("id")
                 chosen = all_tasks.exclude(id__in=solved_tasks)[0]
+
                 if(result ["task_with_optional"] == 0):
                     result["task_with_optional"] = chosen.id
+
                 if chosen.optional == False:
                     result["task_without_optional"] = chosen.id
                     return Response(result)
-                    
 
         except Exception as e:
             print(e)
@@ -116,6 +126,7 @@ class NextTaskView(APIView):
 class TaskView(APIView):
     def get(self, request, format=None, **kwargs):
         result = {}
+
         try:
             task = Tasks.objects.get(id=kwargs["task_id"])
             result = {
@@ -126,10 +137,18 @@ class TaskView(APIView):
                 "placeholder_before": task.placeholder_before,
                 "placeholder_after": task.placeholder_after
             }
+
             if task.placeholder_before == None:
                 result["placeholder_before"] = ""
+
             if task.placeholder_after == None:
                 result["placeholder_after"] = ""
+
+            if Progress.objects.filter(user__username=request.user, task=task, solved=True).exists():
+                result["stars"] = get_stars(request.user, task)
+            else:
+                result["stars"] = 0
+
         except Exception as e:
             print(e)
 
@@ -139,10 +158,13 @@ class ChangeGameModeView(APIView):
     def post(self, request, format=None, **kwargs):
         try:
             user = AuthUser.objects.get(username=request.user)
+
             if kwargs["game_mode"] != user.game_mode:
                 user.game_mode = kwargs["game_mode"]
                 user.save()
+
             return HttpResponse(status=200)
+
         except Exception as e:
             print(e)
             return HttpResponse(status=400)
@@ -154,14 +176,19 @@ class AddSolution(APIView):
             user = AuthUser.objects.get(username=request.user)
             task = Tasks.objects.get(id=request.data["task_id"])
             solved = task.solution == request.data["solution"]
-            try:
-                num_tries = Progress.objects.filter(user=user, task=task).order_by('-num_tries')[0].num_tries + 1
+            progress = Progress.objects.filter(user=user, task=task).order_by('-num_tries')
+
+            if progress.exists():
+                num_tries = progress[0].num_tries + 1
                 Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
-            except:
+            else:
                 progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
 
             if solved == True:
-                return HttpResponse(status=220)
+                result = {
+                    "stars": get_stars(user.username, task)
+                }
+                return Response(result, status=status.HTTP_202_ACCEPTED)
             
             return HttpResponse(status=200)
 

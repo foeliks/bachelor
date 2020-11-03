@@ -10,7 +10,8 @@ import {
     Home,
     Overview,
     PageLayout,
-    Task
+    Task,
+    Diary
 } from './components';
 
 function App() {
@@ -114,6 +115,12 @@ function App() {
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Overview />
+                    </PageLayout>}
+            </Route>
+            <Route path='/diary' >
+                {redirect ? <Redirect to="/" /> :
+                    <PageLayout values={values} functions={functions} >
+                        <Diary />
                     </PageLayout>}
             </Route>
             <Route path='/task/:taskId'>

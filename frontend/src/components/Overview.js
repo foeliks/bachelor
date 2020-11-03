@@ -69,7 +69,6 @@ function Categories(props) {
                 {categories.map(category => {
                     return (
                         <Collapse.Panel key={category.id} header={category.title} extra={<Progress percent={category.progress} />}>
-
                             {category.tasks.map(task => {
                                 return (
                                     <div style={{ marginTop: "10px" }} key={task.id}>
@@ -86,6 +85,7 @@ function Categories(props) {
                                     </div>
                                 )
                             })}
+                            <Button style={{float: "right", marginBottom: "10px" }} type="danger">Kapitel zurücksetzen</Button>
                         </Collapse.Panel>)
                 })}
             </Collapse>
