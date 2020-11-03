@@ -50,8 +50,14 @@ class CategoriesProgress(APIView):
                         finished_tasks += 1
                         solved = True
                         user_tries = solved_tasks.aggregate(Min('num_tries'))["num_tries__min"]
-                        avg = solved_tasks.aggregate(Avg('num_tries'))["num_tries__avg"]
-                        print(user_tries, avg)
+                        
+                        first_solution_per_user = Progress.objects.filter(solved=True, task=task).order_by('user__id', 'num_tries').distinct('user__id').only('num_tries')
+                        sums = 0
+                        for first_solution in first_solution_per_user:
+                            sums += first_solution.num_tries
+
+                        avg = sums / len(first_solution_per_user)
+
                         if user_tries < avg * 2/3 or user_tries == 1:
                             stars = 3
                         elif user_tries >= avg * 4/3:
@@ -93,7 +99,7 @@ class NextTaskView(APIView):
             user = AuthUser.objects.get(username=request.user)
             all_tasks = Tasks.objects.all()
             for task in all_tasks:
-                solved_tasks = map(lambda x: x.task.id, list(Progress.objects.filter(solved=True, task=task, user=user)))
+                solved_tasks = Progress.objects.filter(solved=True, task=task, user=user).only("id")
                 chosen = all_tasks.exclude(id__in=solved_tasks)[0]
                 if(result ["task_with_optional"] == 0):
                     result["task_with_optional"] = chosen.id

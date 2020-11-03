@@ -47,3 +47,6 @@ return test;"
 3,1,t,5,"
 test = 2
 return test;"
+4,1,t,14,"
+test = 2;
+return test;"
