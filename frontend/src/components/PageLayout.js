@@ -14,7 +14,8 @@ function PageLayout(props) {
 
     useEffect(() => {
         window.location.pathname === "/" ? setSelected("1") : 
-            window.location.pathname === "/overview" && setSelected("2")
+            window.location.pathname === "/overview" ? setSelected("2") :
+                window.location.pathname === "/diary" && setSelected("3")
     }, []);
 
     const Children = () => {

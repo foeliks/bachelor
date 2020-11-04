@@ -105,22 +105,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Users',
-            fields=[
-                ('user_id', models.AutoField(primary_key=True, serialize=False)),
-                ('email', models.TextField(unique=True)),
-                ('password', models.TextField()),
-                ('admin', models.BooleanField(blank=True, null=True)),
-                ('serious_game', models.BooleanField(blank=True, null=True)),
-                ('placeholder_before', models.TextField(blank=True, null=True)),
-                ('placeholder_after', models.TextField(blank=True, null=True)),
-            ],
-            options={
-                'db_table': 'users',
-                'managed': False,
-            },
-        ),
-        migrations.CreateModel(
             name='Diary',
             fields=[
                 ('knowledge', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='robob.knowledge')),

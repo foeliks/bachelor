@@ -111,14 +111,3 @@ class Tasks(models.Model):
         managed = False
         db_table = 'tasks'
 
-
-# class Users(models.Model):
-#     user_id = models.AutoField(primary_key=True)
-#     email = models.TextField(unique=True)
-#     password = models.TextField()
-#     admin = models.BooleanField(blank=True, null=True)
-#     serious_game = models.BooleanField(blank=True, null=True)
-
-#     class Meta:
-#         managed = False
-#         db_table = 'users'

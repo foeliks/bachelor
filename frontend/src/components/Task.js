@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
     PageHeader,
     Card,
@@ -7,7 +7,8 @@ import {
     Switch,
     Button,
     Row,
-    Col
+    Col,
+    Collapse
 } from 'antd';
 import {
     StarOutlined,
@@ -16,6 +17,8 @@ import {
 
 function Task(props) {
     const { taskId } = useParams();
+    const history = useHistory();
+
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
     const [textarea, setTextarea] = useState("");
@@ -89,22 +92,31 @@ function Task(props) {
     }
 
     const successScreen = (
-        <h1>Test</h1>
+        <Card style={{ backgroundColor: 'light-green' }}>
+            <h1>Geschafft!</h1>
+        </Card>
     )
 
     if (props.values.gameMode) {
         return (
-            <Card style={{backgroundColor: 'light-green'}}>
-                <h1>Geschafft!</h1>
-
-            </Card>
+            <h1>Aufgabe als Spiel</h1>
         )
     }
-    
+
+    const knowledgeBody = <Collapse style={{marginBottom: "10px"}}>
+    <Collapse.Panel header="Info">
+        <div dangerouslySetInnerHTML={{ __html: task.knowledge }} />
+        <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
+    </Collapse.Panel>
+    </Collapse>
+
     return (
         <div>
             <Row justify="space-between" align="middle">
-                <PageHeader title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`} />
+                <PageHeader
+                    title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`}
+                    onBack={() => history.push('/overview')}
+                />
                 {task.stars > 0 ? <div>
                     {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                     {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
@@ -112,12 +124,14 @@ function Task(props) {
                 </div> : <div />}
             </Row>
             {success ? successScreen : <div />}
-            <Card style={{ marginBottom: "10px" }}>
+            <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>
-            {!task.multiple_choice &&
+            {task.knowledge ? knowledgeBody : <div />}
+            {
+                !task.multiple_choice &&
                 <div>
-                    <Card style={
+                    <Card title="Eingabe" style={
                         hackerMode ? {
                             color: 'green',
                             backgroundColor: 'black',
@@ -146,10 +160,11 @@ function Task(props) {
 
                         <p>{task.placeholder_after}</p>
                     </Card>
-                    <Card style={submitted && codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
+                    <Card title="Ausgabe" style={submitted && codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
                         <p>{codeResult}</p>
                     </Card>
-                </div>}
+                </div>
+            }
             <Row style={{ marginTop: "10px" }} justify="space-between">
                 <Col>
                     <Button
@@ -167,8 +182,7 @@ function Task(props) {
                     }} />
                 </Col>
             </Row>
-        </div >
-    );
+        </div>);
 }
 
 export default Task;

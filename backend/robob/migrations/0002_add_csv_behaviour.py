@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             	category_id integer references categories (id),
             	description text not null,
             	optional bool default false,
-	        	conversation integer references conversations (id),
+	        	conversation_id integer references conversations (id),
 				place_id integer references places(id),
             	primary key (id)
             );
@@ -81,9 +81,9 @@ class Migration(migrations.Migration):
 
             create table if not exists diary (
             	user_id integer references auth_user (id),
-            	knowledge integer references knowledge (id),
+            	knowledge_id integer references knowledge (id),
 				post_it boolean default(false),
-            	primary key (knowledge, user_id)
+            	primary key (knowledge_id, user_id)
             );
 
 			

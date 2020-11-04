@@ -7,7 +7,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categories, AuthUser, Tasks, Progress
+from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
 from .serializers import UserSerializer, UserSerializerWithToken
 
 def get_stars(username, task):
@@ -26,6 +26,7 @@ def get_stars(username, task):
         return 1
     
     return 2
+
 
 @api_view(['GET'])
 def current_user(request):
@@ -97,7 +98,8 @@ class CategoriesProgress(APIView):
         
         return Response(result)
 
-class NextTaskView(APIView):
+
+class NextTask(APIView):
     def get(self, request, format=None, **kwargs):
         result = {
             "task_with_optional": 0,
@@ -123,6 +125,7 @@ class NextTaskView(APIView):
 
         return Response(result)
 
+
 class TaskView(APIView):
     def get(self, request, format=None, **kwargs):
         result = {}
@@ -144,6 +147,13 @@ class TaskView(APIView):
             if task.placeholder_after == None:
                 result["placeholder_after"] = ""
 
+            if task.knowledge != None:
+                result["knowledge"] = task.knowledge.description
+
+                if Diary.objects.filter(user__username=request.user, knowledge=task.knowledge).exists() == False:
+                    user = AuthUser.objects.get(username=request.user)
+                    Diary.objects.create(user=user, knowledge=task.knowledge, post_it=False)
+
             if Progress.objects.filter(user__username=request.user, task=task, solved=True).exists():
                 result["stars"] = get_stars(request.user, task)
             else:
@@ -154,7 +164,33 @@ class TaskView(APIView):
 
         return Response(result)
 
-class ChangeGameModeView(APIView):
+
+class DiaryView(APIView):
+    def get(self, request, format=None, **kwargs):
+        result = {}
+        
+        try:
+            categories = Categories.objects.all()
+
+            for category in categories:
+                
+                result[category.id] = {
+                    "title": category.title,
+                    "knowledge": map(
+                        lambda entry: {
+                            "id": entry.knowledge.id,
+                            "description": entry.knowledge.description
+                        }, 
+                        list(Diary.objects.filter(user__username=request.user, knowledge__category=category).only("knowledge")))
+                }
+
+        except Exception as e:
+            print(e)
+
+        return Response(result)
+
+
+class ChangeGameMode(APIView):
     def post(self, request, format=None, **kwargs):
         try:
             user = AuthUser.objects.get(username=request.user)
