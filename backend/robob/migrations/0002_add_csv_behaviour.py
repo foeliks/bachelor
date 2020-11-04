@@ -41,12 +41,19 @@ class Migration(migrations.Migration):
 	        	primary key (id)
 	        );
 
+			create table if not exists places (
+				id serial,
+				name text,
+				primary key(id)
+			);
+
             create table if not exists knowledge (
             	id serial,
             	category_id integer references categories (id),
             	description text not null,
             	optional bool default false,
 	        	conversation integer references conversations (id),
+				place_id integer references places(id),
             	primary key (id)
             );
 
@@ -75,9 +82,11 @@ class Migration(migrations.Migration):
             create table if not exists diary (
             	user_id integer references auth_user (id),
             	knowledge integer references knowledge (id),
+				post_it boolean default(false),
             	primary key (knowledge, user_id)
             );
 
+			
 
 
 	        -- IMPORT DATA FROM CSV 

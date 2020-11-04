@@ -80,6 +80,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Places',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.TextField(blank=True, null=True)),
+            ],
+            options={
+                'db_table': 'places',
+                'managed': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Tasks',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -113,6 +124,7 @@ class Migration(migrations.Migration):
             name='Diary',
             fields=[
                 ('knowledge', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='robob.knowledge')),
+                ('post_it', models.BooleanField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'diary',

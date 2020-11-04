@@ -48,6 +48,7 @@ class Conversations(models.Model):
 class Diary(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     knowledge = models.OneToOneField('Knowledge', models.DO_NOTHING, primary_key=True)
+    post_it = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -55,11 +56,20 @@ class Diary(models.Model):
         unique_together = (('knowledge', 'user'),)
 
 
+class Places(models.Model):
+    name = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'places'
+
+
 class Knowledge(models.Model):
     category = models.ForeignKey(Categories, models.DO_NOTHING, blank=True, null=True)
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
     conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
+    place = models.ForeignKey('Places', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
