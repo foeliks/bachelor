@@ -103,12 +103,13 @@ function Task(props) {
         )
     }
 
-    const knowledgeBody = <Collapse style={{marginBottom: "10px"}}>
-    <Collapse.Panel header="Info">
-        <div dangerouslySetInnerHTML={{ __html: task.knowledge }} />
-        <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
-    </Collapse.Panel>
-    </Collapse>
+    const knowledgeBody =
+        <Collapse defaultActiveKey="1" style={{ marginBottom: "10px" }}>
+            <Collapse.Panel key="1" header="Info">
+                <div dangerouslySetInnerHTML={{ __html: task.knowledge }} />
+                <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
+            </Collapse.Panel>
+        </Collapse>
 
     return (
         <div>

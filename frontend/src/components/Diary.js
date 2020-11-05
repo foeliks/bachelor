@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-    PageHeader
+    PageHeader,
+    Collapse,
+    Card
 } from 'antd'
 
 
@@ -9,7 +11,6 @@ function Diary(props) {
     const [diary, setDiary] = useState([]);
 
     useEffect(() => {
-
         fetch(`http://localhost:8000/robob/diary/`, {
             headers: {
                 'Authorization': `JWT ${localStorage.getItem('token')}`
@@ -18,7 +19,7 @@ function Diary(props) {
             .then(res => {
                 if (res.status !== 200) {
                     setDiary([]);
-                    //props.functions.logOut();
+                    props.functions.logOut();
                 }
                 else {
                     res.json()
@@ -33,10 +34,18 @@ function Diary(props) {
     return (
         <div>
             <PageHeader title="Tagebuch" />
-            {/* <ul>
-                {diary.map(entry => <li></li>)}
-            </ul> */}
-            
+            <Collapse>
+                {diary.map(category => (
+                    <Collapse.Panel header={category.title} key={category.id}>
+                        {category.knowledge.map(knowledge => (
+                            <Card>
+                                <div key={knowledge.id} dangerouslySetInnerHTML={{ __html: knowledge.description }} />
+                            </Card>
+                        ))}
+                    </Collapse.Panel>
+                ))}
+            </Collapse>
+
         </div>
     )
 }

@@ -167,14 +167,15 @@ class TaskView(APIView):
 
 class DiaryView(APIView):
     def get(self, request, format=None, **kwargs):
-        result = {}
+        result = []
         
         try:
             categories = Categories.objects.all()
 
             for category in categories:
                 
-                result[category.id] = {
+                result.append({
+                    "id": category.id,
                     "title": category.title,
                     "knowledge": map(
                         lambda entry: {
@@ -182,7 +183,7 @@ class DiaryView(APIView):
                             "description": entry.knowledge.description
                         }, 
                         list(Diary.objects.filter(user__username=request.user, knowledge__category=category).only("knowledge")))
-                }
+                })
 
         except Exception as e:
             print(e)
