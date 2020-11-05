@@ -15,8 +15,6 @@ function Categories(props) {
 
     const [categories, setCategories] = useState([]);
     const [ignoreOptional, setIgnoreOptional] = useState(false);
-    const [nextTaskWithOptional, setNextTaskWithOptional] = useState(0);
-    const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(0);
 
     useEffect(() => {
         fetch('http://localhost:8000/robob/category-progress/', {
@@ -38,28 +36,6 @@ function Categories(props) {
                 }
             })
             .catch(error => console.log(error))
-
-        fetch(`http://localhost:8000/robob/next-task/`, {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem('token')}`
-            }
-        })
-            .then(res => {
-                if (res.status !== 200) {
-                    props.functions.logOut();
-                }
-                else {
-                    res.json()
-                        .then(json => {
-                            setNextTaskWithOptional(json.task_with_optional);
-                            setNextTaskWithoutOptional(json.task_without_optional);
-                            props.functions.setRedirect(false);
-                        })
-                }
-            })
-            .catch(error => console.log(error))
-
-
     }, [props.functions])
 
     return (
@@ -76,7 +52,6 @@ function Categories(props) {
                                             Aufgabe {task.id}{task.optional ? " (optional)" : ""}
                                         </Button>
                                         {task.solved ? <div style={{ float: "right" }}>
-
                                             {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                                             {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
                                             <StarFilled />
@@ -89,9 +64,9 @@ function Categories(props) {
                         </Collapse.Panel>)
                 })}
             </Collapse>
-            <Checkbox disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
             <br />
-            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Fortsetzen</Button>
+            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
         </div>
     );
 

@@ -21,6 +21,8 @@ function App() {
     const [username, setUsername] = useState('');
     const [gameMode, setGameMode] = useState(0);
     const [redirect, setRedirect] = useState(false);
+    const [nextTaskWithOptional, setNextTaskWithOptional] = useState(0);
+    const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(0);
 
     const logOut = () => {
         localStorage.removeItem('token');
@@ -87,6 +89,27 @@ function App() {
                     Authorization: `JWT ${localStorage.getItem('token')}`
                 }
             }).catch(error => console.log(error))
+
+
+            fetch(`http://localhost:8000/robob/next-task/`, {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            })
+                .then(res => {
+                    if (res.status !== 200) {
+                        logOut();
+                    }
+                    else {
+                        res.json()
+                            .then(json => {
+                                setNextTaskWithOptional(json.task_with_optional);
+                                setNextTaskWithoutOptional(json.task_without_optional);
+                                setRedirect(false);
+                            })
+                    }
+                })
+                .catch(error => console.log(error))
         }
     }, [gameMode, loggedIn])
 
@@ -95,13 +118,17 @@ function App() {
         loggedIn: loggedIn,
         username: username,
         redirect: redirect,
-        gameMode: gameMode
+        gameMode: gameMode,
+        nextTaskWithOptional: nextTaskWithOptional,
+        nextTaskWithoutOptional: nextTaskWithoutOptional
     }
     const functions = {
         setLoggedIn: setLoggedIn,
         setUsername: setUsername,
         setRedirect: setRedirect,
         setGameMode: setGameMode,
+        setNextTaskWithOptional: setNextTaskWithOptional,
+        setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         logOut: logOut
     }
     return (

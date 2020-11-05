@@ -8,7 +8,8 @@ import {
     Button,
     Row,
     Col,
-    Collapse
+    Collapse,
+    Checkbox
 } from 'antd';
 import {
     StarOutlined,
@@ -26,6 +27,7 @@ function Task(props) {
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [ignoreOptional, setIgnoreOptional] = useState(false);
 
     useEffect(() => {
 
@@ -92,15 +94,16 @@ function Task(props) {
     }
 
     const successScreen = (
-        <Card style={{ backgroundColor: 'light-green' }}>
+        <Card style={{ backgroundColor: 'green' }}>
             <h1>Geschafft!</h1>
+            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+            <br />
+            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
         </Card>
     )
 
     if (props.values.gameMode) {
-        return (
-            <h1>Aufgabe als Spiel</h1>
-        )
+        return <h1>Aufgabe als Spiel</h1>
     }
 
     const knowledgeBody =
@@ -116,7 +119,7 @@ function Task(props) {
             <Row justify="space-between" align="middle">
                 <PageHeader
                     title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`}
-                    onBack={() => history.push('/overview')}
+                    onBack={() => history.goBack()}
                 />
                 {task.stars > 0 ? <div>
                     {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
@@ -124,7 +127,6 @@ function Task(props) {
                     <StarFilled />
                 </div> : <div />}
             </Row>
-            {success ? successScreen : <div />}
             <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>
@@ -183,6 +185,7 @@ function Task(props) {
                     }} />
                 </Col>
             </Row>
+            {success ? successScreen : <div />}
         </div>);
 }
 
