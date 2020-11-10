@@ -27,7 +27,7 @@ function Diary(props) {
                 }
             })
             .catch(error => console.log(error))
-    }, [])
+    }, [props.functions])
 
     console.log(diary)
 

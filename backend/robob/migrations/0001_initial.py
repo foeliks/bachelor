@@ -98,6 +98,8 @@ class Migration(migrations.Migration):
                 ('optional', models.BooleanField(blank=True, null=True)),
                 ('solution', models.TextField(blank=True, null=True)),
                 ('multiple_choice', models.BooleanField(blank=True, null=True)),
+                ('placeholder_before', models.TextField(blank=True, null=True)),
+                ('placeholder_after', models.TextField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'tasks',

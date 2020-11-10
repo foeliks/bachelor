@@ -11,7 +11,8 @@ import {
     Overview,
     PageLayout,
     Task,
-    Diary
+    Diary,
+    Ranking
 } from './components';
 
 function App() {
@@ -154,6 +155,12 @@ function App() {
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Task />
+                    </PageLayout>}
+            </Route>
+            <Route path='/ranking' >
+                {redirect ? <Redirect to="/" /> :
+                    <PageLayout values={values} functions={functions} >
+                        <Ranking />
                     </PageLayout>}
             </Route>
         </Router>

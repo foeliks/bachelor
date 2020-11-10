@@ -30,7 +30,6 @@ function Task(props) {
     const [ignoreOptional, setIgnoreOptional] = useState(false);
 
     useEffect(() => {
-
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
             headers: {
                 'Authorization': `JWT ${localStorage.getItem('token')}`
@@ -50,6 +49,47 @@ function Task(props) {
 
     }, [props.functions, taskId])
 
+    useEffect(() => {
+        if (submitted) {
+
+            fetch(`http://localhost:8000/robob/add-solution/`, {
+                method: 'post',
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "task_id": task.id,
+                    "solution": codeResult,
+                    "user_solution": task.placeholder_before + '\n' + textarea + '\n' + task.placeholder_after
+                })
+            })
+                .then(res => {
+                    if (res.status === 202) {
+                        setSuccess(true);
+                        res.json().then(json => {
+                            let new_task = task;
+                            new_task.stars = json.stars;
+                            setTask(new_task);
+                        })
+                    }
+                    else if (res.status === 200) {
+                        res.json().then(json => {
+                            let new_task = task;
+                            new_task.tries = json.tries;
+                            setTask(new_task);
+                        })
+                    }
+                    else {
+                        props.functions.logOut();
+                    }
+                })
+                .catch(error => console.log(error))
+
+            setSubmitted(false)
+        }
+    }, [codeResult, submitted, props.functions, textarea, task])
+
     const submitCode = () => {
         let userSolution = "";
         const completeCode = task.placeholder_before + '\n' + textarea + '\n' + task.placeholder_after;
@@ -62,35 +102,7 @@ function Task(props) {
             userSolution = error.message;
             setCodeFailed(true);
         }
-        setSubmitted(false)
         setCodeResult(userSolution);
-
-        fetch(`http://localhost:8000/robob/add-solution/`, {
-            method: 'post',
-            headers: {
-                'Authorization': `JWT ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "task_id": task.id,
-                "solution": userSolution,
-                "user_solution": completeCode
-            })
-        })
-            .then(res => {
-                if (res.status === 202) {
-                    setSuccess(true);
-                    res.json().then(json => {
-                        let new_task = task;
-                        new_task.stars = json.stars;
-                        setTask(new_task);
-                    })
-                }
-                else if (res.status !== 200) {
-                    props.functions.logOut();
-                }
-            })
-            .catch(error => console.log(error))
     }
 
     const successScreen = (
@@ -113,7 +125,7 @@ function Task(props) {
                 <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
             </Collapse.Panel>
         </Collapse>
-
+        
     return (
         <div>
             <Row justify="space-between" align="middle">
@@ -121,6 +133,7 @@ function Task(props) {
                     title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`}
                     onBack={() => history.goBack()}
                 />
+                Versuche: {task.tries}
                 {task.stars > 0 ? <div>
                     {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                     {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
@@ -134,7 +147,7 @@ function Task(props) {
             {
                 !task.multiple_choice &&
                 <div>
-                    <Card title="Eingabe" style={
+                    <Card style={
                         hackerMode ? {
                             color: 'green',
                             backgroundColor: 'black',
@@ -163,7 +176,7 @@ function Task(props) {
 
                         <p>{task.placeholder_after}</p>
                     </Card>
-                    <Card title="Ausgabe" style={submitted && codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
+                    <Card title="Ausgabe" style={codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
                         <p>{codeResult}</p>
                     </Card>
                 </div>

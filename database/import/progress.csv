@@ -32,21 +32,33 @@ return test;"
 4,1,t,13,"
 return 2;
 return test;"
-3,1,t,1,"
-return 2;
-return test;"
-3,1,t,2,"
-return 2;
-return test;"
-3,1,t,3,"
-return 2;
-return test;"
-3,1,f,4,"
-
-return test;"
-3,1,t,5,"
-test = 2
-return test;"
 4,1,t,14,"
 test = 2;
+return test;"
+3,1,t,6,"
+return 2
+return test;"
+3,1,t,7,"
+return 2
+return test;"
+3,1,t,8,"
+return 2
+return test;"
+3,1,t,31,"
+return 2
+return test;"
+3,1,f,32,"
+return a
+return test;"
+3,1,f,33,"
+
+return test;"
+3,1,f,34,"
+
+return test;"
+3,1,f,35,"
+return a
+return test;"
+3,1,f,36,"
+return 0
 return test;"

@@ -11,21 +11,24 @@ from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
 from .serializers import UserSerializer, UserSerializerWithToken
 
 def get_stars(username, task):
-    user_tries = Progress.objects.filter(solved=True, task=task, user__username=username).aggregate(Min('num_tries'))["num_tries__min"]
-    first_solution_per_user = Progress.objects.filter(solved=True, task=task).order_by('user__id', 'num_tries').distinct('user__id').only('num_tries')
-    sums = 0
+    user_tries = list(map(lambda progress: progress.num_tries, Progress.objects.filter(solved=True, user__username=username).order_by("num_tries").only("num_tries")))
+    least_tries = 5
+    for index in range(len(user_tries)):
+        if index == 0:
+            tries = user_tries[0]
+        else:
+            tries = user_tries[index] - user_tries[index - 1]
+        
+        if tries < least_tries:
+            least_tries = tries
 
-    for first_solution in first_solution_per_user:
-        sums += first_solution.num_tries
-
-    avg = sums / len(first_solution_per_user)
-
-    if user_tries < avg * 2/3 or user_tries == 1:
+    if least_tries <= 2:
         return 3
-    elif user_tries >= avg * 4/3:
-        return 1
+    elif least_tries <= 4:
+        return 2
+
+    return 1
     
-    return 2
 
 
 @api_view(['GET'])
@@ -40,7 +43,7 @@ def current_user(request):
 @permission_classes([permissions.AllowAny,])
 class UserList(APIView):
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserSerializerWithToken(data=request.data)
 
         if serializer.is_valid():
@@ -51,7 +54,7 @@ class UserList(APIView):
 
 
 class CategoriesProgress(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
         result = []
 
         try:
@@ -100,7 +103,7 @@ class CategoriesProgress(APIView):
 
 
 class NextTask(APIView):
-    def get(self, request, format=None, **kwargs):
+    def get(self, request, **kwargs):
         result = {
             "task_with_optional": 0,
             "task_without_optional": 0
@@ -127,7 +130,7 @@ class NextTask(APIView):
 
 
 class TaskView(APIView):
-    def get(self, request, format=None, **kwargs):
+    def get(self, request, **kwargs):
         result = {}
 
         try:
@@ -154,10 +157,14 @@ class TaskView(APIView):
                     user = AuthUser.objects.get(username=request.user)
                     Diary.objects.create(user=user, knowledge=task.knowledge, post_it=False)
 
-            if Progress.objects.filter(user__username=request.user, task=task, solved=True).exists():
+            solved_tries = Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries")
+
+            if solved_tries.exists():
+                result["tries"] = Progress.objects.filter(user__username=request.user, task=task).order_by("num_tries").last().num_tries - solved_tries.last().num_tries
                 result["stars"] = get_stars(request.user, task)
             else:
                 result["stars"] = 0
+                result["tries"] = Progress.objects.filter(user__username=request.user, task=task).last().num_tries
 
         except Exception as e:
             print(e)
@@ -166,7 +173,7 @@ class TaskView(APIView):
 
 
 class DiaryView(APIView):
-    def get(self, request, format=None, **kwargs):
+    def get(self, request, **kwargs):
         result = []
         
         try:
@@ -192,7 +199,7 @@ class DiaryView(APIView):
 
 
 class ChangeGameMode(APIView):
-    def post(self, request, format=None, **kwargs):
+    def post(self, request, **kwargs):
         try:
             user = AuthUser.objects.get(username=request.user)
 
@@ -208,7 +215,8 @@ class ChangeGameMode(APIView):
 
 
 class AddSolution(APIView):
-    def post(self, request, format=None, **kwargs):
+    def post(self, request):
+        result = {}
         try:
             user = AuthUser.objects.get(username=request.user)
             task = Tasks.objects.get(id=request.data["task_id"])
@@ -217,18 +225,44 @@ class AddSolution(APIView):
 
             if progress.exists():
                 num_tries = progress[0].num_tries + 1
+                result["tries"] = num_tries - Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").last().num_tries
                 Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
             else:
                 progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
-
+                result["tries"] = 1
             if solved == True:
-                result = {
-                    "stars": get_stars(user.username, task)
-                }
+                result["stars"] = get_stars(user.username, task)
+                Progress.objects.filter(user=user, task=task, solved=False).delete()
                 return Response(result, status=status.HTTP_202_ACCEPTED)
             
-            return HttpResponse(status=200)
+            return Response(result, status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
             return HttpResponse(status=400)
+
+class RankingView(APIView):
+    def get(self, request):
+        result = []
+        try:
+            for user in AuthUser.objects.all().only('username'):
+                tasks = map(lambda progress: progress.task, Progress.objects.filter(user__username = user.username, solved=True).order_by('task', 'num_tries').distinct('task').only('task'))
+                stars = 0
+                for task in tasks:
+                    stars += get_stars(user.username, task)
+                result.append({
+                    "username": user.username, 
+                    "stars": stars
+                })
+
+            result.sort(key=lambda entry: entry["stars"], reverse=True)
+            place = 1
+            
+            for entry in result:
+                entry["place"] = place
+                place += 1
+
+        except Exception as e:
+            print(e)
+
+        return Response(result)
