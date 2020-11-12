@@ -139,16 +139,10 @@ class TaskView(APIView):
                 "id": task.id,
                 "description": task.description,
                 "optional": task.optional,
-                "multiple_choice": task.multiple_choice,
-                "placeholder_before": task.placeholder_before,
-                "placeholder_after": task.placeholder_after
+                "specify": task.specify,
+                "placeholder_before": "",
+                "placeholder_after": ""
             }
-
-            if task.placeholder_before == None:
-                result["placeholder_before"] = ""
-
-            if task.placeholder_after == None:
-                result["placeholder_after"] = ""
 
             if task.knowledge != None:
                 result["knowledge"] = task.knowledge.description
@@ -157,14 +151,16 @@ class TaskView(APIView):
                     user = AuthUser.objects.get(username=request.user)
                     Diary.objects.create(user=user, knowledge=task.knowledge, post_it=False)
 
-            solved_tries = Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries")
+            progress = Progress.objects.filter(user__username=request.user, task=task).order_by("num_tries")
 
-            if solved_tries.exists():
-                result["tries"] = Progress.objects.filter(user__username=request.user, task=task).order_by("num_tries").last().num_tries - solved_tries.last().num_tries
-                result["stars"] = get_stars(request.user, task)
+            if progress.exists():
+                if progress.filter(solved=True).exists():
+                    result["tries"] = progress.last().num_tries - progress.filter(solved=True).last().num_tries
+                    result["stars"] = get_stars(request.user, task)
+                else:
+                    result["tries"] = progress.last().num_tries
             else:
                 result["stars"] = 0
-                result["tries"] = Progress.objects.filter(user__username=request.user, task=task).last().num_tries
 
         except Exception as e:
             print(e)
@@ -217,6 +213,7 @@ class ChangeGameMode(APIView):
 class AddSolution(APIView):
     def post(self, request):
         result = {}
+        print(request.data)
         try:
             user = AuthUser.objects.get(username=request.user)
             task = Tasks.objects.get(id=request.data["task_id"])
@@ -225,7 +222,10 @@ class AddSolution(APIView):
 
             if progress.exists():
                 num_tries = progress[0].num_tries + 1
-                result["tries"] = num_tries - Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").last().num_tries
+                if Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").exists():
+                    result["tries"] = num_tries - Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").last().num_tries
+                else:
+                    result["tries"] = num_tries
                 Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
             else:
                 progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])

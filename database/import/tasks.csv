@@ -1,3 +1,2 @@
-id,category_id,knowledge_id,description,optional,solution,multiple_choice,placeholder_before,placeholder_after
-2,9,,<h1>Multiple Choice</h1>,t,1,t,,
-1,9,1,Geben Sie den Wert 2 zurück,f,2,f,,return test;
+id,category_id,knowledge_id,description,optional,solution,specify
+1,1,,"<p>In diesem Kapitel werden die Aufgaben noch sehr leicht sein, um dir ein Gefühl dafür zu geben wie diese Plattform funktioniert.<br/>Außerdem erfährst Du nebenbei schon etwas über JavaScript, ist das nicht toll?</p>",f,"{""0"":true}","{""type"": ""multiple_choice"", ""options"": [{""id"": 0, ""text"": ""Ja""}]}"

@@ -28,6 +28,7 @@ function Task(props) {
     const [submitted, setSubmitted] = useState(false);
     const [success, setSuccess] = useState(false);
     const [ignoreOptional, setIgnoreOptional] = useState(false);
+    const [mcSelection, setMcSelection] = useState({});
 
     useEffect(() => {
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
@@ -42,7 +43,14 @@ function Task(props) {
                 }
                 else {
                     res.json()
-                        .then(json => setTask(json))
+                        .then(json => {
+                            setTask(json)
+                            if (json.specify && json.specify.type === "multiple_choice") {
+                                json.specify.options.map(option => {
+                                    setMcSelection({ ...mcSelection, [option.id]: false });
+                                })
+                            }
+                        })
                 }
             })
             .catch(error => console.log(error))
@@ -61,23 +69,21 @@ function Task(props) {
                 body: JSON.stringify({
                     "task_id": task.id,
                     "solution": codeResult,
-                    "user_solution": task.placeholder_before + '\n' + textarea + '\n' + task.placeholder_after
+                    "user_solution": task.specify.type === "code" ? task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after : codeResult
+                        
+
                 })
             })
                 .then(res => {
                     if (res.status === 202) {
                         setSuccess(true);
                         res.json().then(json => {
-                            let new_task = task;
-                            new_task.stars = json.stars;
-                            setTask(new_task);
+                            setTask({ ...task, stars: json.stars })
                         })
                     }
                     else if (res.status === 200) {
                         res.json().then(json => {
-                            let new_task = task;
-                            new_task.tries = json.tries;
-                            setTask(new_task);
+                            setTask({ ...task, tries: json.tries })
                         })
                     }
                     else {
@@ -90,19 +96,27 @@ function Task(props) {
         }
     }, [codeResult, submitted, props.functions, textarea, task])
 
-    const submitCode = () => {
-        let userSolution = "";
-        const completeCode = task.placeholder_before + '\n' + textarea + '\n' + task.placeholder_after;
-        try {
-            const runCode = new Function(completeCode);
-            userSolution = runCode() === undefined ? "" : String(runCode());
-            setCodeFailed(false);
+    const submit = () => {
+        if (task.specify) {
+            if (task.specify.type === "code") {
+
+                let userSolution = "";
+                const completeCode = task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after;
+                try {
+                    const runCode = new Function(completeCode);
+                    userSolution = runCode() === undefined ? "" : String(runCode());
+                    setCodeFailed(false);
+                }
+                catch (error) {
+                    userSolution = error.message;
+                    setCodeFailed(true);
+                }
+                setCodeResult(userSolution);
+            }
+            else if (task.specify.type === "multiple_choice") {
+                setCodeResult(JSON.stringify(mcSelection));
+            }
         }
-        catch (error) {
-            userSolution = error.message;
-            setCodeFailed(true);
-        }
-        setCodeResult(userSolution);
     }
 
     const successScreen = (
@@ -125,7 +139,56 @@ function Task(props) {
                 <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
             </Collapse.Panel>
         </Collapse>
-        
+
+    const codeBody = () => {
+        return (<div>
+            <Card style={
+                hackerMode ? {
+                    color: 'green',
+                    backgroundColor: 'black',
+                    fontFamily: 'Hack'
+                } : { fontFamily: 'Hack' }}>
+                <p>{task.specify.placeholder_before}</p>
+                <Input.TextArea style={
+                    hackerMode ? {
+                        color: 'green',
+                        backgroundColor: 'black',
+                        fontFamily: 'Hack'
+                    } : { fontFamily: 'Hack' }}
+                    onKeyDown={(event) => {
+                        if (event.keyCode === 9) {
+                            event.preventDefault();
+                            const cursor = event.target.selectionEnd;
+                            event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                            event.target.selectionEnd = cursor + 1;
+                        }
+                    }}
+                    onChange={() => setTextarea(document.getElementById("textarea").value)}
+                    autoFocus
+                    spellCheck={false}
+                    id="textarea"
+                    rows={5} />
+
+                <p>{task.specify.placeholder_after}</p>
+            </Card>
+            <Card title="Ausgabe" style={codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
+                <p>{codeResult}</p>
+            </Card>
+        </div>)
+    }
+
+    const multipleChoiceBody = () => {
+        const result =
+            <Card>
+                {task.specify.options.map(option => {
+                    return (<Checkbox id={option.id} onChange={event => setMcSelection({ ...mcSelection, [event.target.id]: event.target.checked })}>
+                        {option.text}
+                    </Checkbox>)
+                })}
+            </Card>;
+        return result;
+    }
+
     return (
         <div>
             <Row justify="space-between" align="middle">
@@ -133,7 +196,7 @@ function Task(props) {
                     title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`}
                     onBack={() => history.goBack()}
                 />
-                Versuche: {task.tries}
+                Bisherige Versuche: {task.tries ? task.tries : 0}
                 {task.stars > 0 ? <div>
                     {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                     {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
@@ -144,49 +207,15 @@ function Task(props) {
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>
             {task.knowledge ? knowledgeBody : <div />}
-            {
-                !task.multiple_choice &&
-                <div>
-                    <Card style={
-                        hackerMode ? {
-                            color: 'green',
-                            backgroundColor: 'black',
-                            fontFamily: 'Hack'
-                        } : { fontFamily: 'Hack' }}>
-                        <p>{task.placeholder_before}</p>
-                        <Input.TextArea style={
-                            hackerMode ? {
-                                color: 'green',
-                                backgroundColor: 'black',
-                                fontFamily: 'Hack'
-                            } : { fontFamily: 'Hack' }}
-                            onKeyDown={(event) => {
-                                if (event.keyCode === 9) {
-                                    event.preventDefault();
-                                    const cursor = event.target.selectionEnd;
-                                    event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                                    event.target.selectionEnd = cursor + 1;
-                                }
-                            }}
-                            onChange={() => setTextarea(document.getElementById("textarea").value)}
-                            autoFocus
-                            spellCheck={false}
-                            id="textarea"
-                            rows={5} />
-
-                        <p>{task.placeholder_after}</p>
-                    </Card>
-                    <Card title="Ausgabe" style={codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
-                        <p>{codeResult}</p>
-                    </Card>
-                </div>
-            }
+            {task.specify && (
+                task.specify.type === "multiple_choice" ? multipleChoiceBody() :
+                    task.specify.type === "code" && codeBody())}
             <Row style={{ marginTop: "10px" }} justify="space-between">
                 <Col>
                     <Button
                         type="primary"
                         onClick={() => {
-                            submitCode();
+                            submit();
                             setSubmitted(true);
                         }}>Bestätigen</Button>
                 </Col>

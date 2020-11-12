@@ -28,7 +28,6 @@ class AuthUser(models.Model):
 
 class Categories(models.Model):
     title = models.TextField()
-    description = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -103,9 +102,7 @@ class Tasks(models.Model):
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
-    multiple_choice = models.BooleanField(blank=True, null=True)
-    placeholder_before = models.TextField()
-    placeholder_after = models.TextField()
+    specify = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False

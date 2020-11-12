@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
             create table if not exists categories (
             	id serial,
             	title text not null,
-            	description text,
             	primary key (id)
             );
 
@@ -64,9 +63,7 @@ class Migration(migrations.Migration):
             	description text not null,
             	optional bool default false,
             	solution text,
-	        	multiple_choice bool default false,
-				placeholder_before text default '',
-				placeholder_after text default '',
+				specify json,
             	primary key (id)
             );
 

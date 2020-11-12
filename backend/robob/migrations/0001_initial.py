@@ -38,7 +38,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.TextField()),
-                ('description', models.TextField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'categories',
@@ -97,9 +96,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('optional', models.BooleanField(blank=True, null=True)),
                 ('solution', models.TextField(blank=True, null=True)),
-                ('multiple_choice', models.BooleanField(blank=True, null=True)),
-                ('placeholder_before', models.TextField(blank=True, null=True)),
-                ('placeholder_after', models.TextField(blank=True, null=True)),
+                ('specify', models.JSONField(null=True)),
             ],
             options={
                 'db_table': 'tasks',
