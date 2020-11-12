@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField()),
                 ('is_active', models.BooleanField()),
                 ('date_joined', models.DateTimeField()),
-                ('plays_game', models.BooleanField())
+                ('game_mode', models.BooleanField())
             ],
             options={
                 'db_table': 'auth_user',
@@ -80,6 +80,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Places',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.TextField(blank=True, null=True)),
+            ],
+            options={
+                'db_table': 'places',
+                'managed': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Tasks',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -87,6 +98,8 @@ class Migration(migrations.Migration):
                 ('optional', models.BooleanField(blank=True, null=True)),
                 ('solution', models.TextField(blank=True, null=True)),
                 ('multiple_choice', models.BooleanField(blank=True, null=True)),
+                ('placeholder_before', models.TextField(blank=True, null=True)),
+                ('placeholder_after', models.TextField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'tasks',
@@ -94,23 +107,10 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Users',
-            fields=[
-                ('user_id', models.AutoField(primary_key=True, serialize=False)),
-                ('email', models.TextField(unique=True)),
-                ('password', models.TextField()),
-                ('admin', models.BooleanField(blank=True, null=True)),
-                ('serious_game', models.BooleanField(blank=True, null=True)),
-            ],
-            options={
-                'db_table': 'users',
-                'managed': False,
-            },
-        ),
-        migrations.CreateModel(
             name='Diary',
             fields=[
                 ('knowledge', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='robob.knowledge')),
+                ('post_it', models.BooleanField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'diary',

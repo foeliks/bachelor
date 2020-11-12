@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Layout,
     PageHeader,
     Card,
     Form,
     Input,
-    Button
+    Button,
+    Row,
+    Col
 } from 'antd';
 
 
 function Login(props) {
 
     const [tab, setTab] = useState(0);
-    
+    const [useTabs, setUseTabs] = useState(window.innerWidth <= 1000)
+
+    const onResize = () => {
+        if (window.innerWidth <= 1300 && useTabs === false) {
+            setUseTabs(true)
+        }
+        else if (window.innerWidth >= 1300 && useTabs === true) {
+            setUseTabs(false)
+        }
+    }
+
+    useEffect(() => window.addEventListener('resize', onResize));
 
     const onFinishLogin = (data) => {
         fetch('http://localhost:8000/token-auth/', {
@@ -44,13 +57,16 @@ function Login(props) {
                 props.functions.setLoggedIn(true);
             }).catch(error => console.log(error));
     }
-    const layout = {
-        labelCol: {
-            span: 6
-        },
-        wrapperCol: {
-            span: 16
+    const layout = () => {
+        return {
+            labelCol: {
+                span: 6
+            },
+            wrapperCol: {
+                span: 18
+            }
         }
+
     };
     const tabList = [
         {
@@ -62,7 +78,7 @@ function Login(props) {
         },
     ];
     const contentList = {
-        0: <Form {...layout}
+        0: <Form {...layout()}
             onFinish={onFinishLogin}>
             <Form.Item label="Benutzername" name="username"
                 rules={
@@ -84,18 +100,13 @@ function Login(props) {
                 }>
                 <Input.Password />
             </Form.Item>
-            <Form.Item wrapperCol={
-                {
-                    ...layout.wrapperCol,
-                    offset: 6
-                }
-            }>
+            <Form.Item wrapperCol={{ offset: layout().labelCol.span }}>
                 <Button type="primary" htmlType="submit">
                     Anmelden
                 </Button>
             </Form.Item>
         </Form>,
-        1: <Form {...layout}
+        1: <Form {...layout()}
             onFinish={onFinishRegister}>
             <Form.Item label="Email-Adresse" name="email"
                 rules={
@@ -151,37 +162,51 @@ function Login(props) {
                 }>
                 <Input.Password />
             </Form.Item>
-            <Form.Item wrapperCol={
-                {
-                    ...layout.wrapperCol,
-                    offset: 6
-                }
-            }>
+            <Form.Item wrapperCol={{ offset: layout().labelCol.span }}>
                 <Button type="primary" htmlType="submit">
                     Registrieren
                 </Button>
             </Form.Item>
         </Form>
     };
-    const logged_out_comp = (
-        <Card tabList={tabList}
-            onTabChange={
-                key => {
-                    setTab(key);
-                }
-            }
+    const logged_out_comp = () => {
+        if (useTabs) {
+            return (
+                <Card tabList={tabList}
+                    onTabChange={
+                        key => {
+                            setTab(key);
+                        }
+                    }
+                >
+                    {
+                        contentList[tab]
+                    }
+                </Card>
+            );
+        }
+        return (
+            <Card
             >
-            {
-                contentList[tab]
-            } </Card>
-    );
+                <Row>
+                    <Col flex={1}>
+                        {contentList[0]}
+                    </Col>
+                    <Col flex={1}>
+                        {contentList[1]}
+                    </Col>
+                </Row>
+
+            </Card>
+        )
+    }
+
     const logged_in_comp = (
         <Button onClick={() => {
             localStorage.removeItem('token');
             props.functions.setLoggedIn(false);
         }}>Logout</Button>
     )
-
     return (
         <Layout>
             <Layout.Content>
@@ -189,7 +214,7 @@ function Login(props) {
                     // onBack={() => null}
                     title="Melde dich an, um anzufangen"
                 />
-                <div>{props.values.loggedIn ? logged_in_comp : logged_out_comp}</div>
+                <div>{props.values.loggedIn ? logged_in_comp : logged_out_comp()}</div>
             </ Layout.Content>
         </Layout>
     );

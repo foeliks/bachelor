@@ -1,1 +1,3 @@
-task_id,category,knowledge,description,optional,solution,multiple_choice
+id,category_id,knowledge_id,description,optional,solution,multiple_choice,placeholder_before,placeholder_after
+2,9,,<h1>Multiple Choice</h1>,t,1,t,,
+1,9,1,Geben Sie den Wert 2 zurück,f,2,f,,return test;

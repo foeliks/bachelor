@@ -1,13 +1,8 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from .models import Categories
+from .models import Categories, Tasks
 
-
-class CategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Categories
-        fields = ('id', 'title')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,4 +33,12 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         model = User
         fields = ('token', 'email', 'username', 'password')
 
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categories
+        fields = ['id', 'title']
 
+class TasksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tasks
+        field = ['id', 'description', 'multiple_choice']

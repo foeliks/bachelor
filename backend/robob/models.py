@@ -19,7 +19,7 @@ class AuthUser(models.Model):
     is_staff = models.BooleanField()
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
-    plays_game = models.BooleanField()
+    game_mode = models.BooleanField()
 
     class Meta:
         managed = False
@@ -48,6 +48,7 @@ class Conversations(models.Model):
 class Diary(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     knowledge = models.OneToOneField('Knowledge', models.DO_NOTHING, primary_key=True)
+    post_it = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -55,11 +56,20 @@ class Diary(models.Model):
         unique_together = (('knowledge', 'user'),)
 
 
+class Places(models.Model):
+    name = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'places'
+
+
 class Knowledge(models.Model):
     category = models.ForeignKey(Categories, models.DO_NOTHING, blank=True, null=True)
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
     conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
+    place = models.ForeignKey('Places', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -94,19 +104,10 @@ class Tasks(models.Model):
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
     multiple_choice = models.BooleanField(blank=True, null=True)
+    placeholder_before = models.TextField()
+    placeholder_after = models.TextField()
 
     class Meta:
         managed = False
         db_table = 'tasks'
 
-
-class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    email = models.TextField(unique=True)
-    password = models.TextField()
-    admin = models.BooleanField(blank=True, null=True)
-    serious_game = models.BooleanField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'users'

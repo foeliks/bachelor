@@ -4,20 +4,21 @@ import {
     Button,
     Col,
     Row,
-    PageHeader
+    PageHeader,
+    Radio
 } from 'antd';
 import { TwitterOutlined, InstagramOutlined } from '@ant-design/icons';
 import Login from './Login';
 
 function Home(props) {
-    const title = `Willkommen bei Robob${props.values.loggedIn ? `, ${props.values.username}`: ""}!` ;
+
     return (
         <div>
-            <PageHeader title={title}/>
+            <PageHeader title={`Willkommen bei Robob${props.values.loggedIn ? `, ${props.values.username}` : ""}!`} />
 
             <p>
                 Hier kannst Du die Grundlagen in JavaScript erlernen! Dazu hast Du die Wahl zwischen zwei Lernmethoden:
-                </p>
+            </p>
 
             <Row gutter={16}>
                 <Col span={12}>
@@ -34,14 +35,30 @@ function Home(props) {
                         </ul>
                     </Card>
                 </Col>
-
             </Row>
-            <p style={{ padding: '12px 0' }}>
+
+            {props.values.loggedIn ?
+                <div>
+                    <Row>
+                        <Radio.Group defaultValue={props.values.gameMode} style={{ marginTop: "10px" }} 
+                        onChange={(event) => props.values.gameMode !== event.target.value && props.functions.setGameMode(event.target.value)}>
+                            <Radio value={1}>
+                                Serious Game
+                            </Radio>
+                            <Radio value={0}>
+                                Gamification
+                            </Radio>
+                        </Radio.Group>
+                    </Row>
+                    <Button href="/overview" type="primary" style={{ marginTop: "10px" }}>Los geht's</Button>
+                </div> :
+                <Login values={props.values} functions={props.functions} />}
+
+            <p style={{ marginTop: '10px' }}>
                 Dieses Projekt ist im Rahmen meiner Bachelor Arbeit entstanden und es würde mich freuen, wenn Du mir Feedback da lässt.
-                        <a target="blank" href="https://www.instagram.com/it_fenix_"><InstagramOutlined /></a>
+                <a target="blank" href="https://www.instagram.com/it_fenix_"><InstagramOutlined /></a>
                 <a target="blank" href="https://www.twitter.com/it_fenix_"><TwitterOutlined /></a>
             </p>
-            {props.values.loggedIn ? <Button href="/categories" type="primary">Los geht's</Button> : <Login values={props.values} functions={props.functions} />}
         </div>
     );
 }

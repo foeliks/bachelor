@@ -41,12 +41,19 @@ class Migration(migrations.Migration):
 	        	primary key (id)
 	        );
 
+			create table if not exists places (
+				id serial,
+				name text,
+				primary key(id)
+			);
+
             create table if not exists knowledge (
             	id serial,
             	category_id integer references categories (id),
             	description text not null,
             	optional bool default false,
-	        	conversation integer references conversations (id),
+	        	conversation_id integer references conversations (id),
+				place_id integer references places(id),
             	primary key (id)
             );
 
@@ -58,24 +65,28 @@ class Migration(migrations.Migration):
             	optional bool default false,
             	solution text,
 	        	multiple_choice bool default false,
+				placeholder_before text default '',
+				placeholder_after text default '',
             	primary key (id)
             );
 
             create table if not exists progress (
             	user_id integer references auth_user (id),
-            	task integer references tasks (id),
+            	task_id integer references tasks (id),
             	solved bool,
             	num_tries integer,
             	user_solution text,
-            	primary key (user_id, task, num_tries)
+            	primary key (user_id, task_id, num_tries)
             );
 
             create table if not exists diary (
             	user_id integer references auth_user (id),
-            	knowledge integer references knowledge (id),
-            	primary key (knowledge, user_id)
+            	knowledge_id integer references knowledge (id),
+				post_it boolean default(false),
+            	primary key (knowledge_id, user_id)
             );
 
+			
 
 
 	        -- IMPORT DATA FROM CSV 

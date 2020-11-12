@@ -14,7 +14,9 @@ function PageLayout(props) {
 
     useEffect(() => {
         window.location.pathname === "/" ? setSelected("1") : 
-            window.location.pathname === "/categories" && setSelected("2")
+            window.location.pathname === "/overview" ? setSelected("2") :
+                window.location.pathname === "/diary" ? setSelected("3") : 
+                    window.location.pathname === "/ranking" && setSelected("4")
     }, []);
 
     const Children = () => {
@@ -26,13 +28,22 @@ function PageLayout(props) {
             {props.values.loggedIn && <Layout.Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}>
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" selectedKeys={[selected]}>
-                    <Menu.Item key="1" onClick={() => history.push("/")}>
-                        Startseite als Logo
+                    <Menu.Item style={{ backgroundColor: "#002140", color: "white" }}>
+                        {props.values.username}
                     </Menu.Item>
-                    <Menu.Item key="2" onClick={() => history.push("/categories")}>
+                    <Menu.Item key="1" onClick={() => history.push("/")}>
+                        Startseite
+                    </Menu.Item>
+                    <Menu.Item key="2" onClick={() => history.push("/overview")}>
                         Übersicht
                     </Menu.Item>
-                    <Menu.Item key="3" href="/" onClick={() => props.functions.logOut()}>
+                    <Menu.Item key="3" onClick={() => history.push("/diary")}>
+                        Tagebuch
+                    </Menu.Item>
+                    <Menu.Item key="4" onClick={() => history.push("/ranking")}>
+                        Rangliste
+                    </Menu.Item>
+                    <Menu.Item key="5" href="/" onClick={() => props.functions.logOut()}>
                         Abmelden
                     </Menu.Item>
 
