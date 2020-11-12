@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Knowledge</title>
+	</head>
+	<body>
+		<h1>Einführung</h1>
+
+		<div>
+			<p>JavaScript ist...</p>
+			<ul>
+				<li>
+					Dynamisch typisiert
+					<dl>
+						<dd>
+							Variablen können unterschiedliche Datentypen aufnehmen
+						</dd>
+					</dl>
+				</li>
+				<li>
+					Objektorientiert
+					<dl>
+						<dd>
+							Es gibt Objekte, Vererbung, Polymorphie
+						</dd>
+					</dl>
+				</li>
+				<li>
+					Prototypen-basiert
+					<dl>
+						<dd>
+							Objekte werden über Prototypen konstriert
+						</dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+		
+		<div>
+			<p>JavaScript kann in HTML über drei Möglichkeiten eingebunden werden:</p>
+			<ol>
+				<li>
+				In externen Dateien im Header
+				<dl>
+					<dd>
+						&lt;script src="Dateiname.js" /&gt;
+					</dd>
+				</dl>
+			</li>
+			<li>
+				Einbettung im Dokument an beliebiger Stelle
+				<dl>
+					<dd>
+						&lt;script type="text/javascript"&gt; <i>JavaScript Code</i> &lt;/script&gt;
+					</dd>
+					<dd>
+						<br/>
+						Code wird sofort ausgeführt, wenn der Webbrowser die Stelle einliest. Es kann also sein, dass Elemente, die "weiter unten" im Dokument noch nicht ansprechbar sind <br />
+						deshalb: Am Ende des &lt;body&gt; Tags einfügen	
+					</dd>
+				</dl>
+			</li>
+			<li>
+				In speziellen Attributen in HTML-Elementen als Aktionen
+				<dl>
+					<dd>
+						&lt;button onclick=" <i>JavaScript Code</i> "&gt;Cooler Buttonname&lt;/button&gt;
+					</dd>
+				</dl>
+			</li>
+			</ol>
+		</div>
+
+		<div>
+			<p>Kommentare können wie in anderen Programmiersprachen mittels ...</p>
+				<ul>
+					<li>
+						// Einzeiliger Kommentar
+					</li>
+					<li>
+						/*<br/>
+						Mehrzeiliger <br/>
+						Kommentar <br/>
+						*/
+					</li>
+				</ul>
+			<p>... eingefügt werden</p>
+		</div>
+
+		<div>
+			<p>Eine Ausgabe von Inhalten kann auf zwei Weisen erfolgen:</p>
+			<ol>
+				<li>
+					alert: Gibt eine PopUp-Meldung in Form eines Dialogfensters im Webbrowser aus
+				</li>
+				<li>
+					console: Gibt Nachrichten in der Entwicklerkonsole des Webbrowsers aus
+					<ul>
+						<li>.log() </br>Nachricht wird ohne weiteres Highlighting ausgegeben</li>
+						<li>.warn() </br>Nachricht wird als Warnung (häufig gelb) ausgegeben</li>
+						<li>.error() </br>Nachricht wird als Fehler (häufig rot) ausgegeben</li>
+					</ul>
+				</li>
+			</ol>
+		</div>
+	</body>
+</html>
