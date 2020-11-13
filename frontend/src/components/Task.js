@@ -29,6 +29,8 @@ function Task(props) {
     const [success, setSuccess] = useState(false);
     const [ignoreOptional, setIgnoreOptional] = useState(false);
     const [mcSelection, setMcSelection] = useState({});
+    const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
+    const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
 
     useEffect(() => {
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
@@ -46,16 +48,22 @@ function Task(props) {
                         .then(json => {
                             setTask(json)
                             if (json.specify && json.specify.type === "multiple_choice") {
+                                let newMcSelection = {};
                                 json.specify.options.map(option => {
-                                    setMcSelection({ ...mcSelection, [option.id]: false });
+                                    newMcSelection[option.id] = false;
                                 })
+                                setMcSelection(newMcSelection)
+                            }
+                            else if(json.specify && json.specify.type === "code") {
+                                setTextarea(json.specify.placeholder_middle)
                             }
                         })
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
+        
 
-    }, [props.functions, taskId])
+    }, [taskId])
 
     useEffect(() => {
         if (submitted) {
@@ -79,22 +87,23 @@ function Task(props) {
                         setSuccess(true);
                         res.json().then(json => {
                             setTask({ ...task, stars: json.stars })
+                            setNextTaskWithOptional(json.task_with_optional);
+                            setNextTaskWithoutOptional(json.task_without_optional);
                         })
                     }
                     else if (res.status === 200) {
                         res.json().then(json => {
                             setTask({ ...task, tries: json.tries })
                         })
+                        setSubmitted(false)
                     }
                     else {
                         props.functions.logOut();
                     }
                 })
-                .catch(error => console.log(error))
-
-            setSubmitted(false)
+                .catch(error => console.error(error))
         }
-    }, [codeResult, submitted, props.functions, textarea, task])
+    }, [codeResult, submitted, textarea, task])
 
     const submit = () => {
         if (task.specify) {
@@ -119,17 +128,15 @@ function Task(props) {
         }
     }
 
-    const successScreen = (
-        <Card style={{ backgroundColor: 'green' }}>
-            <h1>Geschafft!</h1>
-            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
-            <br />
-            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
-        </Card>
-    )
-
-    if (props.values.gameMode) {
-        return <h1>Aufgabe als Spiel</h1>
+    const successScreen = () => {
+        return (
+            <Card style={{ backgroundColor: 'green' }}>
+                <h1>Geschafft!</h1>
+                <Checkbox disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                <br />
+                <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Fortsetzen</Button>
+            </Card>
+        )
     }
 
     const knowledgeBody =
@@ -163,6 +170,7 @@ function Task(props) {
                             event.target.selectionEnd = cursor + 1;
                         }
                     }}
+                    defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
                     onChange={() => setTextarea(document.getElementById("textarea").value)}
                     autoFocus
                     spellCheck={false}
@@ -196,7 +204,7 @@ function Task(props) {
                     title={`Aufgabe ${task.id} ${task.optional ? " (optional)" : ""}`}
                     onBack={() => history.goBack()}
                 />
-                Bisherige Versuche: {task.tries ? task.tries : 0}
+                Fehlversuche: {task.tries ? task.tries : 0}
                 {task.stars > 0 ? <div>
                     {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                     {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
@@ -219,15 +227,15 @@ function Task(props) {
                             setSubmitted(true);
                         }}>Bestätigen</Button>
                 </Col>
-                <Col >
+                {task.specify && task.specify.type === "code" && <Col >
                     <label >Hacker-Mode </label>
                     <Switch style={{ flexDirection: 'row', justifyContent: 'flex-end' }} onChange={(checked) => {
                         setHackerMode(checked);
                         document.getElementById("textarea").value = textarea;
                     }} />
-                </Col>
+                </Col>}
             </Row>
-            {success ? successScreen : <div />}
+            {success ? successScreen() : <div />}
         </div>);
 }
 

@@ -40,7 +40,7 @@ function Login(props) {
                 localStorage.setItem('token', json.token);
                 props.functions.setLoggedIn(true);
             })
-            .catch(error => console.log(error));;
+            .catch(error => console.error(error));;
 
     }
     const onFinishRegister = data => {
@@ -55,7 +55,7 @@ function Login(props) {
             .then(json => {
                 localStorage.setItem('token', json.token);
                 props.functions.setLoggedIn(true);
-            }).catch(error => console.log(error));
+            }).catch(error => console.error(error));
     }
     const layout = () => {
         return {
@@ -68,15 +68,7 @@ function Login(props) {
         }
 
     };
-    const tabList = [
-        {
-            key: 0,
-            tab: 'Anmelden'
-        }, {
-            key: 1,
-            tab: 'Registrieren'
-        },
-    ];
+
     const contentList = {
         0: <Form {...layout()}
             onFinish={onFinishLogin}>
@@ -172,22 +164,23 @@ function Login(props) {
     const logged_out_comp = () => {
         if (useTabs) {
             return (
-                <Card tabList={tabList}
-                    onTabChange={
-                        key => {
-                            setTab(key);
-                        }
-                    }
-                >
-                    {
-                        contentList[tab]
-                    }
+                <Card
+                    tabList={[
+                        {
+                            key: 0,
+                            tab: 'Anmelden'
+                        }, {
+                            key: 1,
+                            tab: 'Registrieren'
+                        },
+                    ]}
+                    onTabChange={key => setTab(key)}>
+                    {contentList[tab]}
                 </Card>
             );
         }
         return (
-            <Card
-            >
+            <Card>
                 <Row>
                     <Col flex={1}>
                         {contentList[0]}
@@ -196,7 +189,6 @@ function Login(props) {
                         {contentList[1]}
                     </Col>
                 </Row>
-
             </Card>
         )
     }
@@ -211,10 +203,9 @@ function Login(props) {
         <Layout>
             <Layout.Content>
                 <PageHeader className="site-page-header"
-                    // onBack={() => null}
                     title="Melde dich an, um anzufangen"
                 />
-                <div>{props.values.loggedIn ? logged_in_comp : logged_out_comp()}</div>
+                {props.values.loggedIn ? logged_in_comp : logged_out_comp()}
             </ Layout.Content>
         </Layout>
     );

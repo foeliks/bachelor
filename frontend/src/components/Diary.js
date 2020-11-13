@@ -26,10 +26,8 @@ function Diary(props) {
                         .then(json => setDiary(json))
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, [props.functions])
-
-    console.log(diary)
 
     return (
         <div>

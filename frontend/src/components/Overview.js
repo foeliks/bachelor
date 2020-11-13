@@ -35,7 +35,7 @@ function Categories(props) {
                         })
                 }
             })
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
     }, [props.functions])
 
     return (
@@ -51,11 +51,11 @@ function Categories(props) {
                                         <Button href={`/task/${task.id}`} style={task.solved ? { backgroundColor: 'green', color: 'white' } : {}} >
                                             Aufgabe {task.id}{task.optional ? " (optional)" : ""}
                                         </Button>
-                                        {task.solved ? <div style={{ float: "right" }}>
+                                        {task.solved && <div style={{ float: "right" }}>
                                             {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                                             {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
                                             <StarFilled />
-                                        </div> : <div />}
+                                        </div>}
                                         <br />
                                     </div>
                                 )

@@ -84,14 +84,6 @@ function App() {
     useEffect(() => {
         if (loggedIn) {
 
-            fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
-                method: 'post',
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
-                }
-            }).catch(error => console.log(error))
-
-
             fetch(`http://localhost:8000/robob/next-task/`, {
                 headers: {
                     Authorization: `JWT ${localStorage.getItem('token')}`
@@ -110,7 +102,15 @@ function App() {
                             })
                     }
                 })
-                .catch(error => console.log(error))
+                .catch(error => console.error(error))
+
+            fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
+                method: 'post',
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).catch(error => console.error(error))
+
         }
     }, [gameMode, loggedIn])
 
@@ -132,6 +132,7 @@ function App() {
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         logOut: logOut
     }
+
     return (
         <Router>
             <Route exact path='/'>

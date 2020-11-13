@@ -110,18 +110,16 @@ class NextTask(APIView):
             }
 
         try:
-            all_tasks = Tasks.objects.all()
+            solved_tasks = list(map(lambda progress: progress.task.id, Progress.objects.filter(user__username=request.user, solved=True).order_by("task_id").distinct("task_id").only("task_id")))
 
-            for task in all_tasks:
-                solved_tasks = Progress.objects.filter(solved=True, task=task, user__username=request.user).only("id")
-                chosen = all_tasks.exclude(id__in=solved_tasks)[0]
+            not_solved_tasks = Tasks.objects.all().exclude(id__in=solved_tasks).order_by("id")
+            if not_solved_tasks.exists():
+                result["task_with_optional"] = not_solved_tasks[0].id
 
-                if(result ["task_with_optional"] == 0):
-                    result["task_with_optional"] = chosen.id
+            if not_solved_tasks.filter(optional=False).exists():
+                result["task_without_optional"] = not_solved_tasks.filter(optional=False)[0].id
 
-                if chosen.optional == False:
-                    result["task_without_optional"] = chosen.id
-                    return Response(result)
+            return Response(result)
 
         except Exception as e:
             print(e)
@@ -140,8 +138,7 @@ class TaskView(APIView):
                 "description": task.description,
                 "optional": task.optional,
                 "specify": task.specify,
-                "placeholder_before": "",
-                "placeholder_after": ""
+                "required_stars": task.required_stars
             }
 
             if task.knowledge != None:
@@ -213,7 +210,6 @@ class ChangeGameMode(APIView):
 class AddSolution(APIView):
     def post(self, request):
         result = {}
-        print(request.data)
         try:
             user = AuthUser.objects.get(username=request.user)
             task = Tasks.objects.get(id=request.data["task_id"])
@@ -230,9 +226,19 @@ class AddSolution(APIView):
             else:
                 progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
                 result["tries"] = 1
+                
             if solved == True:
                 result["stars"] = get_stars(user.username, task)
                 Progress.objects.filter(user=user, task=task, solved=False).delete()
+                solved_tasks = list(map(lambda progress: progress.task.id, Progress.objects.filter(user__username=request.user, solved=True).order_by("task_id").distinct("task_id").only("task_id")))
+
+                not_solved_tasks = Tasks.objects.all().exclude(id__in=solved_tasks).order_by("id")
+                if not_solved_tasks.exists():
+                    result["task_with_optional"] = not_solved_tasks[0].id
+
+                if not_solved_tasks.filter(optional=False).exists():
+                    result["task_without_optional"] = not_solved_tasks.filter(optional=False)[0].id
+
                 return Response(result, status=status.HTTP_202_ACCEPTED)
             
             return Response(result, status=status.HTTP_200_OK)

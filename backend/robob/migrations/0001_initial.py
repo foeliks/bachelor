@@ -97,6 +97,7 @@ class Migration(migrations.Migration):
                 ('optional', models.BooleanField(blank=True, null=True)),
                 ('solution', models.TextField(blank=True, null=True)),
                 ('specify', models.JSONField(null=True)),
+                ('required_stars', models.IntegerField()),
             ],
             options={
                 'db_table': 'tasks',

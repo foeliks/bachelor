@@ -103,6 +103,7 @@ class Tasks(models.Model):
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
     specify = models.TextField(blank=True, null=True)
+    required_stars = models.IntegerField()
 
     class Meta:
         managed = False

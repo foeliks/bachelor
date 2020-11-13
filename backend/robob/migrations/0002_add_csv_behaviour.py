@@ -64,6 +64,7 @@ class Migration(migrations.Migration):
             	optional bool default false,
             	solution text,
 				specify json,
+				required_stars integer,
             	primary key (id)
             );
 
