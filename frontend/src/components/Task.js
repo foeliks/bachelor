@@ -95,7 +95,6 @@ function Task(props) {
                         res.json().then(json => {
                             setTask({ ...task, tries: json.tries })
                         })
-                        setSubmitted(false)
                     }
                     else {
                         props.functions.logOut();
@@ -103,6 +102,7 @@ function Task(props) {
                 })
                 .catch(error => console.error(error))
         }
+        setSubmitted(false)
     }, [codeResult, submitted, textarea, task])
 
     const submit = () => {

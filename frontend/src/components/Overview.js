@@ -60,7 +60,6 @@ function Categories(props) {
                                     </div>
                                 )
                             })}
-                            <Button style={{float: "right", marginBottom: "10px" }} type="danger">Kapitel zurücksetzen</Button>
                         </Collapse.Panel>)
                 })}
             </Collapse>

@@ -1,4 +1,6 @@
 id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined,game_mode
 2,pbkdf2_sha256$216000$SrJECzmAm1va$I7Hs394vob83FUuqFrHXcZiNB1A/TyLLokENGPzoixc=,2020-10-20 16:43:45.374109+00,t,root,"","",felix.sager@alumni.fh-aachen.de,t,t,2020-10-20 13:34:47.841661+00,t
-3,pbkdf2_sha256$216000$WxTEQ0oZt318$wD+xzcYDBxNfoYwNPmpyNZMaz2ec52cW31+H/4+4Nvc=,,f,test,"","",test@test.de,f,t,2020-10-23 10:01:08.4208+00,f
 4,pbkdf2_sha256$216000$WqtPfbb5WGQe$V/NH+84bKMGARYjTZS7kp8lQqbgoC/2bQH1oduYmOa4=,,f,test2,"","",test@test2.de,f,t,2020-11-02 10:32:27.535619+00,f
+3,pbkdf2_sha256$216000$WxTEQ0oZt318$wD+xzcYDBxNfoYwNPmpyNZMaz2ec52cW31+H/4+4Nvc=,,f,test,"","",test@test.de,f,t,2020-10-23 10:01:08.4208+00,f
+5,pbkdf2_sha256$216000$33wsB9G6TgEa$s4wDUWTW0eAGnzfMHqgQmt4mfLV7wuHGipryysw3CKY=,,f,CoolerBenutzername,"","",neuerbenutzer@email.de,f,t,2020-11-13 14:22:35.097595+00,f
+6,pbkdf2_sha256$216000$EYyXNXpu8bBg$ajNxmeBNrWkPBWh4eS8a2j1mpnaJAstSVgU4kVDYt9M=,,f,neuerBenutzer,"","",testemail@email.de,f,t,2020-11-13 15:02:52.953178+00,f

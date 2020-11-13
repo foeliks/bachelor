@@ -54,11 +54,11 @@ function Home(props) {
                 </div> :
                 <Login values={props.values} functions={props.functions} />}
 
-            <p style={{ marginTop: '10px' }}>
+            {/* <p style={{ marginTop: '10px' }}>
                 Dieses Projekt ist im Rahmen meiner Bachelor Arbeit entstanden und es würde mich freuen, wenn Du mir Feedback da lässt.
                 <a target="blank" href="https://www.instagram.com/it_fenix_"><InstagramOutlined /></a>
                 <a target="blank" href="https://www.twitter.com/it_fenix_"><TwitterOutlined /></a>
-            </p>
+            </p> */}
         </div>
     );
 }

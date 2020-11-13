@@ -11,7 +11,7 @@ from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
 from .serializers import UserSerializer, UserSerializerWithToken
 
 def get_stars(username, task):
-    user_tries = list(map(lambda progress: progress.num_tries, Progress.objects.filter(solved=True, user__username=username).order_by("num_tries").only("num_tries")))
+    user_tries = list(map(lambda progress: progress.num_tries, Progress.objects.filter(solved=True, task=task, user__username=username).order_by("num_tries").only("num_tries")))
     least_tries = 5
     for index in range(len(user_tries)):
         if index == 0:
@@ -232,6 +232,8 @@ class AddSolution(APIView):
                 Progress.objects.filter(user=user, task=task, solved=False).delete()
                 solved_tasks = list(map(lambda progress: progress.task.id, Progress.objects.filter(user__username=request.user, solved=True).order_by("task_id").distinct("task_id").only("task_id")))
 
+                result["task_with_optional"] = 0
+                result["task_without_optional"] = 0
                 not_solved_tasks = Tasks.objects.all().exclude(id__in=solved_tasks).order_by("id")
                 if not_solved_tasks.exists():
                     result["task_with_optional"] = not_solved_tasks[0].id
