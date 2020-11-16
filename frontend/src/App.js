@@ -25,6 +25,7 @@ function App() {
     const [redirect, setRedirect] = useState(false);
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(0);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(0);
+    const [ignoreOptional, setIgnoreOptional] = useState(false);
 
     const logOut = () => {
         localStorage.removeItem('token');
@@ -122,7 +123,8 @@ function App() {
         redirect: redirect,
         gameMode: gameMode,
         nextTaskWithOptional: nextTaskWithOptional,
-        nextTaskWithoutOptional: nextTaskWithoutOptional
+        nextTaskWithoutOptional: nextTaskWithoutOptional,
+        setIgnoreOptional: setIgnoreOptional
     }
     const functions = {
         setLoggedIn: setLoggedIn,
@@ -131,6 +133,7 @@ function App() {
         setGameMode: setGameMode,
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
+        setIgnoreOptional: setIgnoreOptional,
         logOut: logOut
     }
 

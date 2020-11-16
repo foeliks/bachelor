@@ -15,6 +15,12 @@ function Login(props) {
 
     const [tab, setTab] = useState(0);
     const [useTabs, setUseTabs] = useState(window.innerWidth <= 1000)
+    const layout = () => {
+        return {
+            labelCol: {span: 6},
+            wrapperCol: {span: 18}
+        }
+    };
 
     const onResize = () => {
         if (window.innerWidth <= 1300 && useTabs === false) {
@@ -27,7 +33,7 @@ function Login(props) {
 
     useEffect(() => window.addEventListener('resize', onResize));
 
-    const onFinishLogin = (data) => {
+    const login = (data) => {
         fetch('http://localhost:8000/token-auth/', {
             method: 'POST',
             headers: {
@@ -43,7 +49,7 @@ function Login(props) {
             .catch(error => console.error(error));;
 
     }
-    const onFinishRegister = data => {
+    const register = data => {
         fetch('http://localhost:8000/robob/users/', {
             method: 'POST',
             headers: {
@@ -57,21 +63,10 @@ function Login(props) {
                 props.functions.setLoggedIn(true);
             }).catch(error => console.error(error));
     }
-    const layout = () => {
-        return {
-            labelCol: {
-                span: 6
-            },
-            wrapperCol: {
-                span: 18
-            }
-        }
-
-    };
 
     const contentList = {
         0: <Form {...layout()}
-            onFinish={onFinishLogin}>
+            onFinish={login}>
             <Form.Item label="Benutzername" name="username"
                 rules={
                     [
@@ -99,7 +94,7 @@ function Login(props) {
             </Form.Item>
         </Form>,
         1: <Form {...layout()}
-            onFinish={onFinishRegister}>
+            onFinish={register}>
             <Form.Item label="Email-Adresse" name="email"
                 rules={
                     [
@@ -202,9 +197,7 @@ function Login(props) {
     return (
         <Layout>
             <Layout.Content>
-                <PageHeader className="site-page-header"
-                    title="Melde dich an, um anzufangen"
-                />
+                <PageHeader className="site-page-header" title="Melde dich an, um anzufangen" />
                 {props.values.loggedIn ? logged_in_comp : logged_out_comp()}
             </ Layout.Content>
         </Layout>

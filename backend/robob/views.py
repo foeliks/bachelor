@@ -10,17 +10,20 @@ from rest_framework.views import APIView
 from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
 from .serializers import UserSerializer, UserSerializerWithToken
 
-def get_stars(username, task):
+def get_stars(username, task, best=True):
     user_tries = list(map(lambda progress: progress.num_tries, Progress.objects.filter(solved=True, task=task, user__username=username).order_by("num_tries").only("num_tries")))
     least_tries = 5
-    for index in range(len(user_tries)):
-        if index == 0:
-            tries = user_tries[0]
-        else:
-            tries = user_tries[index] - user_tries[index - 1]
-        
-        if tries < least_tries:
-            least_tries = tries
+    if best:
+        for index in range(len(user_tries)):
+            if index == 0:
+                tries = user_tries[0]
+            else:
+                tries = user_tries[index] - user_tries[index - 1]
+
+            if tries < least_tries:
+                least_tries = tries
+    else:
+        least_tries = user_tries[len(user_tries) -1]
 
     if least_tries <= 2:
         return 3
@@ -228,7 +231,7 @@ class AddSolution(APIView):
                 result["tries"] = 1
                 
             if solved == True:
-                result["stars"] = get_stars(user.username, task)
+                result["solved_stars"] = get_stars(user.username, task, False)
                 Progress.objects.filter(user=user, task=task, solved=False).delete()
                 solved_tasks = list(map(lambda progress: progress.task.id, Progress.objects.filter(user__username=request.user, solved=True).order_by("task_id").distinct("task_id").only("task_id")))
 

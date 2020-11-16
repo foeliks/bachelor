@@ -14,7 +14,6 @@ import {
 function Categories(props) {
 
     const [categories, setCategories] = useState([]);
-    const [ignoreOptional, setIgnoreOptional] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:8000/robob/category-progress/', {
@@ -63,9 +62,9 @@ function Categories(props) {
                         </Collapse.Panel>)
                 })}
             </Collapse>
-            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
             <br />
-            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
+            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
         </div>
     );
 

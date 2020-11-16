@@ -5,7 +5,8 @@ import {
     Col,
     Row,
     PageHeader,
-    Radio
+    Radio,
+    Checkbox
 } from 'antd';
 import { TwitterOutlined, InstagramOutlined } from '@ant-design/icons';
 import Login from './Login';
@@ -40,8 +41,8 @@ function Home(props) {
             {props.values.loggedIn ?
                 <div>
                     <Row>
-                        <Radio.Group defaultValue={props.values.gameMode} style={{ marginTop: "10px" }} 
-                        onChange={(event) => props.values.gameMode !== event.target.value && props.functions.setGameMode(event.target.value)}>
+                        <Radio.Group defaultValue={props.values.gameMode} style={{ marginTop: "10px" }}
+                            onChange={(event) => props.values.gameMode !== event.target.value && props.functions.setGameMode(event.target.value)}>
                             <Radio value={1}>
                                 Serious Game
                             </Radio>
@@ -50,7 +51,9 @@ function Home(props) {
                             </Radio>
                         </Radio.Group>
                     </Row>
-                    <Button href="/overview" type="primary" style={{ marginTop: "10px" }}>Los geht's</Button>
+                    <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "10px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                    <br />
+                    <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
                 </div> :
                 <Login values={props.values} functions={props.functions} />}
 

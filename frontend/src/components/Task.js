@@ -19,6 +19,7 @@ import {
 function Task(props) {
     const { taskId } = useParams();
     const history = useHistory();
+    const ref = React.createRef();
 
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
@@ -27,7 +28,7 @@ function Task(props) {
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [ignoreOptional, setIgnoreOptional] = useState(false);
+    const [wrongAnswer, setWrongAnswer] = useState(false);
     const [mcSelection, setMcSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
@@ -54,14 +55,13 @@ function Task(props) {
                                 })
                                 setMcSelection(newMcSelection)
                             }
-                            else if(json.specify && json.specify.type === "code") {
+                            else if (json.specify && json.specify.type === "code") {
                                 setTextarea(json.specify.placeholder_middle)
                             }
                         })
                 }
             })
             .catch(error => console.error(error))
-        
 
     }, [taskId])
 
@@ -78,20 +78,24 @@ function Task(props) {
                     "task_id": task.id,
                     "solution": codeResult,
                     "user_solution": task.specify.type === "code" ? task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after : codeResult
-                        
+
 
                 })
             })
                 .then(res => {
                     if (res.status === 202) {
                         setSuccess(true);
+                        setWrongAnswer(false);
+                        setSubmitted(false);
                         res.json().then(json => {
-                            setTask({ ...task, stars: json.stars })
+                            setTask({ ...task, solved_stars: json.solved_stars })
                             setNextTaskWithOptional(json.task_with_optional);
                             setNextTaskWithoutOptional(json.task_without_optional);
                         })
                     }
                     else if (res.status === 200) {
+                        setWrongAnswer(true);
+                        setSubmitted(false);
                         res.json().then(json => {
                             setTask({ ...task, tries: json.tries })
                         })
@@ -102,8 +106,14 @@ function Task(props) {
                 })
                 .catch(error => console.error(error))
         }
-        setSubmitted(false)
-    }, [codeResult, submitted, textarea, task])
+        if (success && ref.current) {
+            ref.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
+        
+    }, [submitted])
 
     const submit = () => {
         if (task.specify) {
@@ -117,7 +127,7 @@ function Task(props) {
                     setCodeFailed(false);
                 }
                 catch (error) {
-                    userSolution = error.message;
+                    userSolution = "Error: " + error.message;
                     setCodeFailed(true);
                 }
                 setCodeResult(userSolution);
@@ -128,73 +138,24 @@ function Task(props) {
         }
     }
 
-    const successScreen = () => {
-        return (
-            <Card style={{ backgroundColor: 'green' }}>
-                <h1>Geschafft!</h1>
-                <Checkbox disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
-                <br />
-                <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Fortsetzen</Button>
-            </Card>
-        )
+    const hackerStyle = () => hackerMode && {
+        color: 'green',
+        backgroundColor: 'black'
     }
 
-    const knowledgeBody =
-        <Collapse defaultActiveKey="1" style={{ marginBottom: "10px" }}>
-            <Collapse.Panel key="1" header="Info">
-                <div dangerouslySetInnerHTML={{ __html: task.knowledge }} />
-                <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
-            </Collapse.Panel>
-        </Collapse>
+    const answerStyle = () => submitted ? {}
+        : wrongAnswer ? {
+            border: '2px solid',
+            borderColor: 'red'
+        }
+            : success && {
+                border: '2px solid',
+                borderColor: '#14ba46'
+            }
 
-    const codeBody = () => {
-        return (<div>
-            <Card style={
-                hackerMode ? {
-                    color: 'green',
-                    backgroundColor: 'black',
-                    fontFamily: 'Hack'
-                } : { fontFamily: 'Hack' }}>
-                <p>{task.specify.placeholder_before}</p>
-                <Input.TextArea style={
-                    hackerMode ? {
-                        color: 'green',
-                        backgroundColor: 'black',
-                        fontFamily: 'Hack'
-                    } : { fontFamily: 'Hack' }}
-                    onKeyDown={(event) => {
-                        if (event.keyCode === 9) {
-                            event.preventDefault();
-                            const cursor = event.target.selectionEnd;
-                            event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                            event.target.selectionEnd = cursor + 1;
-                        }
-                    }}
-                    defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
-                    onChange={() => setTextarea(document.getElementById("textarea").value)}
-                    autoFocus
-                    spellCheck={false}
-                    id="textarea"
-                    rows={5} />
-
-                <p>{task.specify.placeholder_after}</p>
-            </Card>
-            <Card title="Ausgabe" style={codeFailed ? { backgroundColor: 'red', marginTop: "10px" } : { marginTop: "10px" }}>
-                <p>{codeResult}</p>
-            </Card>
-        </div>)
-    }
-
-    const multipleChoiceBody = () => {
-        const result =
-            <Card>
-                {task.specify.options.map(option => {
-                    return (<Checkbox id={option.id} onChange={event => setMcSelection({ ...mcSelection, [event.target.id]: event.target.checked })}>
-                        {option.text}
-                    </Checkbox>)
-                })}
-            </Card>;
-        return result;
+    const codeFailedStyle = () => codeFailed && {
+        border: '2px solid',
+        borderColor: 'red'
     }
 
     return (
@@ -211,20 +172,73 @@ function Task(props) {
                     <StarFilled />
                 </div> : <div />}
             </Row>
+
+
             <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
             </Card>
-            {task.knowledge ? knowledgeBody : <div />}
+
+
+            {task.knowledge &&
+                <Collapse defaultActiveKey="1" style={{ marginBottom: "10px" }}>
+                    <Collapse.Panel key="1" header="Info">
+                        <div dangerouslySetInnerHTML={{ __html: task.knowledge }} />
+                        <p style={{ marginTop: "10px", color: "grey" }}>PS: Du kannst alle Infos auch nochmal im <a href="/diary">Tagebuch</a> nachlesen</p>
+                    </Collapse.Panel>
+                </Collapse>}
+
+
             {task.specify && (
-                task.specify.type === "multiple_choice" ? multipleChoiceBody() :
-                    task.specify.type === "code" && codeBody())}
+                task.specify.type === "multiple_choice" ?
+                    <Card style={{ ...answerStyle() }}>
+                        {task.specify.options.map(option => {
+                            return (<Checkbox disabled={success} id={option.id} onChange={event => setMcSelection({ ...mcSelection, [event.target.id]: event.target.checked })}>
+                                {option.text}
+                            </Checkbox>)
+                        })}
+                    </Card>
+
+
+                    : task.specify.type === "code" &&
+                    <div>
+                        <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
+                            <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
+                            <Input.TextArea
+                                disabled={success}
+                                style={{ fontFamily: 'Hack', ...hackerStyle() }}
+                                onKeyDown={(event) => {
+                                    if (event.keyCode === 9) {
+                                        event.preventDefault();
+                                        const cursor = event.target.selectionEnd;
+                                        event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                                        event.target.selectionEnd = cursor + 1;
+                                    }
+                                }}
+                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                onChange={() => setTextarea(document.getElementById("textarea").value)}
+                                autoFocus
+                                spellCheck={false}
+                                id="textarea"
+                                rows={5} />
+
+                            <p style={{ fontFamily: 'Hack' }}>{task.specify.placeholder_after}</p>
+                        </Card>
+
+
+                        <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
+                            <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
+                        </Card>
+                    </div>)}
+
+
             <Row style={{ marginTop: "10px" }} justify="space-between">
                 <Col>
                     <Button
+                        disabled={success}
                         type="primary"
                         onClick={() => {
-                            submit();
                             setSubmitted(true);
+                            submit();
                         }}>Bestätigen</Button>
                 </Col>
                 {task.specify && task.specify.type === "code" && <Col >
@@ -235,7 +249,21 @@ function Task(props) {
                     }} />
                 </Col>}
             </Row>
-            {success ? successScreen() : <div />}
+
+            {success ?
+                <Card style={{ hide: true, backgroundColor: '#14ba46', marginTop: "10px" }}>
+                    <h1 style={{ color: "white" }}>Geschafft!</h1>
+                    {task.solved_stars > 0 ? <div>
+                        {task.solved_stars === 3 ? <StarFilled style={{color: "yellow"}} /> : <StarOutlined />}
+                        {task.solved_stars >= 2 ? <StarFilled style={{color: "yellow"}} /> : <StarOutlined />}
+                        <StarFilled style={{color: "yellow"}} />
+                    </div> : <div />}
+                    <Checkbox disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                    <br />
+                    <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Fortsetzen</Button>
+                </Card>
+                : <div />}
+            <div ref={ref} />
         </div>);
 }
 
