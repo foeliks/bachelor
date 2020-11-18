@@ -180,4 +180,14 @@ return 0;"
 7,3,t,12,"{""0"":false,""1"":false,""2"":true}"
 7,3,t,13,"{""0"":false,""1"":false,""2"":true}"
 8,2,t,5,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+8,3,t,4,"{""0"":false,""1"":false,""2"":true}"
 7,3,t,22,"{""0"":false,""1"":false,""2"":true}"
+8,5,t,2,"
+//Blödsinn
+/*
+Mehrzeiliger
+Blödsinn*/
+return 0;"
+3,1,t,7,"{""0"":true}"
+3,1,t,8,"{""0"":true}"
+3,1,t,9,"{""0"":true}"

@@ -4,7 +4,9 @@ import {
     Progress,
     Collapse,
     Button,
-    Checkbox
+    Checkbox,
+    Row,
+    Col
 } from 'antd';
 import {
     StarOutlined,
@@ -13,7 +15,7 @@ import {
 
 function Categories(props) {
 
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState({ stars_sum: 0, tasks: [] });
 
     useEffect(() => {
         fetch('http://localhost:8000/robob/category-progress/', {
@@ -39,15 +41,18 @@ function Categories(props) {
 
     return (
         <div>
-            <PageHeader title="Themen" />
+            <Row justify="space-between" align="middle">
+                <PageHeader title="Themen" />
+                <div style={{marginRight: "16px"}}>{categories.stars_sum} <StarFilled /></div>
+            </Row>
             <Collapse>
-                {categories.map(category => {
+                {categories.tasks.map(category => {
                     return (
                         <Collapse.Panel key={category.id} header={category.title} extra={<Progress percent={category.progress} />}>
                             {category.tasks.map(task => {
                                 return (
                                     <div style={{ marginTop: "10px" }} key={task.id}>
-                                        <Button href={`/task/${task.id}`} style={task.solved ? { backgroundColor: 'green', color: 'white' } : {}} >
+                                        <Button href={`/task/${task.id}`} style={task.solved ? { backgroundColor: props.values.robobGreen, color: 'white' } : {}} >
                                             Aufgabe {task.id}{task.optional ? " (optional)" : ""}
                                         </Button>
                                         {task.solved && <div style={{ float: "right" }}>

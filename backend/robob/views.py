@@ -56,9 +56,12 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CategoriesProgress(APIView):
+class CategoriesProgressView(APIView):
     def get(self, request):
-        result = []
+        result = {
+            "stars_sum": 0,
+            "tasks": []
+        }
 
         try:
             categories = Categories.objects.all()
@@ -86,13 +89,14 @@ class CategoriesProgress(APIView):
                         "solved": solved,
                         "stars": stars
                     })
+                    result["stars_sum"] += stars
 
                 progress = 100
 
                 if(len(all_tasks) != 0):
                     progress = finished_tasks/len(all_tasks) * 100
 
-                result.append({
+                result["tasks"].append({
                         'id': category.id,
                         'title': category.title,
                         'progress': progress,
@@ -105,7 +109,7 @@ class CategoriesProgress(APIView):
         return Response(result)
 
 
-class NextTask(APIView):
+class NextTaskView(APIView):
     def get(self, request, **kwargs):
         result = {
             "task_with_optional": 0,

@@ -150,7 +150,7 @@ function Task(props) {
         }
             : success && {
                 border: '2px solid',
-                borderColor: '#14ba46'
+                borderColor: props.values.robobGreen
             }
 
     const codeFailedStyle = () => codeFailed && {
@@ -251,7 +251,7 @@ function Task(props) {
             </Row>
 
             {success ?
-                <Card style={{ hide: true, backgroundColor: '#14ba46', marginTop: "10px" }}>
+                <Card style={{ backgroundColor: props.values.robobGreen, marginTop: "10px" }}>
                     <h1 style={{ color: "white" }}>Geschafft!</h1>
                     {task.solved_stars > 0 ? <div>
                         {task.solved_stars === 3 ? <StarFilled style={{color: "yellow"}} /> : <StarOutlined />}

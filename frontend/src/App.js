@@ -124,7 +124,8 @@ function App() {
         gameMode: gameMode,
         nextTaskWithOptional: nextTaskWithOptional,
         nextTaskWithoutOptional: nextTaskWithoutOptional,
-        setIgnoreOptional: setIgnoreOptional
+        setIgnoreOptional: setIgnoreOptional,
+        robobGreen: "#52C41A" // "#14ba46"
     }
     const functions = {
         setLoggedIn: setLoggedIn,
