@@ -90,7 +90,8 @@ class CategoriesProgressView(APIView):
                         "id": task.id,
                         "optional": task.optional,
                         "solved": solved,
-                        "stars": stars
+                        "stars": stars,
+                        "required_stars": task.required_stars
                     })
                     result["stars_sum"] += stars
 
@@ -276,9 +277,13 @@ class RankingView(APIView):
             result.sort(key=lambda entry: entry["stars"], reverse=True)
             place = 1
             
+            last_entry = result[0]
             for entry in result:
+                if last_entry["stars"] > entry["stars"]:
+                    place += 1
+
                 entry["place"] = place
-                place += 1
+                last_entry = entry
 
         except Exception as e:
             print(e)

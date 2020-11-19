@@ -51,7 +51,7 @@ function Home(props) {
                             </Radio>
                         </Radio.Group>
                     </Row>
-                    <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "10px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                    <Checkbox checked={props.values.ignoreOptional} disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "10px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
                     <br />
                     <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Los geht's!</Button>
                 </div> :

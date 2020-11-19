@@ -28,22 +28,25 @@ function Categories(props) {
                             {category.tasks.map(task => {
                                 return (
                                     <div style={{ marginTop: "10px" }} key={task.id}>
-                                        <Button href={`/task/${task.id}`} style={task.solved ? { backgroundColor: props.values.robobGreen, color: 'white' } : {}} >
-                                            Aufgabe {task.id}{task.optional ? " (optional)" : ""}
+                                        <Row align="middle">
+                                        <Button danger={task.required_stars && (!props.values.sum_stars || (props.values.sum_stars < task.required_keys))} href={`/task/${task.id}`} style={task.solved ? { backgroundColor: props.values.robobGreen, color: 'white' } : {}} >
+                                            Aufgabe {task.id}
                                         </Button>
+                                        <div  style={{marginLeft: "10px", color: "grey"}}>{task.optional ? "(optional)" : ""}{task.required_stars ? <div>({task.required_stars}  <StarFilled /> benötigt)</div> : ""}</div>
                                         {task.solved && <div style={{ float: "right" }}>
                                             {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
                                             {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
                                             <StarFilled />
-                                        </div>}
-                                        <br />
+                                        </div>
+                                        }
+                                        </Row>
                                     </div>
                                 )
                             })}
                         </Collapse.Panel>)
                 })}
             </Collapse>
-            <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+            <Checkbox checked={props.values.ignoreOptional} disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
             <br />
             <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
         </div>

@@ -108,10 +108,7 @@ function App() {
                     }
                     else {
                         res.json()
-                            .then(json => {
-                                setCategories(json);
-                                setRedirect(false);
-                            })
+                            .then(json => setCategories(json))
                     }
                 })
                 .catch(error => console.error(error))
@@ -130,7 +127,6 @@ function App() {
                             .then(json => {
                                 setNextTaskWithOptional(json.task_with_optional);
                                 setNextTaskWithoutOptional(json.task_without_optional);
-                                setRedirect(false);
                             })
                     }
                 })
@@ -152,15 +148,12 @@ function App() {
                     }
                 })
                 .catch(error => console.error(error))
-
         }
-    }, [nextTaskWithoutOptional])
-
+    }, [nextTaskWithOptional, nextTaskWithoutOptional])
 
     const values = {
         loggedIn: loggedIn,
         username: username,
-        redirect: redirect,
         gameMode: gameMode,
         categories: categories,
         diary: diary,
@@ -172,7 +165,6 @@ function App() {
     const functions = {
         setLoggedIn: setLoggedIn,
         setUsername: setUsername,
-        setRedirect: setRedirect,
         setGameMode: setGameMode,
         setCategories: setCategories,
         setDiary: setDiary,
