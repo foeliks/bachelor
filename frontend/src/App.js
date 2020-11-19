@@ -20,12 +20,14 @@ function App() {
     const [loggedIn, setLoggedIn] = useState(
         localStorage.getItem('token') ? true : false
     );
-    const [username, setUsername] = useState('');
+    const [username, setUsername] = useState(null);
     const [gameMode, setGameMode] = useState(0);
     const [redirect, setRedirect] = useState(false);
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(0);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(0);
     const [ignoreOptional, setIgnoreOptional] = useState(false);
+    const [categories, setCategories] = useState({ stars_sum: 0, tasks: [] });
+    const [diary, setDiary] = useState([]);
 
     const logOut = () => {
         localStorage.removeItem('token');
@@ -36,55 +38,83 @@ function App() {
 
     useEffect(() => {
         if (loggedIn) {
-            if (username === '') {
-                fetch('http://localhost:8000/robob/current_user/', {
-                    headers: {
-                        Authorization: `JWT ${localStorage.getItem('token')}`
+            fetch('http://localhost:8000/robob/current_user/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            })
+                .then(res => res.json())
+                .then(json => {
+                    setUsername(json.username)
+                    json.game_mode === false ? setGameMode(0) : setGameMode(1)
+                })
+                .catch(error => {
+                    console.log(error)
+                    logOut()
+                });
+            fetch('http://localhost:8000/token-auth-refresh/', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'token': localStorage.getItem('token')
+                })
+            })
+                .then(res => {
+                    if (res.status !== 200) {
+                        console.log(res);
+                        logOut();
+                    }
+                    else {
+                        res.json()
+                            .then(json => {
+                                localStorage.setItem('token', json.token)
+                                setRedirect(false);
+                            })
                     }
                 })
-                    .then(res => res.json())
-                    .then(json => {
-                        setUsername(json.username)
-                        json.game_mode === false ? setGameMode(0) : setGameMode(1)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        logOut()
-                    });
-            }
-            else {
-                fetch('http://localhost:8000/token-auth-refresh/', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        'token': localStorage.getItem('token')
-                    })
-                })
-                    .then(res => {
-                        if (res.status !== 200) {
-                            console.log(res);
-                            logOut();
-                        }
-                        else {
-                            res.json()
-                                .then(json => {
-                                    localStorage.setItem('token', json.token)
-                                    setRedirect(false);
-                                })
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        logOut()
-                    });
-            }
+                .catch(error => {
+                    console.log(error)
+                    logOut()
+                });
+
         }
-    });
+    }, [loggedIn]);
 
     useEffect(() => {
         if (loggedIn) {
+            fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
+                method: 'post',
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            }).catch(error => console.error(error))
+
+        }
+    }, [gameMode])
+
+    useEffect(() => {
+        if (loggedIn) {
+            fetch('http://localhost:8000/robob/category-progress/', {
+                headers: {
+                    Authorization: `JWT ${localStorage.getItem('token')}`
+                }
+            })
+                .then(res => {
+                    if (res.status !== 200) {
+                        setCategories([]);
+                        logOut();
+                    }
+                    else {
+                        res.json()
+                            .then(json => {
+                                setCategories(json);
+                                setRedirect(false);
+                            })
+                    }
+                })
+                .catch(error => console.error(error))
 
             fetch(`http://localhost:8000/robob/next-task/`, {
                 headers: {
@@ -106,15 +136,25 @@ function App() {
                 })
                 .catch(error => console.error(error))
 
-            fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
-                method: 'post',
+            fetch(`http://localhost:8000/robob/diary/`, {
                 headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
+                    'Authorization': `JWT ${localStorage.getItem('token')}`
                 }
-            }).catch(error => console.error(error))
+            })
+                .then(res => {
+                    if (res.status !== 200) {
+                        setDiary([]);
+                        logOut();
+                    }
+                    else {
+                        res.json()
+                            .then(json => setDiary(json))
+                    }
+                })
+                .catch(error => console.error(error))
 
         }
-    }, [gameMode, loggedIn])
+    }, [nextTaskWithoutOptional])
 
 
     const values = {
@@ -122,16 +162,20 @@ function App() {
         username: username,
         redirect: redirect,
         gameMode: gameMode,
+        categories: categories,
+        diary: diary,
         nextTaskWithOptional: nextTaskWithOptional,
         nextTaskWithoutOptional: nextTaskWithoutOptional,
-        setIgnoreOptional: setIgnoreOptional,
-        robobGreen: "#52C41A" // "#14ba46"
+        ignoreOptional: ignoreOptional,
+        robobGreen: "#52C41A" // "#14ba46",
     }
     const functions = {
         setLoggedIn: setLoggedIn,
         setUsername: setUsername,
         setRedirect: setRedirect,
         setGameMode: setGameMode,
+        setCategories: setCategories,
+        setDiary: setDiary,
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         setIgnoreOptional: setIgnoreOptional,
@@ -158,7 +202,7 @@ function App() {
                     </PageLayout>}
             </Route>
             <Route exact path='/task/0'>
-            {redirect ? <Redirect to="/" /> :
+                {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <FinishedPage />
                     </PageLayout>}

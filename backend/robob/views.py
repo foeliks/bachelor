@@ -23,7 +23,10 @@ def get_stars(username, task, best=True):
             if tries < least_tries:
                 least_tries = tries
     else:
-        least_tries = user_tries[len(user_tries) -1]
+        if len(user_tries) > 1:
+            least_tries = user_tries[len(user_tries) -1] - user_tries[len(user_tries) - 2]
+        else:
+            least_tries = user_tries[0]
 
     if least_tries <= 2:
         return 3

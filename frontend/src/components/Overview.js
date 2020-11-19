@@ -5,8 +5,7 @@ import {
     Collapse,
     Button,
     Checkbox,
-    Row,
-    Col
+    Row
 } from 'antd';
 import {
     StarOutlined,
@@ -15,38 +14,15 @@ import {
 
 function Categories(props) {
 
-    const [categories, setCategories] = useState({ stars_sum: 0, tasks: [] });
-
-    useEffect(() => {
-        fetch('http://localhost:8000/robob/category-progress/', {
-            headers: {
-                Authorization: `JWT ${localStorage.getItem('token')}`
-            }
-        })
-            .then(res => {
-                if (res.status !== 200) {
-                    setCategories([]);
-                    props.functions.logOut();
-                }
-                else {
-                    res.json()
-                        .then(json => {
-                            setCategories(json);
-                            props.functions.setRedirect(false);
-                        })
-                }
-            })
-            .catch(error => console.error(error))
-    }, [props.functions])
 
     return (
         <div>
             <Row justify="space-between" align="middle">
                 <PageHeader title="Themen" />
-                <div style={{marginRight: "16px"}}>{categories.stars_sum} <StarFilled /></div>
+                <div style={{marginRight: "16px"}}>{props.values.categories.stars_sum} <StarFilled /></div>
             </Row>
             <Collapse>
-                {categories.tasks.map(category => {
+                {props.values.categories.tasks.map(category => {
                     return (
                         <Collapse.Panel key={category.id} header={category.title} extra={<Progress percent={category.progress} />}>
                             {category.tasks.map(task => {

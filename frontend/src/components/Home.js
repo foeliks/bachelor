@@ -53,7 +53,7 @@ function Home(props) {
                     </Row>
                     <Checkbox disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "10px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
                     <br />
-                    <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Fortsetzen</Button>
+                    <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Los geht's!</Button>
                 </div> :
                 <Login values={props.values} functions={props.functions} />}
 
