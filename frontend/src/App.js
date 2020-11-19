@@ -79,6 +79,25 @@ function App() {
                     logOut()
                 });
 
+                fetch(`http://localhost:8000/robob/next-task/`, {
+                    headers: {
+                        Authorization: `JWT ${localStorage.getItem('token')}`
+                    }
+                })
+                    .then(res => {
+                        if (res.status !== 200) {
+                            logOut();
+                        }
+                        else {
+                            res.json()
+                                .then(json => {
+                                    setNextTaskWithOptional(json.task_with_optional);
+                                    setNextTaskWithoutOptional(json.task_without_optional);
+                                })
+                        }
+                    })
+                    .catch(error => console.error(error))
+
         }
     }, [loggedIn]);
 
@@ -95,6 +114,7 @@ function App() {
     }, [gameMode])
 
     useEffect(() => {
+        console.log(nextTaskWithOptional)
         if (loggedIn) {
             fetch('http://localhost:8000/robob/category-progress/', {
                 headers: {
