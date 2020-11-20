@@ -22,11 +22,13 @@ function App() {
     );
     const [username, setUsername] = useState(null);
     const [gameMode, setGameMode] = useState(0);
+    const [sumStars, setSumStars] = useState(0);
+    const [employeeRank, setEmployeeRank] = useState({ id: 0, title: null });
     const [redirect, setRedirect] = useState(false);
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(0);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(0);
     const [ignoreOptional, setIgnoreOptional] = useState(false);
-    const [categories, setCategories] = useState({ stars_sum: 0, tasks: [] });
+    const [categories, setCategories] = useState([]);
     const [diary, setDiary] = useState([]);
 
     const logOut = () => {
@@ -35,6 +37,50 @@ function App() {
         setRedirect(true);
         setUsername('');
     }
+
+    const fetchAll = () => {
+        fetch('http://localhost:8000/robob/actual-progress', {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => {
+                if (res.status !== 200) {
+                    setCategories([]);
+                    setDiary([]);
+                    logOut();
+                }
+                else {
+                    res.json()
+                        .then(json => {
+                            setCategories(json.tasks);
+                            setDiary(json.diary);
+                            setSumStars(json.sum_stars);
+                            setEmployeeRank(json.employee_rank);
+                        })
+                }
+            })
+            .catch(error => console.error(error))
+
+        fetch(`http://localhost:8000/robob/next-task/`, {
+            headers: {
+                Authorization: `JWT ${localStorage.getItem('token')}`
+            }
+        })
+            .then(res => {
+                if (res.status !== 200) {
+                    logOut();
+                }
+                else {
+                    res.json()
+                        .then(json => {
+                            setNextTaskWithOptional(json.task_with_optional);
+                            setNextTaskWithoutOptional(json.task_without_optional);
+                        })
+                }
+            })
+            .catch(error => console.error(error))
+    };
 
     useEffect(() => {
         if (loggedIn) {
@@ -45,11 +91,12 @@ function App() {
             })
                 .then(res => res.json())
                 .then(json => {
-                    setUsername(json.username)
-                    json.game_mode === false ? setGameMode(0) : setGameMode(1)
+                    setUsername(json.username);
+                    json.game_mode === false ? setGameMode(0) : setGameMode(1);
+                    setEmployeeRank(json.employee_rank);
                 })
                 .catch(error => {
-                    console.log(error)
+                    console.error(error)
                     logOut()
                 });
             fetch('http://localhost:8000/token-auth-refresh/', {
@@ -63,41 +110,23 @@ function App() {
             })
                 .then(res => {
                     if (res.status !== 200) {
-                        console.log(res);
+                        console.error(res);
                         logOut();
                     }
                     else {
                         res.json()
                             .then(json => {
-                                localStorage.setItem('token', json.token)
+                                localStorage.setItem('token', json.token);
                                 setRedirect(false);
                             })
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    logOut()
+                    console.error(error);
+                    logOut();
                 });
 
-                fetch(`http://localhost:8000/robob/next-task/`, {
-                    headers: {
-                        Authorization: `JWT ${localStorage.getItem('token')}`
-                    }
-                })
-                    .then(res => {
-                        if (res.status !== 200) {
-                            logOut();
-                        }
-                        else {
-                            res.json()
-                                .then(json => {
-                                    setNextTaskWithOptional(json.task_with_optional);
-                                    setNextTaskWithoutOptional(json.task_without_optional);
-                                })
-                        }
-                    })
-                    .catch(error => console.error(error))
-
+            fetchAll();
         }
     }, [loggedIn]);
 
@@ -113,68 +142,12 @@ function App() {
         }
     }, [gameMode])
 
-    useEffect(() => {
-        console.log(nextTaskWithOptional)
-        if (loggedIn) {
-            fetch('http://localhost:8000/robob/category-progress/', {
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
-                }
-            })
-                .then(res => {
-                    if (res.status !== 200) {
-                        setCategories([]);
-                        logOut();
-                    }
-                    else {
-                        res.json()
-                            .then(json => setCategories(json))
-                    }
-                })
-                .catch(error => console.error(error))
-
-            fetch(`http://localhost:8000/robob/next-task/`, {
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
-                }
-            })
-                .then(res => {
-                    if (res.status !== 200) {
-                        logOut();
-                    }
-                    else {
-                        res.json()
-                            .then(json => {
-                                setNextTaskWithOptional(json.task_with_optional);
-                                setNextTaskWithoutOptional(json.task_without_optional);
-                            })
-                    }
-                })
-                .catch(error => console.error(error))
-
-            fetch(`http://localhost:8000/robob/diary/`, {
-                headers: {
-                    'Authorization': `JWT ${localStorage.getItem('token')}`
-                }
-            })
-                .then(res => {
-                    if (res.status !== 200) {
-                        setDiary([]);
-                        logOut();
-                    }
-                    else {
-                        res.json()
-                            .then(json => setDiary(json))
-                    }
-                })
-                .catch(error => console.error(error))
-        }
-    }, [nextTaskWithOptional, nextTaskWithoutOptional])
-
     const values = {
         loggedIn: loggedIn,
         username: username,
         gameMode: gameMode,
+        sumStars: sumStars,
+        employeeRank: employeeRank,
         categories: categories,
         diary: diary,
         nextTaskWithOptional: nextTaskWithOptional,
@@ -186,6 +159,7 @@ function App() {
         setLoggedIn: setLoggedIn,
         setUsername: setUsername,
         setGameMode: setGameMode,
+        setSumStars: setSumStars,
         setCategories: setCategories,
         setDiary: setDiary,
         setNextTaskWithOptional: setNextTaskWithOptional,

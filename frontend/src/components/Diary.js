@@ -15,7 +15,7 @@ function Diary(props) {
                 {props.values.diary.map(category => (
                     <Collapse.Panel header={category.title} key={category.id}>
                         {category.knowledge.map(knowledge => (
-                            <Card>
+                            <Card style={{ marginTop: "5px", border: '2px solid', borderColor: '#7CB6FF' }}>
                                 <div key={knowledge.id} dangerouslySetInnerHTML={{ __html: knowledge.description }} />
                             </Card>
                         ))}

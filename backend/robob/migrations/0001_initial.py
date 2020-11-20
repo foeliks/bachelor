@@ -56,6 +56,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='EmployeeRanks',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.TextField()),
+            ],
+            options={
+                'db_table': 'employee_ranks',
+                'managed': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Knowledge',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -75,17 +86,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'narrators',
-                'managed': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='Places',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField(blank=True, null=True)),
-            ],
-            options={
-                'db_table': 'places',
                 'managed': False,
             },
         ),

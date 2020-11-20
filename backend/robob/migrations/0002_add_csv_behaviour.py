@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             """
-			-- UPDATE auth_user
-
-			alter table auth_user add game_mode boolean default false;
-
 			
 
             -- CREATE TABLES
@@ -32,6 +28,12 @@ class Migration(migrations.Migration):
 	        	primary key(id)
 	        );
 
+			create table if not exists employee_ranks (
+				id serial,
+				title text not null,
+				primary key (id)
+			);
+
 	        create table if not exists conversations (
 	        	id serial,
 	        	content text,
@@ -40,19 +42,12 @@ class Migration(migrations.Migration):
 	        	primary key (id)
 	        );
 
-			create table if not exists places (
-				id serial,
-				name text,
-				primary key(id)
-			);
-
             create table if not exists knowledge (
             	id serial,
             	category_id integer references categories (id),
             	description text not null,
             	optional bool default false,
 	        	conversation_id integer references conversations (id),
-				place_id integer references places(id),
             	primary key (id)
             );
 
@@ -65,6 +60,9 @@ class Migration(migrations.Migration):
             	solution text,
 				specify json,
 				required_stars integer,
+				required_employee_rank_id integer references employee_ranks (id),
+				achieve_employee_rank_id integer references employee_ranks (id),
+	        	conversation_id integer references conversations (id),
             	primary key (id)
             );
 
@@ -84,7 +82,12 @@ class Migration(migrations.Migration):
             	primary key (knowledge_id, user_id)
             );
 
-			
+
+
+			-- UPDATE auth_user
+
+			alter table auth_user add game_mode boolean default false;
+			alter table auth_user add employee_rank_id integer references employee_ranks (id);
 
 
 	        -- IMPORT DATA FROM CSV 
@@ -145,6 +148,21 @@ class Migration(migrations.Migration):
 	        	exception
 	        		when undefined_file then
 	        			raise notice '/tmp/conversations.csv was not found.';
+	        end;
+	        $$
+	        language plpgsql;
+
+			do
+	        $$
+	        begin
+	        	copy employee_ranks
+	        	from '/tmp/employee_ranks.csv'
+	        	delimiter ','
+	        	csv header;
+
+	        	exception
+	        		when undefined_file then
+	        			raise notice '/tmp/employee_ranks.csv was not found.';
 	        end;
 	        $$
 	        language plpgsql;
@@ -217,6 +235,7 @@ class Migration(migrations.Migration):
 	        select setval('conversations_id_seq', max(id)) from conversations;
 	        select setval('knowledge_id_seq', max(id)) from knowledge;
 	        select setval('tasks_id_seq', max(id)) from tasks;
+			select setval('employee_ranks_id_seq', max(id)) from employee_ranks;
 
 
 	        -- CREATE TRIGGER FOR EXPORT DATA INTO CSV 
@@ -229,6 +248,7 @@ class Migration(migrations.Migration):
 	        drop trigger if exists tasks_trigger on tasks;
 	        drop trigger if exists progress_trigger on progress; 
 	        drop trigger if exists diary_trigger on diary;
+	        drop trigger if exists employee_ranks_trigger on employee_ranks;
 
 	        create or replace function auth_user_export()
 	        	returns trigger 
@@ -389,6 +409,26 @@ class Migration(migrations.Migration):
 	        on diary
 	        for each statement 
 	        execute procedure diary_export();
+
+			create or replace function employee_ranks_export()
+	        	returns trigger 
+	        	language plpgsql
+	        	as 
+	        $$
+	        begin
+	        	copy employee_ranks
+	        	to '/tmp/employee_ranks.csv'
+	        	delimiter ','
+	        	csv header;
+	        	return null;
+	        end;
+	        $$;
+
+	        create trigger employee_ranks_trigger
+	        after insert or delete or update
+	        on employee_ranks
+	        for each statement 
+	        execute procedure employee_ranks_export();
             """
         )
     ]

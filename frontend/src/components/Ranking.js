@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import {
     PageHeader,
     Table,
-    // Tag,
+    Spin
 } from 'antd'
+import {
+    LoadingOutlined
+} from '@ant-design/icons';
 
 
 function Ranking(props) {
-    const [ranking, setRanking] = useState([])
+    const [loading, setLoading] = useState(true);
+    const [ranking, setRanking] = useState([]);
+    const [userIndex, setUserIndex] = useState(-1);
 
     useEffect(() => {
 
@@ -23,21 +28,31 @@ function Ranking(props) {
                 }
                 else {
                     res.json()
-                        .then(json => setRanking(json))
+                        .then(json => {
+                            setRanking(json);
+                            setLoading(false);
+                        })
                 }
             })
             .catch(error => console.error(error))
 
     }, [props.functions])
 
+    
     return (
         <div>
             <PageHeader title="Rangliste" />
-            <Table dataSource={ranking}>
-                <Table.Column title="Platzierung" dataIndex="place" key="place" />
-                <Table.Column title="Benutzer" dataIndex="username" key="username" />
-                <Table.Column title="Sterne" dataIndex="stars" key="stars" />
-            </Table>
+            {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} /> :
+                <Table
+                    onRow={(record, rowIndex) => record.username === props.values.username && setUserIndex(rowIndex)}
+                    rowClassName={(record, index) => index === userIndex && 'highlight-row'}
+                    dataSource={ranking}>
+                    <Table.Column title="Platzierung" dataIndex="place" key="place" />
+                    <Table.Column title="Benutzer" dataIndex="username" key="username" />
+                    <Table.Column title="Sterne" dataIndex="stars" key="stars" />
+                    <Table.Column title="Mitarbeiter Rang" dataIndex="employee_rank" key="employee_rank" />
+                </Table>
+            }
         </div>
     )
 }

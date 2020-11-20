@@ -20,6 +20,8 @@ class AuthUser(models.Model):
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
     game_mode = models.BooleanField()
+    employee_rank = models.ForeignKey('EmployeeRanks', models.DO_NOTHING, blank=True, null=True)
+
 
     class Meta:
         managed = False
@@ -55,12 +57,12 @@ class Diary(models.Model):
         unique_together = (('knowledge', 'user'),)
 
 
-class Places(models.Model):
-    name = models.TextField(blank=True, null=True)
+class EmployeeRanks(models.Model):
+    title = models.TextField()
 
     class Meta:
         managed = False
-        db_table = 'places'
+        db_table = 'employee_ranks'
 
 
 class Knowledge(models.Model):
@@ -68,7 +70,6 @@ class Knowledge(models.Model):
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
     conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
-    place = models.ForeignKey('Places', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -103,7 +104,10 @@ class Tasks(models.Model):
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
     specify = models.TextField(blank=True, null=True)
-    required_stars = models.IntegerField()
+    required_stars = models.IntegerField(blank=True, null=True)
+    required_employee_rank = models.ForeignKey(EmployeeRanks, models.DO_NOTHING, blank=True, null=True, related_name="required_employee_rank")
+    achieve_employee_rank = models.ForeignKey(EmployeeRanks, models.DO_NOTHING, blank=True, null=True, related_name="achieve_employee_rank")
+    conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False

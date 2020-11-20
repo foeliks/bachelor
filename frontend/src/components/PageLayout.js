@@ -3,7 +3,8 @@ import { useHistory } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import {
     Layout,
-    Menu
+    Menu,
+    Row
 } from 'antd';
 
 
@@ -29,7 +30,9 @@ function PageLayout(props) {
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" selectedKeys={[selected]}>
                     <Menu.Item style={{ backgroundColor: "#002140", color: "white" }}>
-                        {props.values.username}
+                        <Row>
+                            {props.values.username} {props.values.employeeRank.title ? <p style={{color: "#7CB6FF"}}>&nbsp; ({props.values.employeeRank.title})</p> : <div />}
+                        </Row>
                     </Menu.Item>
                     <Menu.Item key="1" onClick={() => history.push("/")}>
                         Startseite

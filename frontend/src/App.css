@@ -2,3 +2,7 @@
   font-family: 'Hack';
   src: local('Hack'), url(./fonts/Hack-Regular.ttf) format('truetype')
 }
+
+.highlight-row {
+  background-color: #d9f4ff;
+}
