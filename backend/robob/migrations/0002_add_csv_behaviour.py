@@ -92,6 +92,22 @@ class Migration(migrations.Migration):
 
 	        -- IMPORT DATA FROM CSV 
 
+			do
+	        $$
+	        begin
+	        	copy employee_ranks
+	        	from '/tmp/employee_ranks.csv'
+	        	delimiter ','
+	        	csv header;
+
+	        	exception
+	        		when undefined_file then
+	        			raise notice '/tmp/employee_ranks.csv was not found.';
+	        end;
+	        $$
+	        language plpgsql;
+
+
 	        do
 	        $$
 	        begin
@@ -148,21 +164,6 @@ class Migration(migrations.Migration):
 	        	exception
 	        		when undefined_file then
 	        			raise notice '/tmp/conversations.csv was not found.';
-	        end;
-	        $$
-	        language plpgsql;
-
-			do
-	        $$
-	        begin
-	        	copy employee_ranks
-	        	from '/tmp/employee_ranks.csv'
-	        	delimiter ','
-	        	csv header;
-
-	        	exception
-	        		when undefined_file then
-	        			raise notice '/tmp/employee_ranks.csv was not found.';
 	        end;
 	        $$
 	        language plpgsql;
