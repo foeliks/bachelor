@@ -1,15 +1,16 @@
-# pull official base image
+# build
 FROM node:latest
-
-# set working directory
 WORKDIR /app
-
-# install app dependencies
 COPY package*.json /app/
 RUN npm install
-
-# add app
 COPY . /app/
+CMD ["npm", "start"]
 
-# start app
-CMD ["npm", "start"]   
+
+# RUN npm run build  
+
+# # production
+# FROM nginx:stable-alpine
+# COPY --from=build /app/build /usr/share/nginx/html
+# EXPOSE 80
+# CMD ["nginx", "-g", "daemon off;"]
