@@ -67,8 +67,8 @@ class Migration(migrations.Migration):
             );
 
             create table if not exists progress (
-            	user_id integer references auth_user (id),
-            	task_id integer references tasks (id),
+            	user_id integer references auth_user (id) on delete cascade,
+            	task_id integer references tasks (id) on delete cascade,
             	solved bool,
             	num_tries integer,
             	user_solution text,
@@ -76,8 +76,8 @@ class Migration(migrations.Migration):
             );
 
             create table if not exists diary (
-            	user_id integer references auth_user (id),
-            	knowledge_id integer references knowledge (id),
+            	user_id integer references auth_user (id)  on delete cascade,
+            	knowledge_id integer references knowledge (id) on delete cascade,
 				post_it boolean default(false),
             	primary key (knowledge_id, user_id)
             );
