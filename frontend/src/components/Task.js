@@ -188,7 +188,12 @@ function Task(props) {
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
                     : props.values.gameMode === 1
-                        ? <Unity unityContent={unityContent} />
+                        ? 
+                        <div>
+                            <Unity unityContent={unityContent} />
+                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
+                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
+                        </div>
                         : props.values.gameMode === 0 && <div>
                             <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                                 <div dangerouslySetInnerHTML={{ __html: task.description }} />
