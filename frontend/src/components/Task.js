@@ -42,8 +42,7 @@ function Task(props) {
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
     
     // Test States für Unity Interaction
-    const [gameOver, setGameOver] = useState(false);
-    const [score, setScore] = useState(null);
+    const [test, setTest] = useState("");
 
     useEffect(() => {
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
@@ -76,16 +75,7 @@ function Task(props) {
             })
             .catch(error => console.error(error))
 
-        function unitySaysGameOver(score) {
-            setGameOver(true);
-            setScore(score);
-        }
-
-        window.addEventListener('GameOver', unitySaysGameOver);
-
-        return () => {
-            window.removeEventListener('GameOver', unitySaysGameOver);
-        };
+        unityContent.on("test", message => setTest(message))
     }, [])
 
     useEffect(() => {
@@ -205,7 +195,7 @@ function Task(props) {
                             <Unity unityContent={unityContent} />
                             <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
                             <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
-                            {gameOver && <p>GameOver! Score: {score}</p>}
+                            <p>Nachricht von Unity: {test}</p>
                         </div>
                         : props.values.gameMode === 0 && <div>
                             <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
