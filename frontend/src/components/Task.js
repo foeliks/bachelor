@@ -17,18 +17,25 @@ import {
     StarFilled,
     LoadingOutlined
 } from '@ant-design/icons';
-import Unity, { UnityContext } from "react-unity-webgl";
+import Unity, { UnityContent } from "react-unity-webgl";
 
 function Task(props) {
     const { taskId } = useParams();
     const history = useHistory();
     const ref = React.createRef();
-    const unityContext = new UnityContext({
-        loaderUrl: "build/game.loader.js",
-        dataUrl: "build/game.data",
-        frameworkUrl: "build/game.framework.js",
-        codeUrl: "build/game.wasm",
-      });
+
+    // "react-unity-webgl": "^8.0.2"
+    // const unityContext = new UnityContext({
+    //     loaderUrl: "/Build/game.loader.js",
+    //     dataUrl: "/Build/game.data",
+    //     frameworkUrl: "/Build/game.framework.js",
+    //     codeUrl: "/Build/game.wasm",
+    //   });
+
+    const unityContent = new UnityContent(
+        "/Build/game.json",
+        "/Build/UnityLoader.js"
+    )
 
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
@@ -77,7 +84,7 @@ function Task(props) {
             })
             .catch(error => console.error(error))
 
-        unityContext.on("test", message => setTest(message))
+        unityContent.on("test", message => setTest(message))
     }, [])
 
     useEffect(() => {
@@ -194,9 +201,9 @@ function Task(props) {
                     : props.values.gameMode === 1
                         ? 
                         <div>
-                            <Unity unityContext={unityContext} />
-                            <Button onClick={() => unityContext.send('JavaScriptHook', 'TintRed')}>ROT</Button>
-                            <Button onClick={() => unityContext.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
+                            <Unity unityContent={unityContent} />
+                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
+                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
                             <p>Nachricht von Unity: {test}</p>
                         </div>
                         : props.values.gameMode === 0 && <div>
