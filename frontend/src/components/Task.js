@@ -19,16 +19,14 @@ import {
 } from '@ant-design/icons';
 import Unity, { UnityContent } from "react-unity-webgl";
 
-const unityContent = new UnityContent(
-  "/Build/game.json",
-  "/Build/UnityLoader.js"
-);
-
-
 function Task(props) {
     const { taskId } = useParams();
     const history = useHistory();
     const ref = React.createRef();
+    const unityContent = new UnityContent(
+        "/Build/game.json",
+        "/Build/UnityLoader.js"
+      );
 
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
@@ -42,6 +40,10 @@ function Task(props) {
     const [mcSelection, setMcSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
+    
+    // Test States für Unity Interaction
+    const [gameOver, setGameOver] = useState(false);
+    const [score, setScore] = useState(null);
 
     useEffect(() => {
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
@@ -74,7 +76,17 @@ function Task(props) {
             })
             .catch(error => console.error(error))
 
-    }, [taskId])
+        function unitySaysGameOver(score) {
+            setGameOver(true);
+            setScore(score);
+        }
+
+        window.addEventListener('GameOver', unitySaysGameOver);
+
+        return () => {
+            window.removeEventListener('GameOver', unitySaysGameOver);
+        };
+    }, [])
 
     useEffect(() => {
         if (submitted) {
@@ -193,6 +205,7 @@ function Task(props) {
                             <Unity unityContent={unityContent} />
                             <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
                             <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
+                            {gameOver && <p>GameOver! Score: {score}</p>}
                         </div>
                         : props.values.gameMode === 0 && <div>
                             <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
