@@ -17,16 +17,18 @@ import {
     StarFilled,
     LoadingOutlined
 } from '@ant-design/icons';
-import Unity, { UnityContent } from "react-unity-webgl";
+import Unity, { UnityContext } from "react-unity-webgl";
 
 function Task(props) {
     const { taskId } = useParams();
     const history = useHistory();
     const ref = React.createRef();
-    const unityContent = new UnityContent(
-        "/Build/game.json",
-        "/Build/UnityLoader.js"
-      );
+    const unityContext = new UnityContext({
+        loaderUrl: "build/game.loader.js",
+        dataUrl: "build/game.data",
+        frameworkUrl: "build/game.framework.js",
+        codeUrl: "build/game.wasm",
+      });
 
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
@@ -75,7 +77,7 @@ function Task(props) {
             })
             .catch(error => console.error(error))
 
-        unityContent.on("test", message => setTest(message))
+        unityContext.on("test", message => setTest(message))
     }, [])
 
     useEffect(() => {
@@ -192,9 +194,9 @@ function Task(props) {
                     : props.values.gameMode === 1
                         ? 
                         <div>
-                            <Unity unityContent={unityContent} />
-                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
-                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
+                            <Unity unityContext={unityContext} />
+                            <Button onClick={() => unityContext.send('JavaScriptHook', 'TintRed')}>ROT</Button>
+                            <Button onClick={() => unityContext.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
                             <p>Nachricht von Unity: {test}</p>
                         </div>
                         : props.values.gameMode === 0 && <div>
