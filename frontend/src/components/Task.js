@@ -19,6 +19,11 @@ import {
 } from '@ant-design/icons';
 import Unity, { UnityContent } from "react-unity-webgl";
 
+const unityContent = new UnityContent(
+    "/Build/game.json",
+    "/Build/UnityLoader.js"
+)
+
 function Task(props) {
     const { taskId } = useParams();
     const history = useHistory();
@@ -31,11 +36,6 @@ function Task(props) {
     //     frameworkUrl: "/Build/game.framework.js",
     //     codeUrl: "/Build/game.wasm",
     //   });
-
-    const unityContent = new UnityContent(
-        "/Build/game.json",
-        "/Build/UnityLoader.js"
-    )
 
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
@@ -202,8 +202,8 @@ function Task(props) {
                         ? 
                         <div>
                             <Unity unityContent={unityContent} />
-                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintRed')}>ROT</Button>
-                            <Button onClick={() => unityContent.send('JavaScriptHook', 'TintGreen')}>GRÜN</Button>
+                            <Button onClick={() => unityContent.send('JsToUnity', 'TintRed')}>ROT</Button>
+                            <Button onClick={() => unityContent.send('JsToUnity', 'TintGreen')}>GRÜN</Button>
                             <p>Nachricht von Unity: {test}</p>
                         </div>
                         : props.values.gameMode === 0 && <div>
