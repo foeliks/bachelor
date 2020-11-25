@@ -1,6 +1,6 @@
 {
 "companyName": "DefaultCompany",
-"productName": "New Unity Project",
+"productName": "RobobUnity",
 "productVersion": "0.1",
 "dataUrl": "game.data.unityweb",
 "wasmCodeUrl": "game.wasm.code.unityweb",
