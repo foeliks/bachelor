@@ -10,7 +10,8 @@ import {
     Col,
     Collapse,
     Checkbox,
-    Spin
+    Spin,
+    Select
 } from 'antd';
 import {
     StarOutlined,
@@ -46,10 +47,10 @@ function Task(props) {
     const [submitted, setSubmitted] = useState(false);
     const [success, setSuccess] = useState(false);
     const [wrongAnswer, setWrongAnswer] = useState(false);
-    const [mcSelection, setMcSelection] = useState({});
+    const [selection, setSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
-    
+
     // Test States für Unity Interaction
     const [test, setTest] = useState("");
 
@@ -69,11 +70,11 @@ function Task(props) {
                         .then(json => {
                             setTask(json)
                             if (json.specify && json.specify.type === "multiple_choice") {
-                                let newMcSelection = {};
+                                let newSelection = {};
                                 json.specify.options.map(option => {
-                                    newMcSelection[option.id] = false;
+                                    newSelection[option.id] = false;
                                 })
-                                setMcSelection(newMcSelection)
+                                setSelection(newSelection)
                             }
                             else if (json.specify && json.specify.type === "code") {
                                 setTextarea(json.specify.placeholder_middle)
@@ -155,11 +156,12 @@ function Task(props) {
                 }
                 setCodeResult(userSolution);
             }
-            else if (task.specify.type === "multiple_choice") {
-                setCodeResult(JSON.stringify(mcSelection));
+            else if (task.specify.type === "multiple_choice" || task.specify.type === "select" || task.specify.type === "input") {
+                setCodeResult(JSON.stringify(selection));
             }
         }
     }
+
 
     const hackerStyle = () => hackerMode && {
         color: 'green',
@@ -199,7 +201,7 @@ function Task(props) {
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
                     : props.values.gameMode === 1
-                        ? 
+                        ?
                         <div>
                             <Unity unityContent={unityContent} />
                             <Button onClick={() => unityContent.send('JsToUnity', 'TintRed')}>ROT</Button>
@@ -222,46 +224,77 @@ function Task(props) {
 
 
                             {task.specify && (
-                                task.specify.type === "multiple_choice" ?
-                                    <Card style={{ ...answerStyle() }}>
-                                        {task.specify.options.map(option => {
-                                            return (<Checkbox disabled={success} id={option.id} onChange={event => setMcSelection({ ...mcSelection, [event.target.id]: event.target.checked })}>
-                                                {option.text}
-                                            </Checkbox>)
+                                task.specify.type === "input" ?
+                                    <Card style={{ ...answerStyle() }} >
+                                        {task.specify.inputs.map(input => {
+                                            return (
+                                                    <Input
+                                                        addonBefore={input.label}
+                                                        disabled={success}
+                                                        autoFocus
+                                                        spellCheck={false}
+                                                        placeholder={input.placeholder}
+                                                        onChange={() => setSelection({ ...selection, [input.id]: document.getElementById(`input ${input.id}`).value })}
+                                                        id={`input ${input.id}`} />)
                                         })}
                                     </Card>
 
-
-                                    : task.specify.type === "code" &&
-                                    <div>
-                                        <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
-                                            <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
-                                            <Input.TextArea
-                                                disabled={success}
-                                                style={{ fontFamily: 'Hack', ...hackerStyle() }}
-                                                onKeyDown={(event) => {
-                                                    if (event.keyCode === 9) {
-                                                        event.preventDefault();
-                                                        const cursor = event.target.selectionEnd;
-                                                        event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                                                        event.target.selectionEnd = cursor + 1;
-                                                    }
-                                                }}
-                                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
-                                                onChange={() => setTextarea(document.getElementById("textarea").value)}
-                                                autoFocus
-                                                spellCheck={false}
-                                                id="textarea"
-                                                rows={5} />
-
-                                            <p style={{ fontFamily: 'Hack' }}>{task.specify.placeholder_after}</p>
+                                    : task.specify.type === "select" ?
+                                        <Card style={{ ...answerStyle() }}>
+                                            {task.specify.selects.map(select => {
+                                                return (
+                                                    <div>
+                                                        <label>{select.label} </label>
+                                                        <Select key={select.id} disabled={success} defaultValue="Auswählen" onSelect={value => setSelection({ ...selection, [select.id]: value })}>
+                                                            {select.options.map(option => {
+                                                                return (
+                                                                    <Select.Option value={option}>{option}</Select.Option>
+                                                                )
+                                                            })}
+                                                        </Select>
+                                                    </div>)
+                                            })}
                                         </Card>
+                                        : task.specify.type === "multiple_choice" ?
+                                            <Card style={{ ...answerStyle() }}>
+                                                {task.specify.options.map(option => {
+                                                    return (<Checkbox disabled={success} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
+                                                        {option.text}
+                                                    </Checkbox>)
+                                                })}
+                                            </Card>
 
 
-                                        <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
-                                            <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
-                                        </Card>
-                                    </div>)}
+                                            : task.specify.type === "code" &&
+                                            <div>
+                                                <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
+                                                    <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
+                                                    <Input.TextArea
+                                                        disabled={success}
+                                                        style={{ fontFamily: 'Hack', ...hackerStyle() }}
+                                                        onKeyDown={(event) => {
+                                                            if (event.keyCode === 9) {
+                                                                event.preventDefault();
+                                                                const cursor = event.target.selectionEnd;
+                                                                event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                                                                event.target.selectionEnd = cursor + 1;
+                                                            }
+                                                        }}
+                                                        defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                                        onChange={() => setTextarea(document.getElementById("textarea").value)}
+                                                        autoFocus
+                                                        spellCheck={false}
+                                                        id="textarea"
+                                                        rows={5} />
+
+                                                    <p style={{ fontFamily: 'Hack' }}>{task.specify.placeholder_after}</p>
+                                                </Card>
+
+
+                                                <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
+                                                    <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
+                                                </Card>
+                                            </div>)}
 
 
                             <Row style={{ marginTop: "10px" }} justify="space-between">
