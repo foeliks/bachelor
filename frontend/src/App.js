@@ -21,7 +21,7 @@ function App() {
         localStorage.getItem('token') ? true : false
     );
     const [username, setUsername] = useState(null);
-    const [gameMode, setGameMode] = useState(0);
+    const [gameMode, setGameMode] = useState(null);
     const [sumStars, setSumStars] = useState(0);
     const [employeeRank, setEmployeeRank] = useState({ id: 0, title: null });
     const [redirect, setRedirect] = useState(false);
@@ -131,7 +131,7 @@ function App() {
     }, [loggedIn]);
 
     useEffect(() => {
-        if (loggedIn) {
+        if (loggedIn && gameMode != null) {
             fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
                 method: 'post',
                 headers: {
