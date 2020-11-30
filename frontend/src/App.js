@@ -17,9 +17,7 @@ import {
 } from './components';
 
 function App() {
-    const [loggedIn, setLoggedIn] = useState(
-        localStorage.getItem('token') ? true : false
-    );
+    const [loggedIn, setLoggedIn] = useState(localStorage.getItem('token') ? true : false);
     const [username, setUsername] = useState(null);
     const [gameMode, setGameMode] = useState(null);
     const [sumStars, setSumStars] = useState(0);
@@ -30,13 +28,6 @@ function App() {
     const [ignoreOptional, setIgnoreOptional] = useState(false);
     const [categories, setCategories] = useState([]);
     const [diary, setDiary] = useState([]);
-
-    const logOut = () => {
-        localStorage.removeItem('token');
-        setLoggedIn(false);
-        setRedirect(true);
-        setUsername('');
-    }
 
     const fetchAll = () => {
         fetch('http://localhost:8000/robob/actual-progress', {
@@ -142,6 +133,29 @@ function App() {
         }
     }, [gameMode])
 
+    const logOut = () => {
+        localStorage.removeItem('token');
+        setLoggedIn(false);
+        setRedirect(true);
+        setUsername('');
+    }
+
+    const solvedNeededTasks = (categoryId) => {
+        let result = true
+        try {
+            categories.filter(category => category.id === categoryId)[0].tasks.forEach(task => {
+                if (!task.optional && !task.solved) {
+                    result = false;
+                }
+            })
+        }
+        catch (error) {
+            console.error(error);
+        }
+        return result;
+    }
+
+
     const values = {
         loggedIn: loggedIn,
         username: username,
@@ -165,7 +179,8 @@ function App() {
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         setIgnoreOptional: setIgnoreOptional,
-        logOut: logOut
+        logOut: logOut,
+        solvedNeededTasks: solvedNeededTasks
     }
 
     return (

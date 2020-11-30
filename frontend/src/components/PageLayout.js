@@ -31,7 +31,7 @@ function PageLayout(props) {
                 <Menu theme="dark" mode="inline" selectedKeys={[selected]}>
                     <Menu.Item style={{ backgroundColor: "#002140", color: "white" }}>
                         <Row>
-                            {props.values.username} {props.values.employeeRank ? <p style={{color: "#7CB6FF"}}>&nbsp; ({props.values.employeeRank.title})</p> : <div />}
+                            {props.values.username} {props.values.employeeRank.title ? <p style={{color: "#7CB6FF"}}>&nbsp; ({props.values.employeeRank.title})</p> : <div />}
                         </Row>
                     </Menu.Item>
                     <Menu.Item key="1" onClick={() => history.push("/")}>

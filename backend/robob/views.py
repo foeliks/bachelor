@@ -117,6 +117,7 @@ class TaskView(APIView):
 
             result = {
                 "id": task.id,
+                "category_id": task.category.id,
                 "description": task.description,
                 "optional": task.optional,
                 "specify": task.specify,
@@ -318,6 +319,7 @@ class ProgressDependingView(APIView):
 
                     tasks.append({
                         "id": task.id,
+                        "category_id": task.category.id,
                         "optional": task.optional,
                         "solved": solved,
                         "stars": stars,
