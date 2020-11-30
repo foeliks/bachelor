@@ -79,7 +79,10 @@ function Task(props) {
             .catch(error => console.error(error))
 
         unityContent.on("test", message => setTest(message))
-        unityContent.on("activateTask", () => setActive(true))
+        unityContent.on("activateTask", (id) => {
+            console.log(id);
+            setActive(true)
+        })
     }, [])
 
     useEffect(() => {
@@ -210,6 +213,8 @@ function Task(props) {
 
 
                 {active && <div>
+
+                    {props.values.gameMode === 1 && <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}/>}
 
                     <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                         <div dangerouslySetInnerHTML={{ __html: task.description }} />
