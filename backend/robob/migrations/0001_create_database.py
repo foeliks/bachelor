@@ -5,10 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('robob', '0001_initial'),
-    ]
-
     operations = [
         migrations.RunSQL(
             """
@@ -22,32 +18,17 @@ class Migration(migrations.Migration):
             	primary key (id)
             );
 
-	        create table if not exists narrators (
-	        	id serial,
-	        	name text,
-	        	primary key(id)
-	        );
-
 			create table if not exists employee_ranks (
 				id serial,
 				title text not null,
 				primary key (id)
 			);
 
-	        create table if not exists conversations (
-	        	id serial,
-	        	content text,
-	        	narrator_id integer references narrators (id),
-	        	next_id integer references conversations (id),
-	        	primary key (id)
-	        );
-
             create table if not exists knowledge (
             	id serial,
             	category_id integer references categories (id),
             	description text not null,
             	optional bool default false,
-	        	conversation_id integer references conversations (id),
             	primary key (id)
             );
 
@@ -62,7 +43,6 @@ class Migration(migrations.Migration):
 				required_stars integer,
 				required_employee_rank_id integer references employee_ranks (id),
 				achieve_employee_rank_id integer references employee_ranks (id),
-	        	conversation_id integer references conversations (id),
             	primary key (id)
             );
 
@@ -71,14 +51,21 @@ class Migration(migrations.Migration):
             	task_id integer references tasks (id) on delete cascade,
             	solved bool,
             	num_tries integer,
-            	user_solution text,
             	primary key (user_id, task_id, num_tries)
             );
+
+			create table if not exists answers (
+				user_id integer references auth_user (id) on delete cascade,
+            	task_id integer references tasks (id) on delete cascade,
+            	solved bool,
+            	num_tries integer,
+            	user_solution text,
+            	primary key (user_id, task_id, num_tries)
+			);
 
             create table if not exists diary (
             	user_id integer references auth_user (id)  on delete cascade,
             	knowledge_id integer references knowledge (id) on delete cascade,
-				post_it boolean default(false),
             	primary key (knowledge_id, user_id)
             );
 
@@ -141,36 +128,6 @@ class Migration(migrations.Migration):
 	        do
 	        $$
 	        begin
-	        	copy narrators
-	        	from '/tmp/narrators.csv'
-	        	delimiter ','
-	        	csv header;
-
-	        	exception
-	        		when undefined_file then
-	        			raise notice '/tmp/narrators.csv was not found.';
-	        end;
-	        $$
-	        language plpgsql;
-
-	        do
-	        $$
-	        begin
-	        	copy conversations
-	        	from '/tmp/conversations.csv'
-	        	delimiter ','
-	        	csv header;
-
-	        	exception
-	        		when undefined_file then
-	        			raise notice '/tmp/conversations.csv was not found.';
-	        end;
-	        $$
-	        language plpgsql;
-
-	        do
-	        $$
-	        begin
 	        	copy knowledge
 	        	from '/tmp/knowledge.csv'
 	        	delimiter ','
@@ -213,6 +170,21 @@ class Migration(migrations.Migration):
 	        $$
 	        language plpgsql;
 
+			do
+	        $$
+	        begin
+	        	copy answers
+	        	from '/tmp/answers.csv'
+	        	delimiter ','
+	        	csv header;
+
+	        	exception
+	        		when undefined_file then
+	        			raise notice '/tmp/answers.csv was not found.';
+	        end;
+	        $$
+	        language plpgsql;
+
 	        do
 	        $$
 	        begin
@@ -232,8 +204,6 @@ class Migration(migrations.Migration):
 	        -- UPDATE SERIAL COUNTER
 	        select setval('auth_user_id_seq', max(id)) from auth_user;
 	        select setval('categories_id_seq', max(id)) from categories;
-	        select setval('narrators_id_seq', max(id)) from narrators;
-	        select setval('conversations_id_seq', max(id)) from conversations;
 	        select setval('knowledge_id_seq', max(id)) from knowledge;
 	        select setval('tasks_id_seq', max(id)) from tasks;
 			select setval('employee_ranks_id_seq', max(id)) from employee_ranks;
@@ -243,11 +213,10 @@ class Migration(migrations.Migration):
 
 	        drop trigger if exists auth_user_trigger on auth_user;
 	        drop trigger if exists categories_trigger on categories;
-	        drop trigger if exists narrator_trigger on narrators;
-	        drop trigger if exists conversations_trigger on conversations;
 	        drop trigger if exists knowledge_trigger on knowledge;
 	        drop trigger if exists tasks_trigger on tasks;
 	        drop trigger if exists progress_trigger on progress; 
+	        drop trigger if exists answers_trigger on answers; 
 	        drop trigger if exists diary_trigger on diary;
 	        drop trigger if exists employee_ranks_trigger on employee_ranks;
 
@@ -290,46 +259,6 @@ class Migration(migrations.Migration):
 	        on categories
 	        for each statement 
 	        execute procedure categories_export();
-
-	        create or replace function narrators_export()
-	        	returns trigger 
-	        	language plpgsql
-	        	as 
-	        $$
-	        begin
-	        	copy narrators
-	        	to '/tmp/narrators.csv'
-	        	delimiter ','
-	        	csv header;
-	        	return null;
-	        end;
-	        $$;
-
-	        create trigger narrators_trigger
-	        after insert or delete or update
-	        on narrators
-	        for each statement 
-	        execute procedure narrators_export();
-
-	        create or replace function conversations_export()
-	        	returns trigger 
-	        	language plpgsql
-	        	as 
-	        $$
-	        begin
-	        	copy conversations
-	        	to '/tmp/conversations.csv'
-	        	delimiter ','
-	        	csv header;
-	        	return null;
-	        end;
-	        $$;
-
-	        create trigger conversations_trigger
-	        after insert or delete or update
-	        on conversations
-	        for each statement 
-	        execute procedure conversations_export();
 
 	        create or replace function knowledge_export()
 	        	returns trigger 
@@ -390,6 +319,26 @@ class Migration(migrations.Migration):
 	        on progress
 	        for each statement 
 	        execute procedure progress_export();
+
+			create or replace function answers_export()
+	        	returns trigger 
+	        	language plpgsql
+	        	as 
+	        $$
+	        begin
+	        	copy answers
+	        	to '/tmp/answers.csv'
+	        	delimiter ','
+	        	csv header;
+	        	return null;
+	        end;
+	        $$;
+
+	        create trigger answers_trigger
+	        after insert or delete or update
+	        on answers
+	        for each statement 
+	        execute procedure answers_export();
 
 	        create or replace function diary_export()
 	        	returns trigger 

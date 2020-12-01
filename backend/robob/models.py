@@ -8,6 +8,19 @@
 from django.db import models
 
 
+class Answers(models.Model):
+    user = models.OneToOneField('AuthUser', models.DO_NOTHING, primary_key=True)
+    task = models.ForeignKey('Tasks', models.DO_NOTHING)
+    solved = models.BooleanField(blank=True, null=True)
+    num_tries = models.IntegerField()
+    user_solution = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'answers'
+        unique_together = (('user', 'task', 'num_tries'),)
+
+
 class AuthUser(models.Model):
     password = models.CharField(max_length=128)
     last_login = models.DateTimeField(blank=True, null=True)
@@ -36,20 +49,9 @@ class Categories(models.Model):
         db_table = 'categories'
 
 
-class Conversations(models.Model):
-    content = models.TextField(blank=True, null=True)
-    narrator = models.ForeignKey('Narrators', models.DO_NOTHING, blank=True, null=True)
-    next = models.ForeignKey('self', models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'conversations'
-
-
 class Diary(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
     knowledge = models.OneToOneField('Knowledge', models.DO_NOTHING, primary_key=True)
-    post_it = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -69,19 +71,10 @@ class Knowledge(models.Model):
     category = models.ForeignKey(Categories, models.DO_NOTHING, blank=True, null=True)
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
-    conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'knowledge'
-
-
-class Narrators(models.Model):
-    name = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'narrators'
 
 
 class Progress(models.Model):
@@ -89,7 +82,6 @@ class Progress(models.Model):
     task = models.ForeignKey('Tasks', models.DO_NOTHING)
     solved = models.BooleanField(blank=True, null=True)
     num_tries = models.IntegerField()
-    user_solution = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -107,7 +99,6 @@ class Tasks(models.Model):
     required_stars = models.IntegerField(blank=True, null=True)
     required_employee_rank = models.ForeignKey(EmployeeRanks, models.DO_NOTHING, blank=True, null=True, related_name="required_employee_rank")
     achieve_employee_rank = models.ForeignKey(EmployeeRanks, models.DO_NOTHING, blank=True, null=True, related_name="achieve_employee_rank")
-    conversation = models.ForeignKey(Conversations, models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False

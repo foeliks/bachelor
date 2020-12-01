@@ -21,7 +21,7 @@ function Home(props) {
 
             <Row gutter={16}>
                 <Col span={12}>
-                    <Card title="Gamification" style={props.values.gameMode === 0 ? {border: '2px solid', borderColor: '#7CB6FF'} : {}}>
+                    <Card title="Gamification" style={props.values.loggedIn && props.values.gameMode === 0 ? {border: '2px solid', borderColor: '#7CB6FF'} : {}}>
                         <p>Die <b>schnelle</b> Variante<br/>Zusätzlich zu üblichen Website Elementen gibt es Elemente, die man aus Videospielen kennt:</p>
                         <ul>
                             <li>Fortschrittsanzeigen</li>
@@ -32,7 +32,7 @@ function Home(props) {
                     </Card>
                 </Col>
                 <Col span={12}>
-                    <Card title="Serious Game" style={props.values.gameMode === 1 ? {border: '2px solid', borderColor: '#7CB6FF'} : {}}>
+                    <Card title="Serious Game" style={props.values.loggedIn && props.values.gameMode === 1 ? {border: '2px solid', borderColor: '#7CB6FF'} : {}}>
                         <p>Die <b>kreative</b> Variante<br/>Zusätzlich zu den Gamification Elementen, spielst du ein Spiel und hast dort weitere interessante Elemente:</p>
                         <ul>
                             <li>Spielen/Handeln als "Robob"</li>

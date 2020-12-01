@@ -7,7 +7,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
+from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge, Answers
 from .serializers import UserSerializer, UserSerializerWithToken
 
 def get_stars(username, task, best=True):
@@ -164,9 +164,11 @@ class TaskView(APIView):
                     result["tries"] = num_tries - Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").last().num_tries
                 else:
                     result["tries"] = num_tries
-                Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
+                Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved)
+                Answers.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
             else:
-                progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
+                progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved)
+                Answers.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
                 result["tries"] = 1
                 
             if solved == True:

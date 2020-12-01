@@ -23,7 +23,7 @@ function Categories(props) {
             <Collapse>
                 {props.values.categories.map(category => {
                     return (
-                        <Collapse.Panel key={category.id} header={category.title} extra={<Progress percent={category.progress} />}>
+                        <Collapse.Panel key={category.id} header={category.title} extra={<Progress percent={category.progress.toFixed()} />}>
                             {category.tasks.map(task => {
                                 return (
                                     <div style={{ marginTop: "10px" }} key={task.id}>
