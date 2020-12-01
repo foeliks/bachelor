@@ -262,7 +262,7 @@ class ProgressDependingView(APIView):
                 "id": 0, 
                 "title": None
             },
-            "tasks": [],
+            "categories": [],
             "diary": []
         }
 
@@ -336,7 +336,7 @@ class ProgressDependingView(APIView):
                 if(len(all_tasks) != 0):
                     progress = finished_tasks/len(all_tasks) * 100
 
-                result["tasks"].append({
+                result["categories"].append({
                         'id': category.id,
                         'title': category.title,
                         'progress': progress,

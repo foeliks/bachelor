@@ -44,7 +44,7 @@ function App() {
                 else {
                     res.json()
                         .then(json => {
-                            setCategories(json.tasks);
+                            setCategories(json.categories);
                             setDiary(json.diary);
                             setSumStars(json.sum_stars);
                             setEmployeeRank(json.employee_rank);
@@ -208,7 +208,7 @@ function App() {
                         <FinishedPage />
                     </PageLayout>}
             </Route>
-            <Route path='/task/:taskId'>
+            <Route path='/task/:id'>
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Task />

@@ -26,10 +26,11 @@ const unityContent = new UnityContent(
 )
 
 function Task(props) {
-    const { taskId } = useParams();
+    const { id } = useParams();
     const history = useHistory();
     const ref = React.createRef();
 
+    const [taskId, setTaskId] = useState(id);
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
@@ -46,6 +47,14 @@ function Task(props) {
     // States für Unity Interaction
     const [test, setTest] = useState("");
     const [active, setActive] = useState(props.values.gameMode === 0 ? true : false)
+
+    useEffect(() => {
+        unityContent.on("test", message => setTest(message))
+        unityContent.on("activateTask", (id) => {
+            setTaskId(id);
+            setActive(true)
+        })
+    }, [])
 
     useEffect(() => {
         fetch(`http://localhost:8000/robob/task/${taskId}`, {
@@ -77,13 +86,7 @@ function Task(props) {
                 }
             })
             .catch(error => console.error(error))
-
-        unityContent.on("test", message => setTest(message))
-        unityContent.on("activateTask", (id) => {
-            console.log(id);
-            setActive(true)
-        })
-    }, [])
+    }, [taskId])
 
     useEffect(() => {
         if (submitted) {
@@ -180,41 +183,42 @@ function Task(props) {
         borderColor: 'red'
     }
 
+    const taskHeader = (
+        <Row justify="space-between" align="middle">
+            {props.values.gameMode === 1 ? 
+                <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
+                : <PageHeader 
+                    title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
+                    onBack={() => history.push('/overview')} />}
+            Fehlversuche: {task.tries ? task.tries : 0}
+            {task.stars > 0 ? <div>
+                {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
+                {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
+                <StarFilled />
+            </div> : <div />}
+        </Row>)
+
     if (!((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
         (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
         (task.required_stars && props.values.sumStars < task.required_stars))) {
         return (
             <div>
-
-                <Row justify="space-between" align="middle">
-                    {props.values.gameMode === 1 ? 
-                        <PageHeader
-                            title={"Robob"} onBack={() => history.push('/overview')} />
-                        : <PageHeader
-                            title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
-                            onBack={() => history.push('/overview')} />}
-                    Fehlversuche: {task.tries ? task.tries : 0}
-                    {task.stars > 0 ? <div>
-                        {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
-                        {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
-                        <StarFilled />
-                    </div> : <div />}
-                </Row>
+                {props.values.gameMode === 1 ?
+                    <PageHeader
+                        title={"Robob"} onBack={() => history.push('/overview')} />
+                    : taskHeader}
 
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
                     : props.values.gameMode === 1 &&
                     <div>
                         <Unity unityContent={unityContent} />
-                        <Button onClick={() => unityContent.send('JsToUnity', 'TintRed')}>ROT</Button>
-                        <Button onClick={() => unityContent.send('JsToUnity', 'TintGreen')}>GRÜN</Button>
-                        <p>Nachricht von Unity: {test}</p>
                     </div>}
 
 
                 {active && <div>
 
-                    {props.values.gameMode === 1 && <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}/>}
+                    {props.values.gameMode === 1 && taskHeader}
 
                     <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                         <div dangerouslySetInnerHTML={{ __html: task.description }} />
