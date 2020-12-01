@@ -28,6 +28,7 @@ function App() {
     const [ignoreOptional, setIgnoreOptional] = useState(false);
     const [categories, setCategories] = useState([]);
     const [diary, setDiary] = useState([]);
+    const [progress, setProgress] = useState({});
 
     const fetchAll = () => {
         fetch('http://localhost:8000/robob/actual-progress', {
@@ -48,6 +49,7 @@ function App() {
                             setDiary(json.diary);
                             setSumStars(json.sum_stars);
                             setEmployeeRank(json.employee_rank);
+                            setProgress(json);
                         })
                 }
             })
@@ -164,6 +166,7 @@ function App() {
         employeeRank: employeeRank,
         categories: categories,
         diary: diary,
+        progress: progress,
         nextTaskWithOptional: nextTaskWithOptional,
         nextTaskWithoutOptional: nextTaskWithoutOptional,
         ignoreOptional: ignoreOptional,

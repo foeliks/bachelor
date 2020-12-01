@@ -54,6 +54,7 @@ function Task(props) {
             setTaskId(id);
             setActive(true)
         })
+        unityContent.on("loaded", () => unityContent.send("EventSystem", "setProgress", JSON.stringify(props.values.progress)))
     }, [])
 
     useEffect(() => {
