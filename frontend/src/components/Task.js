@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Prompt } from 'react-router-dom';
 import {
     PageHeader,
     Card,
@@ -43,6 +43,9 @@ function Task(props) {
     const [selection, setSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
+
+
+    const [progress, setProgress] = useState(props.values.progress);
 
     // States für Unity Interaction
     const [test, setTest] = useState("");
@@ -119,6 +122,24 @@ function Task(props) {
                             setNextTaskWithOptional(json.task_with_optional);
                             setNextTaskWithoutOptional(json.task_without_optional);
                         })
+                        fetch('http://localhost:8000/robob/actual-progress', {
+                            headers: {
+                                Authorization: `JWT ${localStorage.getItem('token')}`
+                            }
+                        })
+                            .then(res => {
+                                if (res.status !== 200) {
+                                    props.functions.logOut();
+                                }
+                                else {
+                                    res.json()
+                                        .then(json => {
+                                            setProgress(json);
+                                            unityContent.send("EventSystem", "setInputJson", JSON.stringify(json))
+                                        })
+                                }
+                            })
+                            .catch(error => console.error(error))
                     }
                     else if (res.status === 200) {
                         setWrongAnswer(true);
@@ -207,6 +228,8 @@ function Task(props) {
         (task.required_stars && props.values.sumStars < task.required_stars))) {
         return (
             <div>
+                <Prompt when={props.values.progress !== progress} message="Dein Fortschritt wurde noch nicht gespeichert!" />
+
                 {props.values.gameMode === 1 ?
                     <PageHeader
                         title={"Robob"} onBack={() => history.push('/overview')} />
