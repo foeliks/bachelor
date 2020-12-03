@@ -52,7 +52,10 @@ function Task(props) {
         unityContent.on("test", message => setTest(message))
         unityContent.on("activateTask", (id) => {
             setTaskId(id);
-            setActive(true)
+            setActive(true);
+        })
+        unityContent.on("deactivateTask", () => {
+            setActive(false);
         })
         unityContent.on("loaded", () => unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress)))
     }, [])
