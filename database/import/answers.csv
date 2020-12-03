@@ -1,2 +1,5 @@
 user_id,task_id,solved,num_tries,user_solution
 8,1,t,1,"{""0"":true}"
+9,1,f,1,"{""0"":false}"
+9,1,f,2,"{""0"":false}"
+9,1,t,3,"{""0"":true}"
