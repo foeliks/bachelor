@@ -38,7 +38,7 @@ function Task(props) {
     const [codeFailed, setCodeFailed] = useState(false);
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [success, setSuccess] = useState([]);
     const [wrongAnswer, setWrongAnswer] = useState(false);
     const [selection, setSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
@@ -114,7 +114,7 @@ function Task(props) {
             })
                 .then(res => {
                     if (res.status === 202) {
-                        setSuccess(true);
+                        setSuccess((oldSucess) => [...oldSucess, taskId]);
                         setWrongAnswer(false);
                         setSubmitted(false);
                         res.json().then(json => {
@@ -154,7 +154,7 @@ function Task(props) {
                 })
                 .catch(error => console.error(error))
         }
-        if (success && ref.current) {
+        if (success.some((id) => id === taskId) && ref.current) {
             ref.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
@@ -198,7 +198,7 @@ function Task(props) {
             border: '2px solid',
             borderColor: 'red'
         }
-            : success && {
+            : success.some((id) => id === taskId) && {
                 border: '2px solid',
                 borderColor: props.values.robobGreen
             }
@@ -207,21 +207,6 @@ function Task(props) {
         border: '2px solid',
         borderColor: 'red'
     }
-
-    const taskHeader = (
-        <Row justify="space-between" align="middle">
-            {props.values.gameMode === 1 ? 
-                <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
-                : <PageHeader 
-                    title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
-                    onBack={() => history.push('/overview')} />}
-            Fehlversuche: {task.tries ? task.tries : 0}
-            {task.stars > 0 ? <div>
-                {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
-                {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
-                <StarFilled />
-            </div> : <div />}
-        </Row>)
 
     if (!((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
         (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
@@ -233,7 +218,19 @@ function Task(props) {
                 {props.values.gameMode === 1 ?
                     <PageHeader
                         title={"Robob"} onBack={() => history.push('/overview')} />
-                    : taskHeader}
+                    : <Row justify="space-between" align="middle">
+                        {props.values.gameMode === 1 ?
+                            <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
+                            : <PageHeader
+                                title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
+                                onBack={() => history.push('/overview')} />}
+                        Fehlversuche: {task.tries ? task.tries : 0}
+                        {task.stars > 0 ? <div>
+                            {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
+                            {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
+                            <StarFilled />
+                        </div> : <div />}
+                    </Row>}
 
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
@@ -245,7 +242,20 @@ function Task(props) {
 
                 {active && <div>
 
-                    {props.values.gameMode === 1 && taskHeader}
+                    {props.values.gameMode === 1 &&
+                        <Row justify="space-between" align="middle">
+                            {props.values.gameMode === 1 ?
+                                <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
+                                : <PageHeader
+                                    title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
+                                    onBack={() => history.push('/overview')} />}
+                            Fehlversuche: {task.tries ? task.tries : 0}
+                            {task.stars > 0 ? <div>
+                                {task.stars === 3 ? <StarFilled /> : <StarOutlined />}
+                                {task.stars >= 2 ? <StarFilled /> : <StarOutlined />}
+                                <StarFilled />
+                            </div> : <div />}
+                        </Row>}
 
                     <Card title="Aufgabenstellung" style={{ marginBottom: "10px" }}>
                         <div dangerouslySetInnerHTML={{ __html: task.description }} />
@@ -268,7 +278,7 @@ function Task(props) {
                                     return (
                                         <Input
                                             addonBefore={input.label}
-                                            disabled={success}
+                                            disabled={success.some((id) => id === taskId)}
                                             autoFocus
                                             spellCheck={false}
                                             placeholder={input.placeholder}
@@ -283,7 +293,7 @@ function Task(props) {
                                         return (
                                             <div>
                                                 <label>{select.label} </label>
-                                                <Select key={select.id} disabled={success} defaultValue="Auswählen" onSelect={value => setSelection({ ...selection, [select.id]: value })}>
+                                                <Select key={select.id} disabled={success.some((id) => id === taskId)} defaultValue="Auswählen" onSelect={value => setSelection({ ...selection, [select.id]: value })}>
                                                     {select.options.map(option => {
                                                         return (
                                                             <Select.Option value={option}>{option}</Select.Option>
@@ -296,7 +306,7 @@ function Task(props) {
                                 : task.specify.type === "multiple_choice" ?
                                     <Card style={{ ...answerStyle() }}>
                                         {task.specify.options.map(option => {
-                                            return (<Checkbox disabled={success} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
+                                            return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
                                                 {option.text}
                                             </Checkbox>)
                                         })}
@@ -308,7 +318,7 @@ function Task(props) {
                                         <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
                                             <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
                                             <Input.TextArea
-                                                disabled={success}
+                                                disabled={success.some((id) => id === taskId)}
                                                 style={{ fontFamily: 'Hack', ...hackerStyle() }}
                                                 onKeyDown={(event) => {
                                                     if (event.keyCode === 9) {
@@ -338,7 +348,7 @@ function Task(props) {
                     <Row style={{ marginTop: "10px" }} justify="space-between">
                         <Col>
                             <Button
-                                disabled={success}
+                                disabled={success.some((id) => id === taskId)}
                                 type="primary"
                                 onClick={() => {
                                     setSubmitted(true);
@@ -354,7 +364,8 @@ function Task(props) {
                         </Col>}
                     </Row>
 
-                    {success ?
+
+                    {success.some((id) => id === taskId) ?
                         <Card style={{ backgroundColor: props.values.robobGreen, marginTop: "10px" }}>
                             <h1 style={{ color: "white" }}>Geschafft!</h1>
                             {task.solved_stars > 0 ? <div>
