@@ -60,5 +60,18 @@
 
 
 
+		<h1>Funktionen</h1>
+
+		<p>JavaScript unterst&uuml;tzt Funktionen, diese&nbsp;<strong>m&uuml;ssen&nbsp;</strong>einen Wert &uuml;ber&nbsp;<em>return&nbsp;</em>zu&uuml;ckgeben</p><p style="padding-left: 30px;">function myFunction() {</p><p style="padding-left: 60px;">return 1;</p><p style="padding-left: 30px;">}</p>
+
+		<p>Funktionen k&ouml;nnen&nbsp;Variablen zugewiesen werden</p><p style="padding-left: 30px;">function myFunction() {</p><p style="padding-left: 60px;">return 1;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">let z = myFunction();</p>
+
+		<p>Funktionen&nbsp;k&ouml;nnen<em>&nbsp;Parameter</em> &uuml;bergeben bekommen</p><ul><li>Parameter werden &uuml;ber innerhalb der "(...)" definiert</li></ul><p style="padding-left: 30px;">funciton myFunction2(parameter) {</p><p style="padding-left: 60px;">return parameter;</p><p style="padding-left: 30px;">}</p>
+
+		<p>Funktionen&nbsp;k&ouml;nnen&nbsp;Standardwerte&nbsp;f&uuml;r Parameter festlegen</p><ul><li>diese werden &uuml;ber den "=" Operator definiert</li></ul><p style="padding-left: 30px;">function myFunction(parameter = 3) {</p><p style="padding-left: 60px;">return parameter;</p><p style="padding-left: 30px;">}</p>
+
+		<p>Funktionen&nbsp;k&ouml;nnen&nbsp;Funktionen als Parameter verwenden&nbsp;</p><ul><li>die "Parameter Funkion" kann dann innerhalb der Funktion verwendet werden</li></ul><p style="padding-left: 30px;">function myFunction(fn, x, y) {</p><p style="padding-left: 60px;">return fn(x, y);</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">let z = myFunction(</p><p style="padding-left: 60px;">function(a, b) {</p><p style="padding-left: 90px;">return a + b;</p><p style="padding-left: 60px;">},&nbsp;</p><p style="padding-left: 60px;">4, 5);</p><p style="padding-left: 30px;">// z = 9</p>
+
+
 	</body>
 </html>
