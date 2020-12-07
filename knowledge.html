@@ -25,6 +25,22 @@
 		<p><strong>Kombination von Zahlen und</strong>&nbsp;<strong>Zeichenketten</strong></p><p>Wird eine Zahl zu einem String (oder ein String zu einer Zahl) addiert, so wird die Zahl zu einemString umgewandelt</p><ul><li>+ (Plus) ist auch das Zeichen f&uuml;r Konkatenation in JavaScript</li><li>Die Ausf&uuml;hrung geschieht von links nach rechts</li><li>Sobald ein String beteiligt ist, erfolgt eine Konkatenation</li></ul><p>(Konkatenation bedeutet, dass zwei Listen bzw. Strings aneinander geh&auml;ngt werden)</p>
 		
 
+
+		<h1>Variablen</h1>
+
+		<p>Es gibt drei Wege im "Strict Mode" Variablen zu deklarieren:</p><ol><li>let<br />Deklariert eine Variable im aktuellen Block (scope)</li><li>const<br />Deklariert eine konstante im aktuellen Block</li><li>var<br />Deklariert eine Variable im globalen Bereich</li></ol><p>Ohne "Strict Mode" k&ouml;nnen Variablen beliebig deklariert und verwendet werden. Diese sind dann automatisch global.</p><p>Grunds&auml;tzlich: Variablen so lokal wie m&ouml;glich halten</p>
+
+		<p>Variablennamen k&ouml;nnen...</p><ul><li>a..z und A..Z (Buchstaben)</li><li>0..9 (Zahlen)</li><li>_ (Unterstrich)</li><li>$ (Dollar-Zeichen)</li></ul><p>enthalten, aber d&uuml;rfen in ES6 nicht mehr mit einer Zahl beginnen</p><p>Namen sind case-sensitive (Gro&szlig;- und Kleinschreibung beachten)</p><p>Reservierte Schl&uuml;sselworte k&ouml;nnen nicht als Namen verwendet werden (Wie z.B. if, for, ...)</p>
+
+		<p>Variablen ohne einen expliziten Wert, besitzen den Wert&nbsp;<strong>undefined</strong></p><p>Die &Uuml;berpr&uuml;fung, ob eine Variable&nbsp;undefined ist, geschieht &uuml;ber den Operator <strong>typeof</strong></p><p style="padding-left: 30px;">if (typeof name === 'undefined') {</p><p style="padding-left: 60px;">// Anweisung</p><p style="padding-left: 30px;">}</p><p>Hinweis: Das hier verwendete If Konstrukt wird im Kapitel "Kontrollstrukturen" n&auml;her erkl&auml;rt.</p>
+
+		<p>Eine Neu-Deklaration einer Variable &uuml;berschreibt den alten Wert</p><p style="padding-left: 30px;">let name = 1;</p><p style="padding-left: 30px;">let name;</p><p style="padding-left: 30px;">// name ist&nbsp;undefined</p>
+
+		<p>In JavaScript k&ouml;nnen Variablen&nbsp;<strong>nach</strong> ihrer Verwendung deklariert werden (<strong>Hoisting</strong> genannt):</p><p style="padding-left: 30px;">x = 42;<br />console.log(x);<br />var x;</p><p>Hintergrund: JavaScript sortiert den Block vor der Ausf&uuml;hrung so um, dass Deklarationen am Anfang stehen.</p><p>JavaScript sortiert nur die Deklaration (var x), nicht die Inititalisierung (= 42).</p>
+
+
+
+
 		<h1>Kontrollstrukturen</h1>
 
 		<p>JavaScript bietet die folgenden Kontrollstrukturen an:</p><ul><li>If-Else (bedingte Ausf&uuml;hrung)</li><li>Switch-Case</li><li>While (Schleife)</li><li>For (Schleife)</li><li>Do ... While (Schleife)</li></ul>
@@ -40,6 +56,9 @@
 		<p><strong>Do ... While</strong> (Schleife) wird wie folgt definiert:</p><p style="padding-left: 30px;">do {</p><p style="padding-left: 60px;">// Anweisung</p><p style="padding-left: 30px;">} while (/* Bedingung */);</p>
 
 		<p>In JavaScript ist es m&ouml;glich, mit&nbsp;<strong>break</strong> die Schleifendurchf&uuml;hrung zu unterbrechen oder mit&nbsp<strong>continue</strong> wieder an den Schleifenanfang zu springen (bzw. den aktuellen Durchlauf zu &uuml;berspringen).</p><p>Beispiel:</p><p style="padding-left: 30px;">let i = 10;</p><p style="padding-left: 30px;">while (i &gt; 0) {</p><p style="padding-left: 60px;">if (i == 3) {</p><p style="padding-left: 90px;">break;</p><p style="padding-left: 60px;">}</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">alert(i); // Ergibt 3</p>
+
+
+
 
 	</body>
 </html>
