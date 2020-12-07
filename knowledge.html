@@ -62,7 +62,7 @@
 
 		<h1>Funktionen</h1>
 
-		<p>JavaScript unterst&uuml;tzt Funktionen, diese&nbsp;<strong>m&uuml;ssen&nbsp;</strong>einen Wert &uuml;ber&nbsp;<em>return&nbsp;</em>zu&uuml;ckgeben</p><p style="padding-left: 30px;">function myFunction() {</p><p style="padding-left: 60px;">return 1;</p><p style="padding-left: 30px;">}</p>
+		<p>JavaScript unterst&uuml;tzt <strong>Funktionen</strong>, diese&nbsp;<strong>m&uuml;ssen&nbsp;</strong>einen Wert &uuml;ber&nbsp;<em>return&nbsp;</em>zu&uuml;ckgeben</p><p style="padding-left: 30px;">function myFunction() {</p><p style="padding-left: 60px;">return 1;</p><p style="padding-left: 30px;">}</p>
 
 		<p>Funktionen k&ouml;nnen&nbsp;Variablen zugewiesen werden</p><p style="padding-left: 30px;">function myFunction() {</p><p style="padding-left: 60px;">return 1;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">let z = myFunction();</p>
 
@@ -72,6 +72,16 @@
 
 		<p>Funktionen&nbsp;k&ouml;nnen&nbsp;Funktionen als Parameter verwenden&nbsp;</p><ul><li>die "Parameter Funkion" kann dann innerhalb der Funktion verwendet werden</li></ul><p style="padding-left: 30px;">function myFunction(fn, x, y) {</p><p style="padding-left: 60px;">return fn(x, y);</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">let z = myFunction(</p><p style="padding-left: 60px;">function(a, b) {</p><p style="padding-left: 90px;">return a + b;</p><p style="padding-left: 60px;">},&nbsp;</p><p style="padding-left: 60px;">4, 5);</p><p style="padding-left: 30px;">// z = 9</p>
 
+
+
+
+		<h1>Arrays</h1>
+
+		<p>Ein&nbsp;<strong>Array</strong>&nbsp;kann man sich wie eine Variable als Schachtel vorstellen. Allerdings hat diese Schachtel - im Gegensatz zu der einer einfachen Variablen - durchnummerierte Unterteilungen, in denen die Werte der einzelnen Elemente gespeichert werden.</p><p>Beispiel:</p><p style="padding-left: 30px;">var arr = ['value1', 2, 3.5]; // alternativ: new Array(...)</p><p>Bei Arrays kann man ...</p><ul><li>auf Elemente mittels Index (beginnend bei 0) zugreifen</li></ul><p style="padding-left: 60px;">var arr[1]; // Ergibt 2</p><ul><li>Elemente&nbsp;hinten anf&uuml;gen</li></ul><p style="padding-left: 60px;">arr.push(4); // Der Wert 4 wird hinten angef&uuml;gt</p><ul><li>Elemente von hinten entfernen und zur&uuml;ckgeben</li></ul><p style="padding-left: 60px;">var b = arr.pop(); // b = 4</p>
+
+		<p>&Uuml;ber ein Array kann mittels...</p><ul><li>for-Schleife</li></ul><p style="padding-left: 60px;">for(let i = 0; i &lt; arr.length; i++) {&nbsp;</p><p style="padding-left: 90px;">console.log(arr[i]);</p><p style="padding-left: 60px;">}</p><ul><li>forEach-Schleife</li></ul><p style="padding-left: 60px;">a.forEach(function(value, index) {</p><p style="padding-left: 90px;">console.log(value); // alternativ console.log(arr[index]);</p><p style="padding-left: 60px;">}</p><ul><li>for...of</li></ul><p style="padding-left: 60px;">for(const element of arr) {</p><p style="padding-left: 90px;">console.log(element);&nbsp;</p><p style="padding-left: 60px;">}</p><p><strong>iteriert</strong> werden.</p><p>Hinweis: Alle Beispiele haben die gleiche Ausgabe in der Console</p>
+
+		<p><strong>Array Funktionen&nbsp;</strong>(nicht alle)</p><table style="width: 497px;"><tbody><tr style="height: 13px;"><td style="width: 142px; height: 13px;">Methode</td><td style="width: 184px; height: 13px;"><p>Beschreibung</p></td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">length</td><td style="width: 184px; height: 13px;">Attribut. Gibt die Anzahl der Elemente zur&uuml;ck</td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">sort(compareFunction)</td><td style="width: 184px; height: 13px;">Sortiert die Elemente nach einer Vergleichsfunktion im Array</td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">find(searchFunction)</td><td style="width: 184px; height: 13px;">Gibt das erste Element zur&uuml;ck, f&uuml;r das die Suchfunktion true zur&uuml;ck gibt</td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">filter(filterFunction)</td><td style="width: 184px; height: 13px;">Erzeugt ein neues Array, dass alle Elemente enth&auml;lt, f&uuml;r die die filterFunction true ergibt</td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">map(mapFunction)</td><td style="width: 184px; height: 13px;">Erzeugt ein neues Array, wobei auf jedes Element die mapFunction aufgerufen wird</td></tr><tr style="height: 13px;"><td style="width: 142px; height: 13px;">slice(start, length)</td><td style="width: 184px; height: 13px;">Erzeugt ein neues Array beginnend ab <em>start&nbsp;</em>mit der L&auml;nge <em>length</em></td></tr></tbody></table>
 
 	</body>
 </html>
