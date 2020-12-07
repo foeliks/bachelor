@@ -11,7 +11,7 @@
 		<p>Eine Ausgabe von Inhalten kann auf zwei Weisen erfolgen:</p><ol><li>alert: Gibt eine PopUp-Meldung in Form eines Dialogfensters im Webbrowser aus</li><li>console: Gibt Nachrichten in der Entwicklerkonsole des Webbrowsers aus<ul><li>.log() </br>Nachricht wird ohne weiteres Highlighting ausgegeben</li><li>.warn() </br>Nachricht wird als Warnung (häufig gelb) ausgegeben</li><li>.error() </br>Nachricht wird als Fehler (häufig rot) ausgegeben</li></ul></li></ol>
 		<p>Es gibt einen "Strict Mode", der ...</p><ul><li>Fehler meldet, sobald z.B. auf nicht deklarierte Variablen zugegriffen wird</li><li>Dich vor Fehlern bewahrt, die schwer zu finden sein können</li><li>Über "use strict;" in der ersten Zeile des Codes aktiviert wird<br/>(Du musst diesen nicht selbst aktivieren, das hat der nette Entwickler dieser Lernumgebung schon für dich gemacht)</li></ul>
 
-
+		<h1>Datentypen</h1>
 		<p>JavaScript kennt die folgenden&nbsp;<strong>primitiven Darentypen</strong>:</p><ul><li><strong>string&nbsp;</strong>(Zeichenketten)</li><li><strong>number&nbsp;</strong>(Zahlenwerte)</li><li><strong>boolean</strong> (wahr | falsch)</li></ul><p>Spezielle Werte:</p><ul><li><strong>null</strong> (Kein Wert)</li><li><strong>undefined</strong> (Nicht definierter Wert)</li></ul>
 
 		<p><strong>Operatoren</strong></p><table><tbody><tr><td>Operator</td><td>Beschreibung</td><td>Operator und Zuweisung</td></tr><tr><td>+</td><td>Addition</td><td>x += y</td></tr><tr><td>-</td><td>Subtraktion</td><td>x -= y</td></tr><tr><td>*</td><td>Multiplikation</td><td><p>x *= y</p></td></tr><tr><td>&nbsp;/</td><td>Division</td><td><p>x /= y</p></td></tr><tr><td>%</td><td>Modulo</td><td>x %= y</td></tr><tr><td>++</td><td>Inkrement</td><td>&nbsp;</td></tr><tr><td>--</td><td>Dekrement</td><td>&nbsp;</td></tr></tbody></table>
@@ -24,5 +24,22 @@
 
 		<p><strong>Kombination von Zahlen und</strong>&nbsp;<strong>Zeichenketten</strong></p><p>Wird eine Zahl zu einem String (oder ein String zu einer Zahl) addiert, so wird die Zahl zu einemString umgewandelt</p><ul><li>+ (Plus) ist auch das Zeichen f&uuml;r Konkatenation in JavaScript</li><li>Die Ausf&uuml;hrung geschieht von links nach rechts</li><li>Sobald ein String beteiligt ist, erfolgt eine Konkatenation</li></ul><p>(Konkatenation bedeutet, dass zwei Listen bzw. Strings aneinander geh&auml;ngt werden)</p>
 		
+
+		<h1>Kontrollstrukturen</h1>
+
+		<p>JavaScript bietet die folgenden Kontrollstrukturen an:</p><ul><li>If-Else (bedingte Ausf&uuml;hrung)</li><li>Switch-Case</li><li>While (Schleife)</li><li>For (Schleife)</li><li>Do ... While (Schleife)</li></ul>
+
+		<p><strong>If-Else</strong>&nbsp;wird wie folgt definiert:</p><p style="padding-left: 30px;">if (/* Bedingung */) {</p><p style="padding-left: 60px;">// Anweisung 1</p><p style="padding-left: 30px;">} else if (/* Bedingung */) {</p><p style="padding-left: 60px;">// Anweisung 2</p><p style="padding-left: 30px;">} else {</p><p style="padding-left: 60px;">// Anweisung 3</p><p style="padding-left: 30px;">}</p>
+
+		<p><strong>Switch-Case</strong> wird wie folgt definiert:</p><p style="padding-left: 30px;">switch (/* Variable */) {</p><p style="padding-left: 60px;">case /* Wert 1 */:</p><p style="padding-left: 90px;">// Anweisung 1<br />break;</p><p style="padding-left: 60px;">default:</p><p style="padding-left: 90px;">// Anweisung<br />break;</p><p style="padding-left: 30px;">}</p>
+
+		<p><strong>While (Schleife)&nbsp;</strong>wird wie folgt definiert:</p><p style="padding-left: 30px;">while (/* Bedingung */) {</p><p style="padding-left: 60px;">// Anweisung</p><p style="padding-left: 30px;">}</p>
+
+		<p><strong>For (Schleife)</strong> wird wie folgt definiert:</p><p style="padding-left: 30px;">for (/* Initialisierung; Bedingung; Wert&auml;nderung */) {</p><p style="padding-left: 60px;">// Anweisung</p><p style="padding-left: 30px;">}</p>
+
+		<p><strong>Do ... While</strong> (Schleife) wird wie folgt definiert:</p><p style="padding-left: 30px;">do {</p><p style="padding-left: 60px;">// Anweisung</p><p style="padding-left: 30px;">} while (/* Bedingung */);</p>
+
+		<p>In JavaScript ist es m&ouml;glich, mit&nbsp;<strong>break</strong> die Schleifendurchf&uuml;hrung zu unterbrechen oder mit&nbsp<strong>continue</strong> wieder an den Schleifenanfang zu springen (bzw. den aktuellen Durchlauf zu &uuml;berspringen).</p><p>Beispiel:</p><p style="padding-left: 30px;">let i = 10;</p><p style="padding-left: 30px;">while (i &gt; 0) {</p><p style="padding-left: 60px;">if (i == 3) {</p><p style="padding-left: 90px;">break;</p><p style="padding-left: 60px;">}</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">alert(i); // Ergibt 3</p>
+
 	</body>
 </html>
