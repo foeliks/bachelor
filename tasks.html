@@ -58,5 +58,19 @@
 
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let v = 4;</p><p style="padding-left: 30px;">let y = 0;</p><p style="padding-left: 30px;">while (v % 2 != 1) {</p><p style="padding-left: 60px;">v /= 2;</p><p style="padding-left: 60px;">let z = 2;</p><p style="padding-left: 60px;">for(let i = 0; i &lt;= 5; i+= 2) {</p><p style="padding-left: 90px;">if(y &lt; 5) {</p><p style="padding-left: 120px;">switch (i) {</p><p style="padding-left: 150px;">case 2:</p><p style="padding-left: 180px;">y += 1;</p><p style="padding-left: 150px;">default:</p><p style="padding-left: 180px;">y += 2;</p><p style="padding-left: 120px;">}</p><p style="padding-left: 90px;">}</p><p style="padding-left: 90px;">else {</p><p style="padding-left: 120px;">break;</p><p style="padding-left: 90px;">}</p><p style="padding-left: 60px;">}</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">do {</p><p style="padding-left: 60px;">v += y;</p><p style="padding-left: 60px;">y -= 3;</p><p style="padding-left: 30px;">} while (y &gt; 5);</p><p style="padding-left: 30px;">return v;</p>
 
+
+        <h1>Funktionen</h1>
+
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction() + 2;</p><p style="padding-left: 30px;">&nbsp;</p>
+
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let z = myFunction();</p><p style="padding-left: 30px;">return z + 1;</p>
+
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(9) - 5;</p>
+
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(5) - myFunction;</p>
+
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function minus(a, b) {</p><p style="padding-left: 60px;">return a - b;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function weirdFunction(fn, x, y) {</p><p style="padding-left: 60px;">return fn(fn(x, y), y);</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return weirdFunction(minus, 5, 2);</p>
+
+
     </body>
 </html>
