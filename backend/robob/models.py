@@ -89,12 +89,20 @@ class Progress(models.Model):
         unique_together = (('user', 'task', 'num_tries'),)
 
 
+class TaskTypes(models.Model):
+    description = models.TextField()
+
+    class Meta: 
+        managed = False
+        db_table = 'task_types'
+
 class Tasks(models.Model):
     category = models.ForeignKey(Categories, models.DO_NOTHING, blank=True, null=True)
     knowledge = models.ForeignKey(Knowledge, models.DO_NOTHING, blank=True, null=True)
     description = models.TextField()
     optional = models.BooleanField(blank=True, null=True)
     solution = models.TextField(blank=True, null=True)
+    task_type = models.ForeignKey(TaskTypes, models.DO_NOTHING, blank=True, null=True)
     specify = models.TextField(blank=True, null=True)
     required_stars = models.IntegerField(blank=True, null=True)
     required_employee_rank = models.ForeignKey(EmployeeRanks, models.DO_NOTHING, blank=True, null=True, related_name="required_employee_rank")

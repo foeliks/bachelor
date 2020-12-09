@@ -120,6 +120,7 @@ class TaskView(APIView):
                 "category_id": task.category.id,
                 "description": task.description,
                 "optional": task.optional,
+                "type": task.task_type.description,
                 "specify": task.specify,
                 "required_stars": task.required_stars,
                 "required_employee_rank": required_employee_rank,

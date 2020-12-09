@@ -32,6 +32,12 @@ class Migration(migrations.Migration):
             	primary key (id)
             );
 
+			create table if not exists task_types ( 
+				id serial,
+				description text not null,
+				primary key (id)
+			);
+
             create table if not exists tasks (
             	id serial,
             	category_id integer references categories (id),
@@ -39,6 +45,7 @@ class Migration(migrations.Migration):
             	description text not null,
             	optional bool default false,
             	solution text,
+				task_type_id integer references task_types (id),
 				specify json,
 				required_stars integer,
 				required_employee_rank_id integer references employee_ranks (id),
@@ -140,6 +147,21 @@ class Migration(migrations.Migration):
 	        $$
 	        language plpgsql;
 
+			do
+	        $$
+	        begin
+	        	copy task_types
+	        	from '/tmp/task_types.csv'
+	        	delimiter ','
+	        	csv header;
+
+	        	exception
+	        		when undefined_file then
+	        			raise notice '/tmp/task_types.csv was not found.';
+	        end;
+	        $$
+	        language plpgsql;
+
 	        do
 	        $$
 	        begin
@@ -205,6 +227,7 @@ class Migration(migrations.Migration):
 	        select setval('auth_user_id_seq', max(id)) from auth_user;
 	        select setval('categories_id_seq', max(id)) from categories;
 	        select setval('knowledge_id_seq', max(id)) from knowledge;
+	        select setval('task_types_id_seq', max(id)) from task_types;
 	        select setval('tasks_id_seq', max(id)) from tasks;
 			select setval('employee_ranks_id_seq', max(id)) from employee_ranks;
 
@@ -214,6 +237,7 @@ class Migration(migrations.Migration):
 	        drop trigger if exists auth_user_trigger on auth_user;
 	        drop trigger if exists categories_trigger on categories;
 	        drop trigger if exists knowledge_trigger on knowledge;
+	        drop trigger if exists task_types_trigger on task_types;
 	        drop trigger if exists tasks_trigger on tasks;
 	        drop trigger if exists progress_trigger on progress; 
 	        drop trigger if exists answers_trigger on answers; 
@@ -279,6 +303,26 @@ class Migration(migrations.Migration):
 	        on knowledge
 	        for each statement 
 	        execute procedure knowledge_export();
+
+			create or replace function task_types_export()
+	        	returns trigger 
+	        	language plpgsql
+	        	as 
+	        $$
+	        begin
+	        	copy task_types
+	        	to '/tmp/task_types.csv'
+	        	delimiter ','
+	        	csv header;
+	        	return null;
+	        end;
+	        $$;
+
+	        create trigger task_types_trigger
+	        after insert or delete or update
+	        on task_types
+	        for each statement 
+	        execute procedure task_types_export();
 
 	        create or replace function tasks_export()
 	        	returns trigger 

@@ -14,71 +14,47 @@
 
 
         <h1>Variablen</h1>
-    
         <p>Deklariere die Variable v so, dass der Code ohne Fehler ausgef&uuml;hrt wird.</p>
-
-        <p>Welche Variablen haben den Wert&nbsp;<strong>undefined</strong>?</p>
-
+        <p>Welche Variablennamen sind erlaubt? (Ab ES6)</p>
         <p>Welche Variablen haben den Wert&nbsp;<strong>undefined</strong>?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let a;</p><p style="padding-left: 30px;">let b = a;</p><p style="padding-left: 30px;">a = 5;</p><p style="padding-left: 30px;">let c = a;</p><p style="padding-left: 30px;">a = b;</p>
-
         <p>Welcher Text wird auf der Console ausgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">x = 42;</p><p style="padding-left: 30px;">console.log(x + " " + y);</p><p style="padding-left: 30px;">var x;</p><p style="padding-left: 30px;">var y = 9;</p>
 
 
 
 
         <h1>Datentypen</h1>
-
         <p>Ordne den Variablen die richtigen Datentypen zu.</p>
-        
         <div><div>Welche Werte haben die Variablen nachdem folgender Code ausgef&uuml;hrt wurde?</div><div>&nbsp;</div><div style="padding-left: 30px;">let&nbsp;a = 0, b = 4, c = 0;</div><div style="padding-left: 30px;">c = a + b;</div><div style="padding-left: 30px;">b++;</div><div style="padding-left: 30px;">c = b % 2;</div></div>
-
         <p>Welche Vergleiche geben den Wert "true" zurück?</p>
-        
-        <p>Gebe folgenden String zurück (Mit Anführungszeichen):<br/>'JS is "toll"!' ist/wirkt sarkastischer als "JS ist 'toll'!"</p>
-
-        <p>Was ist das Ergebnis der folgenden Stringoperationen?</p>
-        
+        <p>Gebe folgenden String zurück (Mit Anführungszeichen):<br/>'JS is "toll"!' wirkt sarkastischer als "JS ist 'toll'!"</p>
+        <p>Was ist das Ergebnis der folgenden Stringoperationen?</p><p style="padding-left: 30px;">var str = 'This is a message';</p><p style="padding-left: 30px;">str.substring(0,4);</p><p style="padding-left: 30px;">str.substring(5,2);</p><p style="padding-left: 30px;">str.replace("is a", "is one");</p><p style="padding-left: 30px;">str.concat("!");</p><p style="padding-left: 30px;">str.lastIndexOf("i");</p>
         <p>Verwende Operationen auf die Variablen, sodass folgender String zurückgegeben wird:<br /> JavaScript 4 Ever &lt;3</p>
     
-    
+        
 
         <h1>Kontrollstrukturen</h1>
-
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 2;</p><p style="padding-left: 30px;">if (input &lt; 2) {</p><p style="padding-left: 60px;">return "a";</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">else if (input &gt;= 3) {</p><p style="padding-left: 60px;">return "b";</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">else {</p><p style="padding-left: 60px;">return "c";</p><p style="padding-left: 30px;">}</p>
-
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 2;</p><p style="padding-left: 30px;">let z = v + 7;</p><p style="padding-left: 30px;">switch (z) {</p><p style="padding-left: 60px;">case 2:</p><p style="padding-left: 90px;">return "a";</p><p style="padding-left: 60px;">case 9:</p><p style="padding-left: 90px;">return "b";</p><p style="padding-left: 60px;">default:</p><p style="padding-left: 90px;">return "c";</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">&nbsp;</p>
-
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 2;</p><p style="padding-left: 30px;">let i = 0;</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">while ( i &lt; 10 ) {</p><p style="padding-left: 60px;">v += 2;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return v;</p>
-
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 2;</p><p style="padding-left: 30px;">let i = 0;</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">while ( i &lt; 10 ) {</p><p style="padding-left: 60px;">v += 2;</p><p style="padding-left: 60px;">i += 3;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return v;</p>
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 3;</p><p style="padding-left: 30px;">for (let i = 0; i &lt; v; i += 2) {</p><p style="padding-left: 60px;">v += 1;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return v;</p><p style="padding-left: 30px;">&nbsp;</p>
-
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 3;</p><p style="padding-left: 30px;">do {</p><p style="padding-left: 60px;">v += 1;</p><p style="padding-left: 30px;">} while (v &lt; 2);</p><p style="padding-left: 30px;">return v;</p><p style="padding-left: 30px;">&nbsp;</p>
-
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p>&nbsp;</p><p style="padding-left: 30px;">let v = 4;</p><p style="padding-left: 30px;">while (v &gt; 0) {</p><p style="padding-left: 60px;">if (v == 3) {</p><p style="padding-left: 90px;">break;</p><p style="padding-left: 60px;">}</p><p style="padding-left: 60px;">v--;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return v;</p>
-
         <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let v = 4;</p><p style="padding-left: 30px;">let y = 0;</p><p style="padding-left: 30px;">while (v % 2 != 1) {</p><p style="padding-left: 60px;">v /= 2;</p><p style="padding-left: 60px;">let z = 2;</p><p style="padding-left: 60px;">for(let i = 0; i &lt;= 5; i+= 2) {</p><p style="padding-left: 90px;">if(y &lt; 5) {</p><p style="padding-left: 120px;">switch (i) {</p><p style="padding-left: 150px;">case 2:</p><p style="padding-left: 180px;">y += 1;</p><p style="padding-left: 150px;">default:</p><p style="padding-left: 180px;">y += 2;</p><p style="padding-left: 120px;">}</p><p style="padding-left: 90px;">}</p><p style="padding-left: 90px;">else {</p><p style="padding-left: 120px;">break;</p><p style="padding-left: 90px;">}</p><p style="padding-left: 60px;">}</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">do {</p><p style="padding-left: 60px;">v += y;</p><p style="padding-left: 60px;">y -= 3;</p><p style="padding-left: 30px;">} while (y &gt; 5);</p><p style="padding-left: 30px;">return v;</p>
 
 
         <h1>Funktionen</h1>
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction() + 2;</p><p style="padding-left: 30px;">&nbsp;</p><p>Hinweis: Die Funktionsdefinition von myFunction findest du in der Info.</p>
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let z = myFunction();</p><p style="padding-left: 30px;">return z + 1;</p><p style="padding-left: 30px;">&nbsp;</p><p>Hinweis: Die Funktionsdefinition von myFunction findest du in der Info.</p>
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(9) - 5;</p><p style="padding-left: 30px;">&nbsp;</p><p>Hinweis: Die Funktionsdefinition von myFunction findest du in der Info.</p>
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(5) - myFunction();</p><p style="padding-left: 30px;">&nbsp;</p><p>Hinweis: Die Funktionsdefinition von myFunction findest du in der Info.</p>
+        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function minus(a, b) {</p><p style="padding-left: 60px;">return a - b;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function weirdFunction(fn, x, y) {</p><p style="padding-left: 60px;">return fn(fn(x, y), y);</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return weirdFunction(minus, 5, 2);</p><p style="padding-left: 30px;">&nbsp;</p>
 
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction() + 2;</p><p style="padding-left: 30px;">&nbsp;</p>
-
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">let z = myFunction();</p><p style="padding-left: 30px;">return z + 1;</p>
-
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(9) - 5;</p>
-
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">return myFunction(5) - myFunction;</p>
-
-        <p>Welcher Wert wird zur&uuml;ckgegeben?</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function minus(a, b) {</p><p style="padding-left: 60px;">return a - b;</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">&nbsp;</p><p style="padding-left: 30px;">function weirdFunction(fn, x, y) {</p><p style="padding-left: 60px;">return fn(fn(x, y), y);</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return weirdFunction(minus, 5, 2);</p>
 
 
 
         <h1>Arrays</h1>
-
         <p>Welche Elemente enth&auml;lt das Array?</p><p>&nbsp;</p><p style="padding-left: 30px;">var arr = [2];</p><p style="padding-left: 30px;">while (arr.length &lt; 4) {</p><p style="padding-left: 60px;">arr.push("A");</p><p style="padding-left: 60px;">arr.push(arr[0]);</p><p style="padding-left: 60px;">arr.pop();</p><p style="padding-left: 30px;">}</p><p style="padding-left: 30px;">return arr;</p>
-
         <p>Entferne alle ungeraden Zahlen aus dem Array und gebe es zur&uuml;ck.</p>
-
         <p>Definiere die Funktion <em>compare</em>.</p><p>Diese soll vergleichen, ob der Parameter <em>a</em> kleiner ist als der Parameter <em>b</em>.</p><p>Ist a kleiner, dann soll die Funktion -1 zur&uuml;ckgeben.</p><p>Sind die Parameter gleich, dann soll die Funktion 0 zur&uuml;ckgeben.</p><p>Ist b kleiner, dann soll die Funktion 1 zur&uuml;ckgeben.</p>
 
     </body>

@@ -78,14 +78,14 @@ function Task(props) {
                     res.json()
                         .then(json => {
                             setTask(json)
-                            if (json.specify && json.specify.type === "multiple_choice") {
+                            if (json.specify && json.type === "multiple_choice") {
                                 let newSelection = {};
                                 json.specify.options.map(option => {
                                     newSelection[option.id] = false;
                                 })
                                 setSelection(newSelection)
                             }
-                            else if (json.specify && json.specify.type === "code") {
+                            else if (json.specify && json.type === "code") {
                                 setTextarea(json.specify.placeholder_middle)
                             }
                         })
@@ -107,7 +107,7 @@ function Task(props) {
                 body: JSON.stringify({
                     "task_id": task.id,
                     "solution": codeResult,
-                    "user_solution": task.specify.type === "code" ? task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after : codeResult
+                    "user_solution": task.type === "code" ? task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after : codeResult
 
 
                 })
@@ -165,7 +165,7 @@ function Task(props) {
 
     const submit = () => {
         if (task.specify) {
-            if (task.specify.type === "code") {
+            if (task.type === "code") {
 
                 let userSolution = "";
                 const completeCode = '"use strict";\n' + task.specify.placeholder_before + '\n' + textarea + '\n' + task.specify.placeholder_after;
@@ -181,12 +181,11 @@ function Task(props) {
                 }
                 setCodeResult(userSolution);
             }
-            else if (task.specify.type === "multiple_choice" || task.specify.type === "select" || task.specify.type === "input") {
+            else if (task.type === "multiple_choice" || task.type === "select" || task.type === "input") {
                 setCodeResult(JSON.stringify(selection));
             }
         }
     }
-
 
     const hackerStyle = () => hackerMode && {
         color: 'green',
@@ -272,7 +271,7 @@ function Task(props) {
 
 
                     {task.specify && (
-                        task.specify.type === "input" ?
+                        task.type === "input" ?
                             <Card style={{ ...answerStyle() }} >
                                 {task.specify.inputs.map(input => {
                                     return (
@@ -287,7 +286,7 @@ function Task(props) {
                                 })}
                             </Card>
 
-                            : task.specify.type === "select" ?
+                            : task.type === "select" ?
                                 <Card style={{ ...answerStyle() }}>
                                     {task.specify.selects.map(select => {
                                         return (
@@ -303,7 +302,7 @@ function Task(props) {
                                             </div>)
                                     })}
                                 </Card>
-                                : task.specify.type === "multiple_choice" ?
+                                : task.type === "multiple_choice" ?
                                     <Card style={{ ...answerStyle() }}>
                                         {task.specify.options.map(option => {
                                             return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
@@ -313,7 +312,7 @@ function Task(props) {
                                     </Card>
 
 
-                                    : task.specify.type === "code" &&
+                                    : task.type === "code" &&
                                     <div>
                                         <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
                                             <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
@@ -355,7 +354,7 @@ function Task(props) {
                                     submit();
                                 }}>Bestätigen</Button>
                         </Col>
-                        {task.specify && task.specify.type === "code" && <Col >
+                        {task.specify && task.type === "code" && <Col >
                             <label >Hacker-Mode </label>
                             <Switch style={{ flexDirection: 'row', justifyContent: 'flex-end' }} onChange={(checked) => {
                                 setHackerMode(checked);
