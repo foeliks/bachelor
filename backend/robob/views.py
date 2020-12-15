@@ -7,7 +7,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge
+from .models import Categories, AuthUser, Tasks, Progress, Diary, Knowledge, Answers
 from .serializers import UserSerializer, UserSerializerWithToken
 
 def get_stars(username, task, best=True):
@@ -117,8 +117,10 @@ class TaskView(APIView):
 
             result = {
                 "id": task.id,
+                "category_id": task.category.id,
                 "description": task.description,
                 "optional": task.optional,
+                "type": task.task_type.description,
                 "specify": task.specify,
                 "required_stars": task.required_stars,
                 "required_employee_rank": required_employee_rank,
@@ -130,7 +132,7 @@ class TaskView(APIView):
 
                 if Diary.objects.filter(user__username=request.user, knowledge=task.knowledge).exists() == False:
                     user = AuthUser.objects.get(username=request.user)
-                    Diary.objects.create(user=user, knowledge=task.knowledge, post_it=False)
+                    Diary.objects.create(user=user, knowledge=task.knowledge)
 
             progress = Progress.objects.filter(user__username=request.user, task=task).order_by("num_tries")
 
@@ -163,9 +165,11 @@ class TaskView(APIView):
                     result["tries"] = num_tries - Progress.objects.filter(user__username=request.user, task=task, solved=True).order_by("num_tries").last().num_tries
                 else:
                     result["tries"] = num_tries
-                Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
+                Progress.objects.create(user=user, task=task, num_tries=num_tries, solved=solved)
+                Answers.objects.create(user=user, task=task, num_tries=num_tries, solved=solved, user_solution=request.data["user_solution"])
             else:
-                progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
+                progress = Progress.objects.create(user=user, task=task, num_tries=1, solved=solved)
+                Answers.objects.create(user=user, task=task, num_tries=1, solved=solved, user_solution=request.data["user_solution"])
                 result["tries"] = 1
                 
             if solved == True:
@@ -259,7 +263,7 @@ class ProgressDependingView(APIView):
                 "id": 0, 
                 "title": None
             },
-            "tasks": [],
+            "categories": [],
             "diary": []
         }
 
@@ -318,6 +322,7 @@ class ProgressDependingView(APIView):
 
                     tasks.append({
                         "id": task.id,
+                        "category_id": task.category.id,
                         "optional": task.optional,
                         "solved": solved,
                         "stars": stars,
@@ -332,7 +337,7 @@ class ProgressDependingView(APIView):
                 if(len(all_tasks) != 0):
                     progress = finished_tasks/len(all_tasks) * 100
 
-                result["tasks"].append({
+                result["categories"].append({
                         'id': category.id,
                         'title': category.title,
                         'progress': progress,

@@ -22,16 +22,21 @@ function Login(props) {
         }
     };
 
-    const onResize = () => {
-        if (window.innerWidth <= 1300 && useTabs === false) {
-            setUseTabs(true)
+    useEffect(() => {
+        const onResize = () => {
+            if (window.innerWidth <= 1300 && useTabs === false) {
+                setUseTabs(true)
+            }
+            else if (window.innerWidth >= 1300 && useTabs === true) {
+                setUseTabs(false)
+            }
         }
-        else if (window.innerWidth >= 1300 && useTabs === true) {
-            setUseTabs(false)
+        
+        window.addEventListener('resize', onResize);
+        return () => {
+            window.removeEventListener('resize', onResize);
         }
-    }
-
-    useEffect(() => window.addEventListener('resize', onResize));
+    }, []);
 
     const login = (data) => {
         fetch('http://localhost:8000/token-auth/', {

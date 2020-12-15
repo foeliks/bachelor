@@ -6,3 +6,21 @@
 .highlight-row {
   background-color: #d9f4ff;
 }
+
+table {
+  width: 100%;
+  border: 1px solid black;
+  table-layout: fixed;
+}
+
+td {
+  padding: 10px;
+  height: 20px;
+}
+
+th {
+  background-color: darkgrey;
+  color: white;
+  padding: 10px;
+  height: 20px;
+}

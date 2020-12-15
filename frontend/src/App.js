@@ -17,11 +17,9 @@ import {
 } from './components';
 
 function App() {
-    const [loggedIn, setLoggedIn] = useState(
-        localStorage.getItem('token') ? true : false
-    );
+    const [loggedIn, setLoggedIn] = useState(localStorage.getItem('token') ? true : false);
     const [username, setUsername] = useState(null);
-    const [gameMode, setGameMode] = useState(0);
+    const [gameMode, setGameMode] = useState(null);
     const [sumStars, setSumStars] = useState(0);
     const [employeeRank, setEmployeeRank] = useState({ id: 0, title: null });
     const [redirect, setRedirect] = useState(false);
@@ -30,13 +28,7 @@ function App() {
     const [ignoreOptional, setIgnoreOptional] = useState(false);
     const [categories, setCategories] = useState([]);
     const [diary, setDiary] = useState([]);
-
-    const logOut = () => {
-        localStorage.removeItem('token');
-        setLoggedIn(false);
-        setRedirect(true);
-        setUsername('');
-    }
+    const [progress, setProgress] = useState({});
 
     const fetchAll = () => {
         fetch('http://localhost:8000/robob/actual-progress', {
@@ -53,10 +45,11 @@ function App() {
                 else {
                     res.json()
                         .then(json => {
-                            setCategories(json.tasks);
+                            setCategories(json.categories);
                             setDiary(json.diary);
                             setSumStars(json.sum_stars);
                             setEmployeeRank(json.employee_rank);
+                            setProgress(json);
                         })
                 }
             })
@@ -131,7 +124,7 @@ function App() {
     }, [loggedIn]);
 
     useEffect(() => {
-        if (loggedIn) {
+        if (loggedIn && gameMode != null) {
             fetch(`http://localhost:8000/robob/game-mode/${gameMode}`, {
                 method: 'post',
                 headers: {
@@ -142,6 +135,29 @@ function App() {
         }
     }, [gameMode])
 
+    const logOut = () => {
+        localStorage.removeItem('token');
+        setLoggedIn(false);
+        setRedirect(true);
+        setUsername('');
+    }
+
+    const solvedNeededTasks = (categoryId) => {
+        let result = true
+        try {
+            categories.filter(category => category.id === categoryId)[0].tasks.forEach(task => {
+                if (!task.achieve_employee_rank && !task.optional && !task.solved) {
+                    result = false;
+                }
+            })
+        }
+        catch (error) {
+            console.error(error);
+        }
+        return result;
+    }
+
+
     const values = {
         loggedIn: loggedIn,
         username: username,
@@ -150,6 +166,7 @@ function App() {
         employeeRank: employeeRank,
         categories: categories,
         diary: diary,
+        progress: progress,
         nextTaskWithOptional: nextTaskWithOptional,
         nextTaskWithoutOptional: nextTaskWithoutOptional,
         ignoreOptional: ignoreOptional,
@@ -165,7 +182,8 @@ function App() {
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         setIgnoreOptional: setIgnoreOptional,
-        logOut: logOut
+        logOut: logOut,
+        solvedNeededTasks: solvedNeededTasks
     }
 
     return (
@@ -193,7 +211,7 @@ function App() {
                         <FinishedPage />
                     </PageLayout>}
             </Route>
-            <Route path='/task/:taskId'>
+            <Route path='/task/:id'>
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Task />
