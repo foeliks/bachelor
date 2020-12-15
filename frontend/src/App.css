@@ -17,3 +17,10 @@ td {
   padding: 10px;
   height: 20px;
 }
+
+th {
+  background-color: darkgrey;
+  color: white;
+  padding: 10px;
+  height: 20px;
+}

@@ -146,7 +146,7 @@ function App() {
         let result = true
         try {
             categories.filter(category => category.id === categoryId)[0].tasks.forEach(task => {
-                if (!task.optional && !task.solved) {
+                if (!task.achieve_employee_rank && !task.optional && !task.solved) {
                     result = false;
                 }
             })

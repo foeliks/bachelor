@@ -48,11 +48,9 @@ function Task(props) {
     const [progress, setProgress] = useState(props.values.progress);
 
     // States für Unity Interaction
-    const [test, setTest] = useState("");
     const [active, setActive] = useState(props.values.gameMode === 0 ? true : false)
 
     useEffect(() => {
-        unityContent.on("test", message => setTest(message))
         unityContent.on("activateTask", (id) => {
             setTaskId(id);
             setActive(true);
@@ -234,8 +232,8 @@ function Task(props) {
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
                     : props.values.gameMode === 1 &&
-                    <div>
-                        <Unity unityContent={unityContent} />
+                    <div  onClick={() => unityContent.send("EventSystem", "enableKeyboard")} >
+                        <Unity unityContent={unityContent}/>
                     </div>}
 
 
@@ -282,66 +280,69 @@ function Task(props) {
                                             spellCheck={false}
                                             placeholder={input.placeholder}
                                             onChange={() => setSelection({ ...selection, [input.id]: document.getElementById(`input ${input.id}`).value })}
-                                            id={`input ${input.id}`} />)
+                                            id={`input ${input.id}`} 
+                                            style={{marginBottom: "5px"}}/>)
                                 })}
                             </Card>
 
-                            : task.type === "select" ?
-                                <Card style={{ ...answerStyle() }}>
-                                    {task.specify.selects.map(select => {
-                                        return (
-                                            <div>
-                                                <label>{select.label} </label>
-                                                <Select key={select.id} disabled={success.some((id) => id === taskId)} defaultValue="Auswählen" onSelect={value => setSelection({ ...selection, [select.id]: value })}>
-                                                    {select.options.map(option => {
-                                                        return (
-                                                            <Select.Option value={option}>{option}</Select.Option>
-                                                        )
-                                                    })}
-                                                </Select>
-                                            </div>)
-                                    })}
+                        : task.type === "select" ?
+                            <Card style={{ ...answerStyle() }}>
+                                {task.specify.selects.map(select => {
+                                    return (
+                                        <div>
+                                            <label>{select.label} </label>
+                                            <Select 
+                                                style={{marginBottom: "5px"}} 
+                                                key={select.id} disabled={success.some((id) => id === taskId)} 
+                                                defaultValue="Auswählen" 
+                                                onSelect={value => setSelection({ ...selection, [select.id]: value })}>
+                                                {select.options.map(option => {
+                                                    return (
+                                                        <Select.Option value={option}>{option}</Select.Option>
+                                                    )
+                                                })}
+                                            </Select>
+                                        </div>)
+                                })}
+                            </Card>
+                        : task.type === "multiple_choice" ?
+                            <Card style={{ ...answerStyle() }}>
+                                {task.specify.options.map(option => {
+                                    return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
+                                        {option.text}
+                                    </Checkbox>)
+                                })}
+                            </Card>
+
+
+                        : task.type === "code" &&
+                            <div>
+                                <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
+                                    <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }} >{task.specify.placeholder_before}</p>
+                                    <Input.TextArea
+                                        disabled={success.some((id) => id === taskId)}
+                                        style={{ fontFamily: 'Hack', ...hackerStyle() }}
+                                        onKeyDown={(event) => {
+                                            if (event.keyCode === 9) {
+                                                event.preventDefault();
+                                                const cursor = event.target.selectionEnd;
+                                                event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                                                event.target.selectionEnd = cursor + 1;
+                                            }
+                                        }}
+                                        defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                        onChange={() => setTextarea(document.getElementById("textarea").value)}
+                                        spellCheck={false}
+                                        id="textarea"
+                                        rows={5} />
+                                    <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
                                 </Card>
-                                : task.type === "multiple_choice" ?
-                                    <Card style={{ ...answerStyle() }}>
-                                        {task.specify.options.map(option => {
-                                            return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
-                                                {option.text}
-                                            </Checkbox>)
-                                        })}
-                                    </Card>
 
 
-                                    : task.type === "code" &&
-                                    <div>
-                                        <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
-                                            <p style={{ fontFamily: 'Hack' }} >{task.specify.placeholder_before}</p>
-                                            <Input.TextArea
-                                                disabled={success.some((id) => id === taskId)}
-                                                style={{ fontFamily: 'Hack', ...hackerStyle() }}
-                                                onKeyDown={(event) => {
-                                                    if (event.keyCode === 9) {
-                                                        event.preventDefault();
-                                                        const cursor = event.target.selectionEnd;
-                                                        event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                                                        event.target.selectionEnd = cursor + 1;
-                                                    }
-                                                }}
-                                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
-                                                onChange={() => setTextarea(document.getElementById("textarea").value)}
-                                                autoFocus
-                                                spellCheck={false}
-                                                id="textarea"
-                                                rows={5} />
-
-                                            <p style={{ fontFamily: 'Hack' }}>{task.specify.placeholder_after}</p>
-                                        </Card>
-
-
-                                        <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
-                                            <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
-                                        </Card>
-                                    </div>)}
+                                <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
+                                    <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
+                                </Card>
+                            </div>)}
 
 
                     <Row style={{ marginTop: "10px" }} justify="space-between">

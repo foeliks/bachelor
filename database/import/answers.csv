@@ -9,3 +9,118 @@ user_id,task_id,solved,num_tries,user_solution
 9,3,t,3,"{""0"":false,""1"":false,""2"":true}"
 9,1,t,1,"{""0"":true}"
 3,1,t,1,"{""0"":true}"
+3,1,t,2,"{""0"":true}"
+3,2,t,1,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+3,3,t,1,"{""0"":false,""1"":false,""2"":true}"
+3,4,t,1,"{""0"":false,""1"":true,""2"":false}"
+3,1,t,3,"{""0"":true}"
+3,2,t,2,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+3,3,t,2,"{""0"":false,""1"":false,""2"":true}"
+3,4,t,2,"{""0"":false,""1"":true,""2"":false}"
+3,5,f,1,"
+//Blödsinn
+
+Mehrzeiliger
+Blödsinn
+return 0;"
+3,5,t,2,"
+//Blödsinn
+/*
+Mehrzeiliger
+Blödsinn*/
+return 0;"
+3,6,t,1,"alert(`Das hier ist eine Alert Box`);
+
+return 0;"
+3,7,t,1,"{
+return 2
+}
+v=2;
+return v;"
+3,8,t,1,"{""0"":true,""1"":false,""2"":true,""3"":true,""4"":false,""5"":false,""6"":true}"
+3,9,f,1,"{""0"":false,""1"":false,""2"":true}"
+3,9,f,2,"{""0"":false,""1"":true,""2"":false}"
+3,9,f,3,"{""0"":true,""1"":false,""2"":false}"
+3,9,t,4,"{""0"":true,""1"":true,""2"":false}"
+3,10,t,1,"{""0"":""42 undefined""}"
+3,11,t,1,"{""0"":""number"",""1"":""string"",""2"":""number"",""3"":""boolean"",""4"":""undefined"",""5"":""null""}"
+3,12,t,1,"{""0"":""0"",""1"":""5"",""2"":""1""}"
+3,13,t,1,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+3,14,f,1,"undefined
+return '\'Js ist ""toll""!\' wirkt sarkastischer als ""JS ist \'toll\'!"";
+undefined"
+3,14,f,2,"undefined
+return '\'Js ist ""toll""!\' wirkt sarkastischer als ""JS ist \'toll\'!""';
+undefined"
+3,14,f,3,"undefined
+return '\'Js ist ""toll""!\' wirkt sarkastischer als ""JS ist \'toll\'!""';
+undefined"
+3,14,f,4,"undefined
+return '\'Js ist ""toll""!\' wirkt sarkastischer als ""JS ist \'toll\'!""';
+undefined"
+3,14,f,5,"undefined
+return ""'Js ist \""toll\""!' wirkt sarkastischer als \""JS ist 'toll'!\"""";
+undefined"
+3,14,f,6,"undefined
+return ""'Js ist \""toll\""!' wirkt sarkastischer als \""JS ist 'toll'!\"""";
+undefined"
+3,14,f,7,"undefined
+return ""'Js ist \""toll\""!' wirkt sarkastischer als \""JS ist 'toll'!\"""";
+undefined"
+3,14,t,8,"undefined
+return ""'JS ist \""toll\""!' wirkt sarkastischer als \""JS ist 'toll'!\"""";
+undefined"
+3,15,t,1,"{""0"":""This"",""1"":""is"",""2"":""This is one message"",""3"":""This is a message!"",""4"":""5""}"
+3,15,t,2,"{""0"":""This"",""1"":""is"",""2"":""This is one message"",""3"":""This is a message!"",""4"":""5""}"
+3,16,f,1,"let a = 'javascript';
+let c = 'EVER';
+let d = '<3';
+a = a.replace('j','J');
+a = a.replace('s','S');
+d = d.charAt(1);
+let b = parseInt(d) + 1; // parseInt() wandelt einen String zu einer number/int
+return a + ' ' + b +' ' + c + '< ' + d;"
+3,16,f,2,"let a = 'javascript';
+let c = 'EVER';
+let d = '<3';
+a = a.replace('j','J');
+a = a.replace('s','S');
+d = d.charAt(1);
+let b = parseInt(d) + 1; // parseInt() wandelt einen String zu einer number/int
+return a + ' ' + b +' ' + c + ' <' + d;"
+3,16,t,3,"let a = 'javascript';
+let c = 'EVER';
+let d = '<3';
+a = a.replace('j','J');
+a = a.replace('s','S');
+c = c.toLowerCase();
+d = d.charAt(1);
+let b = parseInt(d) + 1; // parseInt() wandelt einen String zu einer number/int
+return a + ' ' + b +' ' + c + ' <' + d;"
+3,17,t,1,"{""0"":""c""}"
+3,18,f,1,"{""0"":""a""}"
+3,18,t,2,"{""0"":""b""}"
+3,19,t,1,"{""0"":""10""}"
+3,20,t,1,"{""0"":""6""}"
+3,21,t,1,"{""0"":""4""}"
+3,22,t,1,"{""0"":""3""}"
+3,23,f,1,"{""0"":""1""}"
+3,23,t,2,"{""0"":""6""}"
+3,24,f,1,"{""0"":""1""}"
+3,24,f,2,"{""0"":""1""}"
+3,24,t,3,"{""0"":""3""}"
+3,25,t,1,"{""0"":""2""}"
+3,26,t,1,"{""0"":""4""}"
+3,27,t,1,"{""0"":""2""}"
+3,28,t,1,"{""0"":""1""}"
+3,29,t,1,"{""0"":""2"",""1"":""A"",""2"":""A"",""3"":""A""}"
+3,30,t,1,"let arr = [1,2,3,5,6,7,9,10,11,12,13]
+return [2,6,10,12]
+return arr;"
+3,31,t,1,"function compare(a,b){
+if(a<b) return -1;
+if(a==b) return 0;
+return 1;
+}
+let arr = [9,3,2,6,4,5];
+return arr.sort(compare);"

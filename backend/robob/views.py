@@ -132,7 +132,7 @@ class TaskView(APIView):
 
                 if Diary.objects.filter(user__username=request.user, knowledge=task.knowledge).exists() == False:
                     user = AuthUser.objects.get(username=request.user)
-                    Diary.objects.create(user=user, knowledge=task.knowledge, post_it=False)
+                    Diary.objects.create(user=user, knowledge=task.knowledge)
 
             progress = Progress.objects.filter(user__username=request.user, task=task).order_by("num_tries")
 
