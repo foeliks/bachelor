@@ -19,6 +19,10 @@ import {
     LoadingOutlined
 } from '@ant-design/icons';
 import Unity, { UnityContent } from "react-unity-webgl";
+import {
+    FinishedBody,
+    ErrorBody
+} from './TaskComponents'
 
 const unityContent = new UnityContent(
     "/Build/game.json",
@@ -50,6 +54,14 @@ function Task(props) {
     // States für Unity Interaction
     const [active, setActive] = useState(props.values.gameMode === 0 ? true : false)
 
+    const values = {
+        ...props.values, 
+        task:task, 
+        loading:loading,
+        unityContent: unityContent
+    }
+
+
     useEffect(() => {
         unityContent.on("activateTask", (id) => {
             setTaskId(id);
@@ -58,7 +70,12 @@ function Task(props) {
         unityContent.on("deactivateTask", () => {
             setActive(false);
         })
-        unityContent.on("loaded", () => unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress)))
+        unityContent.on("loaded", () => {
+            unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
+        })
+        unityContent.on("saveProgress", () => {
+            history.push(`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`)
+        })
     }, [])
 
     useEffect(() => {
@@ -205,9 +222,8 @@ function Task(props) {
         borderColor: 'red'
     }
 
-    if (!((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
-        (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
-        (task.required_stars && props.values.sumStars < task.required_stars))) {
+
+    const taskBody = () => {
         return (
             <div>
                 <Prompt when={props.values.progress !== progress} message="Dein Fortschritt wurde noch nicht gespeichert!" />
@@ -384,38 +400,23 @@ function Task(props) {
                 </div>}
             </div>);
     }
+    
 
+return <div>
+    {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
+    :(!taskId || taskId == 0) ?
+        ((props.values.employeeRank && props.values.employeeRank.id === 6) ?
+            <FinishedBody values={values} functions={props.functions} />
+            : <ErrorBody values={values} functions={props.functions} />)
+        : Object.entries(task).length > 0 && !((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
+            (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
+            (task.required_stars && props.values.sumStars < task.required_stars)) ? 
+                taskBody()
+                : <ErrorBody values={values} functions={props.functions} />}
+</div>
 
-    return (
-        <div>
-            <PageHeader
-                title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
-                onBack={() => history.push('/overview')}
-            />
-            <Card title="Hoppla" style={{ marginTop: "10px", border: '2px solid', borderColor: 'red' }} >
-                {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} /> :
-                    (task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ?
-                        <p>
-                            Für diese Aufgabe benötigst du einen höheren Mitarbeiter Rang!
-                            <br />
-                            Du bist bisher {props.values.employeeRank.title ? props.values.employeeRank.title : "Ranglos"} und musst mindestens {task.required_employee_rank.title} sein.
-                            <br />
-                            Um einen höheren Rang zu erreichen, erledige die letzten Aufgaben in den jeweiligen Kapiteln
-                        </p>
-                        : (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ?
-                            <p>
-                                Für diese Aufgabe musst du erst die Pflicht-Aufgaben dieses Kapitels erledigen!
-                        </p>
-                            : (task.required_stars && props.values.sumStars < task.required_stars) &&
-                            <p>
-                                Für diese Aufgabe hast Du doch nicht genug Sterne gesammelt!
-                            <br />
-                            Du hast bisher {props.values.sumStars ? props.values.sumStars : 0} und benötigst mindestens {task.required_stars}.
-                            <br />
-                            Entweder du versuchst deine bisherigen Bewertungen zu verbessern oder du bearbeitest die optionalen Aufgaben.
-                        </p>}
-            </Card>
-        </div>)
+    
+
 }
 
 export default Task;
