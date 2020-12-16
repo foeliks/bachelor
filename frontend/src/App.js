@@ -181,6 +181,7 @@ function App() {
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         setIgnoreOptional: setIgnoreOptional,
+        setProgress: setProgress,
         logOut: logOut,
         solvedNeededTasks: solvedNeededTasks
     }

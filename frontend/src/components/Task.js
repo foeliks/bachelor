@@ -55,9 +55,9 @@ function Task(props) {
     const [active, setActive] = useState(props.values.gameMode === 0 ? true : false)
 
     const values = {
-        ...props.values, 
-        task:task, 
-        loading:loading,
+        ...props.values,
+        task: task,
+        loading: loading,
         unityContent: unityContent
     }
 
@@ -74,40 +74,42 @@ function Task(props) {
             unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
         })
         unityContent.on("saveProgress", () => {
-            history.push(`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`)
+            props.functions.setProgress(progress).then(() => history.push(`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`))
         })
     }, [])
 
     useEffect(() => {
-        fetch(`http://localhost:8000/robob/task/${taskId}`, {
-            headers: {
-                'Authorization': `JWT ${localStorage.getItem('token')}`
-            }
-        })
-            .then(res => {
-                if (res.status !== 200) {
-                    setTask({});
-                    props.functions.logOut();
-                }
-                else {
-                    res.json()
-                        .then(json => {
-                            setTask(json)
-                            if (json.specify && json.type === "multiple_choice") {
-                                let newSelection = {};
-                                json.specify.options.map(option => {
-                                    newSelection[option.id] = false;
-                                })
-                                setSelection(newSelection)
-                            }
-                            else if (json.specify && json.type === "code") {
-                                setTextarea(json.specify.placeholder_middle)
-                            }
-                        })
-                        .then(setLoading(false))
+        if (taskId !== 0) {
+            fetch(`http://localhost:8000/robob/task/${taskId}`, {
+                headers: {
+                    'Authorization': `JWT ${localStorage.getItem('token')}`
                 }
             })
-            .catch(error => console.error(error))
+                .then(res => {
+                    if (res.status !== 200) {
+                        setTask({});
+                        props.functions.logOut();
+                    }
+                    else {
+                        res.json()
+                            .then(json => {
+                                setTask(json)
+                                if (json.specify && json.type === "multiple_choice") {
+                                    let newSelection = {};
+                                    json.specify.options.map(option => {
+                                        newSelection[option.id] = false;
+                                    })
+                                    setSelection(newSelection)
+                                }
+                                else if (json.specify && json.type === "code") {
+                                    setTextarea(json.specify.placeholder_middle)
+                                }
+                            })
+                            .then(setLoading(false))
+                    }
+                })
+                .catch(error => console.error(error))
+        }
     }, [taskId])
 
     useEffect(() => {
@@ -248,8 +250,8 @@ function Task(props) {
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
                     : props.values.gameMode === 1 &&
-                    <div  onClick={() => unityContent.send("EventSystem", "enableKeyboard")} >
-                        <Unity unityContent={unityContent}/>
+                    <div onClick={() => unityContent.send("EventSystem", "enableKeyboard")} >
+                        <Unity unityContent={unityContent} />
                     </div>}
 
 
@@ -296,69 +298,69 @@ function Task(props) {
                                             spellCheck={false}
                                             placeholder={input.placeholder}
                                             onChange={() => setSelection({ ...selection, [input.id]: document.getElementById(`input ${input.id}`).value })}
-                                            id={`input ${input.id}`} 
-                                            style={{marginBottom: "5px"}}/>)
+                                            id={`input ${input.id}`}
+                                            style={{ marginBottom: "5px" }} />)
                                 })}
                             </Card>
 
-                        : task.type === "select" ?
-                            <Card style={{ ...answerStyle() }}>
-                                {task.specify.selects.map(select => {
-                                    return (
-                                        <div>
-                                            <label>{select.label} </label>
-                                            <Select 
-                                                style={{marginBottom: "5px"}} 
-                                                key={select.id} disabled={success.some((id) => id === taskId)} 
-                                                defaultValue="Auswählen" 
-                                                onSelect={value => setSelection({ ...selection, [select.id]: value })}>
-                                                {select.options.map(option => {
-                                                    return (
-                                                        <Select.Option value={option}>{option}</Select.Option>
-                                                    )
-                                                })}
-                                            </Select>
-                                        </div>)
-                                })}
-                            </Card>
-                        : task.type === "multiple_choice" ?
-                            <Card style={{ ...answerStyle() }}>
-                                {task.specify.options.map(option => {
-                                    return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
-                                        {option.text}
-                                    </Checkbox>)
-                                })}
-                            </Card>
-
-
-                        : task.type === "code" &&
-                            <div>
-                                <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
-                                    <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }} >{task.specify.placeholder_before}</p>
-                                    <Input.TextArea
-                                        disabled={success.some((id) => id === taskId)}
-                                        style={{ fontFamily: 'Hack', ...hackerStyle() }}
-                                        onKeyDown={(event) => {
-                                            if (event.keyCode === 9) {
-                                                event.preventDefault();
-                                                const cursor = event.target.selectionEnd;
-                                                event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
-                                                event.target.selectionEnd = cursor + 1;
-                                            }
-                                        }}
-                                        defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
-                                        onChange={() => setTextarea(document.getElementById("textarea").value)}
-                                        spellCheck={false}
-                                        id="textarea"
-                                        rows={5} />
-                                    <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
+                            : task.type === "select" ?
+                                <Card style={{ ...answerStyle() }}>
+                                    {task.specify.selects.map(select => {
+                                        return (
+                                            <div>
+                                                <label>{select.label} </label>
+                                                <Select
+                                                    style={{ marginBottom: "5px" }}
+                                                    key={select.id} disabled={success.some((id) => id === taskId)}
+                                                    defaultValue="Auswählen"
+                                                    onSelect={value => setSelection({ ...selection, [select.id]: value })}>
+                                                    {select.options.map(option => {
+                                                        return (
+                                                            <Select.Option value={option}>{option}</Select.Option>
+                                                        )
+                                                    })}
+                                                </Select>
+                                            </div>)
+                                    })}
                                 </Card>
+                                : task.type === "multiple_choice" ?
+                                    <Card style={{ ...answerStyle() }}>
+                                        {task.specify.options.map(option => {
+                                            return (<Checkbox disabled={success.some((id) => id === taskId)} id={option.id} onChange={event => setSelection({ ...selection, [event.target.id]: event.target.checked })}>
+                                                {option.text}
+                                            </Checkbox>)
+                                        })}
+                                    </Card>
 
 
-                                <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
-                                    <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
-                                </Card>
-                            </div>)}
+                                    : task.type === "code" &&
+                                    <div>
+                                        <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
+                                            <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }} >{task.specify.placeholder_before}</p>
+                                            <Input.TextArea
+                                                disabled={success.some((id) => id === taskId)}
+                                                style={{ fontFamily: 'Hack', ...hackerStyle() }}
+                                                onKeyDown={(event) => {
+                                                    if (event.keyCode === 9) {
+                                                        event.preventDefault();
+                                                        const cursor = event.target.selectionEnd;
+                                                        event.target.value = event.target.value.substring(0, cursor) + "\t" + event.target.value.substring(cursor, event.target.value.length);
+                                                        event.target.selectionEnd = cursor + 1;
+                                                    }
+                                                }}
+                                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                                onChange={() => setTextarea(document.getElementById("textarea").value)}
+                                                spellCheck={false}
+                                                id="textarea"
+                                                rows={5} />
+                                            <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
+                                        </Card>
+
+
+                                        <Card title="Ausgabe" headStyle={{ ...hackerStyle() }} style={{ marginTop: "10px", ...codeFailedStyle(), ...hackerStyle() }} >
+                                            <p style={{ fontFamily: 'Hack' }}>{codeResult}</p>
+                                        </Card>
+                                    </div>)}
 
 
                     <Row style={{ marginTop: "10px" }} justify="space-between">
@@ -400,22 +402,22 @@ function Task(props) {
                 </div>}
             </div>);
     }
-    
 
-return <div>
-    {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
-    :(!taskId || taskId == 0) ?
-        ((props.values.employeeRank && props.values.employeeRank.id === 6) ?
-            <FinishedBody values={values} functions={props.functions} />
-            : <ErrorBody values={values} functions={props.functions} />)
-        : Object.entries(task).length > 0 && !((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
-            (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
-            (task.required_stars && props.values.sumStars < task.required_stars)) ? 
-                taskBody()
-                : <ErrorBody values={values} functions={props.functions} />}
-</div>
 
-    
+    return <div>
+        {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
+            : (!taskId || taskId == 0) ?
+                ((props.values.employeeRank && props.values.employeeRank.id === 6) ?
+                    <FinishedBody values={values} functions={props.functions} />
+                    : <ErrorBody values={values} functions={props.functions} />)
+                : Object.entries(task).length > 0 && !((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
+                    (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
+                    (task.required_stars && props.values.sumStars < task.required_stars)) ?
+                    taskBody()
+                    : <ErrorBody values={values} functions={props.functions} />}
+    </div>
+
+
 
 }
 
