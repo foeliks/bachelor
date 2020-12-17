@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useHistory, Prompt } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
     PageHeader,
     Card,
@@ -32,7 +32,8 @@ const unityContent = new UnityContent(
 function Task(props) {
     const { id } = useParams();
     const history = useHistory();
-    const ref = React.createRef();
+    const refSuccess = React.createRef();
+    const refGame = React.createRef();
 
     const [taskId, setTaskId] = useState(id);
     const [loading, setLoading] = useState(true);
@@ -52,7 +53,7 @@ function Task(props) {
     const [progress, setProgress] = useState(props.values.progress);
 
     // States für Unity Interaction
-    const [active, setActive] = useState(props.values.gameMode === 0 ? true : false)
+    const [active, setActive] = useState(props.values.gameMode ? false : true)
 
     const values = {
         ...props.values,
@@ -74,7 +75,13 @@ function Task(props) {
             unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
         })
         unityContent.on("saveProgress", () => {
-            props.functions.setProgress(progress).then(() => history.push(`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`))
+            props.functions.setProgress(progress)
+            if(window.location.pathname === `/task/${nextTaskWithOptional}`) {
+                window.location.reload()
+            }
+            else {
+                history.push(`/task/${nextTaskWithOptional}`)
+            }
         })
     }, [])
 
@@ -171,8 +178,8 @@ function Task(props) {
                 })
                 .catch(error => console.error(error))
         }
-        if (success.some((id) => id === taskId) && ref.current) {
-            ref.current.scrollIntoView({
+        if (success.some((id) => id === taskId) && refSuccess.current) {
+            refSuccess.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
             });
@@ -228,13 +235,13 @@ function Task(props) {
     const taskBody = () => {
         return (
             <div>
-                <Prompt when={props.values.progress !== progress} message="Dein Fortschritt wurde noch nicht gespeichert!" />
-
-                {props.values.gameMode === 1 ?
-                    <PageHeader
-                        title={"Robob"} onBack={() => history.push('/overview')} />
+                {props.values.gameMode ?
+                    <Row justify="space-between" align="middle">
+                        <PageHeader title={"Robob"} onBack={() => history.push('/overview')} />
+                        <div style={{ marginRight: "16px" }}>{progress.sum_stars} <StarFilled /></div>
+                    </Row>
                     : <Row justify="space-between" align="middle">
-                        {props.values.gameMode === 1 ?
+                        {props.values.gameMode ?
                             <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
                             : <PageHeader
                                 title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
@@ -249,9 +256,9 @@ function Task(props) {
 
 
                 {loading ? <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} style={{ display: 'flex', justifyContent: 'center' }} />
-                    : props.values.gameMode === 1 &&
-                    <div onClick={() => unityContent.send("EventSystem", "enableKeyboard")} >
-                        <Unity unityContent={unityContent} />
+                    : props.values.gameMode &&
+                    <div onClick={() => unityContent.send("EventSystem", "enableKeyboard")} ref={refGame} >
+                        <Unity unityContent={unityContent}/>
                     </div>}
 
 
@@ -259,7 +266,7 @@ function Task(props) {
 
                     {props.values.gameMode === 1 &&
                         <Row justify="space-between" align="middle">
-                            {props.values.gameMode === 1 ?
+                            {props.values.gameMode ?
                                 <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
                                 : <PageHeader
                                     title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`}
@@ -294,7 +301,6 @@ function Task(props) {
                                         <Input
                                             addonBefore={input.label}
                                             disabled={success.some((id) => id === taskId)}
-                                            autoFocus
                                             spellCheck={false}
                                             placeholder={input.placeholder}
                                             onChange={() => setSelection({ ...selection, [input.id]: document.getElementById(`input ${input.id}`).value })}
@@ -395,10 +401,26 @@ function Task(props) {
                                 <p>Herzlichen Glückwunsch, du bist jetzt ein {task.achieve_employee_rank.title}</p>}
                             <Checkbox checked={props.values.ignoreOptional} disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
                             <br />
-                            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>Ergebnis speichern & Fortsetzen</Button>
+                            <Row style={{ marginTop: "10px" }} justify="space-between">
+                                <Button 
+                                    type="primary" 
+                                    href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
+                                        {props.values.gameMode ? "Ergebnis speichern & Fortsetzen" : "Ergebnis speichern & Tag beenden"}
+                                </Button>
+                                {props.values.gameMode && 
+                                    <Button onClick={() => {
+                                        refGame.current.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'start',
+                                        });
+                                        unityContent.send("EventSystem", "enableKeyboard");
+                                    }}>
+                                        Zurück zum Spiel
+                                    </Button>}
+                            </Row >
                         </Card>
                         : <div />}
-                    <div ref={ref} />
+                    <div ref={refSuccess} />
                 </div>}
             </div>);
     }
