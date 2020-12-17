@@ -57,9 +57,9 @@ function Categories(props) {
                         </Collapse.Panel>)
                 })}
             </Collapse>
-            <Checkbox checked={props.values.ignoreOptional} disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+            {props.values.sumStars > 0 && <Checkbox checked={props.values.ignoreOptional} disabled={props.values.nextTaskWithoutOptional === 0} style={{ marginTop: "20px" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>}
             <br />
-            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>Nächste Aufgabe</Button>
+            <Button style={{ marginTop: "10px" }} type="primary" href={`/task/${props.values.ignoreOptional ? props.values.nextTaskWithoutOptional : props.values.nextTaskWithOptional}`}>{props.values.sumStars ? "Nächste Aufgabe" : "Los geht's"}</Button>
         </div>
     );
 

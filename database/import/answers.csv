@@ -166,3 +166,13 @@ return v;"
 11,11,t,4,"{""0"":""number"",""1"":""string"",""2"":""number"",""3"":""boolean"",""4"":""undefined"",""5"":""null""}"
 11,12,t,1,"{""0"":""0"",""1"":""5"",""2"":""1""}"
 11,13,t,1,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+12,1,t,1,"{""0"":true}"
+12,2,t,1,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
+12,3,t,1,"{""0"":false,""1"":false,""2"":true}"
+12,1,t,2,"{""0"":true}"
+12,1,t,3,"{""0"":true}"
+12,1,t,4,"{""0"":true}"
+12,6,t,1,"alert(`Das hier ist eine Alert Box`);
+
+return 0;"
+12,4,t,1,"{""0"":false,""1"":true,""2"":false}"
