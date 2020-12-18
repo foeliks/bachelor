@@ -12,8 +12,7 @@ import {
     PageLayout,
     Task,
     Diary,
-    Ranking,
-    FinishedPage
+    Ranking
 } from './components';
 
 function App() {
@@ -182,6 +181,7 @@ function App() {
         setNextTaskWithOptional: setNextTaskWithOptional,
         setNextTaskWithoutOptional: setNextTaskWithoutOptional,
         setIgnoreOptional: setIgnoreOptional,
+        setProgress: setProgress,
         logOut: logOut,
         solvedNeededTasks: solvedNeededTasks
     }
@@ -203,12 +203,6 @@ function App() {
                 {redirect ? <Redirect to="/" /> :
                     <PageLayout values={values} functions={functions} >
                         <Diary />
-                    </PageLayout>}
-            </Route>
-            <Route exact path='/task/0'>
-                {redirect ? <Redirect to="/" /> :
-                    <PageLayout values={values} functions={functions} >
-                        <FinishedPage />
                     </PageLayout>}
             </Route>
             <Route path='/task/:id'>

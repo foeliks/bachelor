@@ -28,9 +28,9 @@ def get_stars(username, task, best=True):
         else:
             least_tries = user_tries[0]
 
-    if least_tries <= 2:
+    if least_tries <= 1:
         return 3
-    elif least_tries <= 4:
+    elif least_tries <= 3:
         return 2
 
     return 1
