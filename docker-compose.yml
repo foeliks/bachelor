@@ -7,8 +7,8 @@ services:
     env_file:
       - ./database/database.env
     volumes:
-      # - database-data:/var/lib/postgresql/data/
       - ./database/import/:/tmp/
+      # - database-data:/var/lib/postgresql/data/
       # - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       
     ports:
@@ -25,21 +25,22 @@ services:
     ports:
       - 8000:8000
     depends_on:
+      - database
       - frontend
 
 
   frontend:
     container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    stdin_open: true
     ports:
       - 3000:3000
-    stdin_open: true
-    command: npm start
+    # command: npm start
+    command: node server
     depends_on:
       - database
-
-# volumes:
-#   database-data:
