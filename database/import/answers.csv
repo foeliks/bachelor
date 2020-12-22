@@ -176,3 +176,6 @@ return v;"
 
 return 0;"
 12,4,t,1,"{""0"":false,""1"":true,""2"":false}"
+14,1,t,1,"{""0"":true}"
+14,2,f,1,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":false}"
+14,2,t,2,"{""0"":true,""1"":false,""2"":false,""3"":true,""4"":true}"
