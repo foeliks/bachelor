@@ -37,6 +37,7 @@ function Home(props) {
                             <li>Spielen/Handeln als "Robob"</li>
                             <li>Interagieren mit Kollegen der "IT-Things Corp."</li>
                             <li>Entdecken der Spielwelt</li>
+                            <li>Aufdecken von Geheimnissen</li>
                         </ul>
                     </Card>
                 </Col>
