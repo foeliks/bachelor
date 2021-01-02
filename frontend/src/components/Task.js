@@ -59,8 +59,7 @@ function Task(props) {
     const values = {
         ...props.values,
         task: task,
-        loading: loading,
-        unityContent: unityContent
+        loading: loading
     }
 
     useEffect(() => {
