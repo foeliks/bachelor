@@ -11,10 +11,6 @@ function FinishedBody(props) {
             <Card style={{ border: '2px solid', borderColor: props.values.robobGreen, marginBottom: "10px" }}>
                 <p>Du hast den höchsten Rang erreicht und damit Robob durchgespielt!<br />Du kannst stolz auf dich sein!</p>
             </Card>
-            {props.values.gameMode == 1 && 
-                <div  onClick={() => props.values.unityContent.send("EventSystem", "enableKeyboard")} >
-                    <Unity unityContent={props.values.unityContent}/>
-                </div>}
         </div>
     )
 }
