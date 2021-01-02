@@ -443,7 +443,7 @@ function Task(props) {
                 ((props.values.employeeRank && props.values.employeeRank.id === 6) ?
                     <FinishedBody values={values} functions={props.functions} />
                     : <ErrorBody values={values} functions={props.functions} />)
-                : Object.entries(task).length > 0 && !((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
+                : props.values.gameMode == 1 || Object.entries(task).length > 0 && !((task.required_employee_rank && props.values.employeeRank.id < task.required_employee_rank.id) ||
                     (task.achieve_employee_rank && !props.functions.solvedNeededTasks(task.category_id)) ||
                     (task.required_stars && props.values.sumStars < task.required_stars)) ?
                     taskBody()
