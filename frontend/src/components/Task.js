@@ -54,7 +54,7 @@ function Task(props) {
     const [progress, setProgress] = useState(props.values.progress);
 
     // States für Unity Interaction
-    const [active, setActive] = useState(props.values.gameMode > 0 ? false : true)
+    const [active, setActive] = useState(props.values.gameMode == 1 ? false : true)
 
     const values = {
         ...props.values,
@@ -263,14 +263,14 @@ function Task(props) {
                     </Row>}
 
 
-                {props.values.gameMode > 0 &&
-                    <div onClick={() => unityContent.send("EventSystem", "enableKeyboard")} >
+                {props.values.gameMode == 1 &&
+                    <div onClick={() => {unityContent.send("EventSystem", "enableKeyboard"); console.log("enabledKeyboard");}} >
                         <Unity unityContent={unityContent} />
                     </div>}
 
 
                     {active && <div ref={refTask}>
-                        {props.values.gameMode > 0 &&
+                        {props.values.gameMode == 1 &&
                             <Row justify="space-between" align="middle">
                                 {props.values.gameMode ?
                                     <PageHeader title={`Aufgabe ${task.id ? task.id : ""} ${task.optional ? " (optional)" : ""}`} />
@@ -413,7 +413,7 @@ function Task(props) {
                                         href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
                                         {props.values.gameMode ? "Ergebnis speichern & Tag beenden" : "Ergebnis speichern & Fortsetzen"}
                                     </Button>
-                                    {props.values.gameMode > 0 &&
+                                    {props.values.gameMode == 1 &&
                                         <Button onClick={() => {
                                             refGame.current.scrollIntoView({
                                                 behavior: 'smooth',
