@@ -62,3 +62,6 @@ user_id,task_id,solved,num_tries
 12,1,t,4
 12,6,t,1
 12,4,t,1
+9,4,t,1
+9,5,t,1
+9,6,t,1

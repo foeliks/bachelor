@@ -15,6 +15,8 @@ import {
     Ranking
 } from './components';
 
+import { UnityContent } from "react-unity-webgl";
+
 function App() {
     const [loggedIn, setLoggedIn] = useState(localStorage.getItem('token') ? true : false);
     const [username, setUsername] = useState(null);
@@ -28,6 +30,11 @@ function App() {
     const [categories, setCategories] = useState([]);
     const [diary, setDiary] = useState([]);
     const [progress, setProgress] = useState({});
+
+    const unityContent = new UnityContent(
+        "/Build/game.json",
+        "/Build/UnityLoader.js"
+    )
 
     const fetchAll = () => {
         fetch('http://localhost:8000/robob/actual-progress', {
@@ -169,7 +176,8 @@ function App() {
         nextTaskWithOptional: nextTaskWithOptional,
         nextTaskWithoutOptional: nextTaskWithoutOptional,
         ignoreOptional: ignoreOptional,
-        robobGreen: "#52C41A" // "#14ba46",
+        robobGreen: "#52C41A", // "#14ba46",
+        unityContent: unityContent
     }
     const functions = {
         setLoggedIn: setLoggedIn,
