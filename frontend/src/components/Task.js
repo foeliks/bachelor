@@ -24,11 +24,6 @@ import {
     ErrorBody
 } from './TaskComponents'
 
-const unityContent = new UnityContent(
-    "/Build/game.json",
-    "/Build/UnityLoader.js"
-)
-
 function Task(props) {
     const { id } = useParams();
     const history = useHistory();
