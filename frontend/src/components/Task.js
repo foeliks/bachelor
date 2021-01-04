@@ -18,16 +18,12 @@ import {
     StarFilled,
     LoadingOutlined
 } from '@ant-design/icons';
-import Unity, { UnityContent } from "react-unity-webgl";
+import Unity from "react-unity-webgl";
 import {
     FinishedBody,
     ErrorBody
 } from './TaskComponents'
 
-const unityContent = new UnityContent(
-    "/Build/game.json",
-    "/Build/UnityLoader.js"
-)
 
 function Task(props) {
     const { id } = useParams();
@@ -72,7 +68,7 @@ function Task(props) {
     }, [refTask])
 
     useEffect(() => {
-        unityContent.on("activateTask", (id) => {
+        props.values.unityContent.on("activateTask", (id) => {
             setTaskId(id);
             setActive(true);
             setWrongAnswer(false);
@@ -81,13 +77,13 @@ function Task(props) {
             setCodeResult("");
             setSelection({});
         })
-        unityContent.on("deactivateTask", () => {
+        props.values.unityContent.on("deactivateTask", () => {
             setActive(false);
         })
-        unityContent.on("loaded", () => {
-            unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
+        props.values.unityContent.on("loaded", () => {
+            props.values.unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
         })
-        unityContent.on("saveProgress", () => {
+        props.values.unityContent.on("saveProgress", () => {
             props.functions.setProgress(progress)
             if (window.location.pathname === `/task/${nextTaskWithOptional}`) {
                 window.location.reload()
@@ -172,7 +168,7 @@ function Task(props) {
                                     res.json()
                                         .then(json => {
                                             setProgress(json);
-                                            unityContent.send("EventSystem", "setInputJson", JSON.stringify(json))
+                                            props.values.unityContent.send("EventSystem", "setInputJson", JSON.stringify(json))
                                         })
                                 }
                             })
@@ -269,8 +265,8 @@ function Task(props) {
 
 
                 {props.values.gameMode == 1 &&
-                    <div onClick={() => { unityContent.send("EventSystem", "enableKeyboard"); console.log("enabledKeyboard"); }} >
-                        <Unity unityContent={unityContent} />
+                    <div onClick={() => props.values.unityContent.send("EventSystem", "enableKeyboard")} >
+                        <Unity unityContent={props.values.unityContent} />
                     </div>}
 
 
@@ -424,7 +420,7 @@ function Task(props) {
                                             behavior: 'smooth',
                                             block: 'start',
                                         });
-                                        unityContent.send("EventSystem", "enableKeyboard");
+                                        props.values.unityContent.send("EventSystem", "enableKeyboard");
                                     }}>
                                         Zurück zum Spiel
                                     </Button>}

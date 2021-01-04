@@ -176,3 +176,10 @@ return v;"
 
 return 0;"
 12,4,t,1,"{""0"":false,""1"":true,""2"":false}"
+9,4,t,1,"{""0"":false,""1"":true,""2"":false}"
+9,5,t,1,"
+
+return 0;"
+9,6,t,1,"alert(`Das hier ist eine Alert Box`);
+
+return 0;"
