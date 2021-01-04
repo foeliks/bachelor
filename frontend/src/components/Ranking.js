@@ -46,7 +46,8 @@ function Ranking(props) {
                 <Table
                     onRow={(record, rowIndex) => record.username === props.values.username && setUserIndex(rowIndex)}
                     rowClassName={(record, index) => index === userIndex && 'highlight-row'}
-                    dataSource={ranking}>
+                    dataSource={ranking}
+                    pagination={false}>
                     <Table.Column title="Platzierung" dataIndex="place" key="place" />
                     <Table.Column title="Benutzer" dataIndex="username" key="username" />
                     <Table.Column title="Sterne" dataIndex="stars" key="stars" />
