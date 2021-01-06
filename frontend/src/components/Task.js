@@ -119,7 +119,12 @@ function Task(props) {
                                 }
                                 else if (json.specify && json.type === "code") {
                                     setTextarea(json.specify.placeholder_middle)
-                                    document.getElementById("textarea").value = json.specify.placeholder_middle
+                                    try {
+                                        document.getElementById("textarea").value = json.specify.placeholder_middle
+                                    }
+                                    catch (error) {
+                                        console.warn(error)
+                                    }
                                 }
                             })
                             .then(setLoading(false))
