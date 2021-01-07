@@ -33,8 +33,8 @@ function PageLayout(props) {
                         {props.values.username}
                     </Menu.Item>
                     {(props.values.employeeRank && props.values.employeeRank.title) ? 
-                        <Menu.Item style={{ backgroundColor: "#002140", color: "white", margin: "0px"}}>
-                            <p style={{color: "#7CB6FF"}}>({props.values.employeeRank.title})</p>
+                        <Menu.Item style={{ backgroundColor: "#002140", color: "white", margin: "0px", color: "#7CB6FF"}}>
+                            {props.values.employeeRank.title}
                         </Menu.Item> : <div />}
                     <Menu.Item key="1" onClick={() => history.push("/")}>
                         Startseite

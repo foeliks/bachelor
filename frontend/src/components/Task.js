@@ -266,7 +266,7 @@ function Task(props) {
 
 
                 {props.values.gameMode == 1 &&
-                    <div onClick={() => props.values.unityContent.send("EventSystem", "enableKeyboard")} >
+                    <div style={{width: "1280px", height: "720px"}} onClick={() => props.values.unityContent.send("EventSystem", "enableKeyboard")} >
                         <Unity unityContent={props.values.unityContent} />
                     </div>}
 
