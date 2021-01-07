@@ -24,6 +24,7 @@ import {
     ErrorBody
 } from './TaskComponents'
 
+
 function Task(props) {
     const { id } = useParams();
     const history = useHistory();
@@ -35,7 +36,7 @@ function Task(props) {
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
-    const [textarea, setTextarea] = useState("");
+    const [textarea, setTextarea] = useState(null);
     const [codeFailed, setCodeFailed] = useState(false);
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
@@ -44,6 +45,7 @@ function Task(props) {
     const [selection, setSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
+    const [ignoreOptional, setIgnoreOptional] = useState(props.values.ignoreOptional);
 
 
     const [progress, setProgress] = useState(props.values.progress);
@@ -70,14 +72,14 @@ function Task(props) {
         props.values.unityContent.on("activateTask", (id) => {
             setTaskId(id);
             setActive(true);
-            setWrongAnswer(false);
-            setTextarea("");
-            setCodeFailed(false);
-            setCodeResult("");
-            setSelection({});
         })
         props.values.unityContent.on("deactivateTask", () => {
             setActive(false);
+            setWrongAnswer(false);
+            setTextarea(null);
+            setCodeFailed(false);
+            setCodeResult("");
+            setSelection({});
         })
         props.values.unityContent.on("loaded", () => {
             props.values.unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
@@ -117,15 +119,7 @@ function Task(props) {
                                     setSelection(newSelection)
                                 }
                                 else if (json.specify && json.type === "code") {
-                                    setTextarea(json.specify.placeholder_middle)
-                                    if(props.values.gameMode == 1) {
-                                        try {
-                                            document.getElementById("textarea").value = json.specify.placeholder_middle
-                                        }
-                                        catch (error) {
-                                            console.warn(error);
-                                        }
-                                    }
+                                    setTextarea(json.specify.placeholder_middle);
                                 }
                             })
                             .then(setLoading(false))
@@ -272,7 +266,7 @@ function Task(props) {
 
 
                 {props.values.gameMode == 1 &&
-                    <div onClick={() => { props.values.unityContent.send("EventSystem", "enableKeyboard"); console.log("enabledKeyboard"); }} >
+                    <div style={{width: "1280px", height: "720px"}} onClick={() => props.values.unityContent.send("EventSystem", "enableKeyboard")} >
                         <Unity unityContent={props.values.unityContent} />
                     </div>}
 
@@ -357,7 +351,7 @@ function Task(props) {
                                     <div>
                                         <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
                                             <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }} >{task.specify.placeholder_before}</p>
-                                            <Input.TextArea
+                                            {textarea !== null && <Input.TextArea
                                                 disabled={success.some((id) => id === taskId)}
                                                 style={{ fontFamily: 'Hack', ...hackerStyle() }}
                                                 onKeyDown={(event) => {
@@ -368,11 +362,11 @@ function Task(props) {
                                                         event.target.selectionEnd = cursor + 1;
                                                     }
                                                 }}
-                                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                                defaultValue={textarea}
                                                 onChange={() => setTextarea(document.getElementById("textarea").value)}
                                                 spellCheck={false}
                                                 id="textarea"
-                                                rows={5} />
+                                                autoSize={{ minRows: 5}} />}
                                             <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
                                         </Card>
 
@@ -389,8 +383,8 @@ function Task(props) {
                                 disabled={success.some((id) => id === taskId)}
                                 type="primary"
                                 onClick={() => {
-                                    setSubmitted(true);
                                     submit();
+                                    setSubmitted(true);
                                 }}>Bestätigen</Button>
                         </Col>
                         {task.specify && task.type === "code" && <Col >
@@ -413,12 +407,12 @@ function Task(props) {
                             </div> : <div />}
                             {task.achieve_employee_rank && task.achieve_employee_rank.id > props.values.employeeRank.id &&
                                 <p>Herzlichen Glückwunsch, du bist jetzt ein {task.achieve_employee_rank.title}</p>}
-                            <Checkbox checked={props.values.ignoreOptional} disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                            <Checkbox checked={ignoreOptional} disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
                             <br />
                             <Row style={{ marginTop: "10px" }} justify="space-between">
                                 <Button
                                     type="primary"
-                                    href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
+                                    href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
                                     {props.values.gameMode ? "Ergebnis speichern & Tag beenden" : "Ergebnis speichern & Fortsetzen"}
                                 </Button>
                                 {props.values.gameMode == 1 &&

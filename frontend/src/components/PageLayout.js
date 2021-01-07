@@ -29,11 +29,13 @@ function PageLayout(props) {
             {props.values.loggedIn && <Layout.Sider collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}>
                 <div className="logo" />
                 <Menu theme="dark" mode="inline" selectedKeys={[selected]}>
-                    <Menu.Item style={{ backgroundColor: "#002140", color: "white" }}>
-                        <Row>
-                            {props.values.username} {(props.values.employeeRank && props.values.employeeRank.title) ? <p style={{color: "#7CB6FF"}}>&nbsp; ({props.values.employeeRank.title})</p> : <div />}
-                        </Row>
+                    <Menu.Item style={{ backgroundColor: "#002140", color: "white", margin: "0px"}}>
+                        {props.values.username}
                     </Menu.Item>
+                    {(props.values.employeeRank && props.values.employeeRank.title) ? 
+                        <Menu.Item style={{ backgroundColor: "#002140", color: "white", margin: "0px", color: "#7CB6FF"}}>
+                            {props.values.employeeRank.title}
+                        </Menu.Item> : <div />}
                     <Menu.Item key="1" onClick={() => history.push("/")}>
                         Startseite
                     </Menu.Item>
