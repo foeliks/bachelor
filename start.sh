@@ -1,9 +1,5 @@
-apt install docker docker-compose npm
+apt install docker docker-compose
 systemctl start docker
-
-cd ./frontend
-npm install
-cd ../
 
 chmod -R a+rw ./database/import
 
