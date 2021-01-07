@@ -45,6 +45,7 @@ function Task(props) {
     const [selection, setSelection] = useState({});
     const [nextTaskWithOptional, setNextTaskWithOptional] = useState(props.values.nextTaskWithOptional);
     const [nextTaskWithoutOptional, setNextTaskWithoutOptional] = useState(props.values.nextTaskWithoutOptional);
+    const [ignoreOptional, setIgnoreOptional] = useState(props.values.ignoreOptional);
 
 
     const [progress, setProgress] = useState(props.values.progress);
@@ -373,7 +374,7 @@ function Task(props) {
                                                 onChange={() => setTextarea(document.getElementById("textarea").value)}
                                                 spellCheck={false}
                                                 id="textarea"
-                                                rows={5} />
+                                                autoSize={{ minRows: 5}} />
                                             <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
                                         </Card>
 
@@ -390,8 +391,8 @@ function Task(props) {
                                 disabled={success.some((id) => id === taskId)}
                                 type="primary"
                                 onClick={() => {
-                                    setSubmitted(true);
                                     submit();
+                                    setSubmitted(true);
                                 }}>Bestätigen</Button>
                         </Col>
                         {task.specify && task.type === "code" && <Col >
@@ -414,12 +415,12 @@ function Task(props) {
                             </div> : <div />}
                             {task.achieve_employee_rank && task.achieve_employee_rank.id > props.values.employeeRank.id &&
                                 <p>Herzlichen Glückwunsch, du bist jetzt ein {task.achieve_employee_rank.title}</p>}
-                            <Checkbox checked={props.values.ignoreOptional} disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => props.functions.setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
+                            <Checkbox checked={ignoreOptional} disabled={nextTaskWithoutOptional === 0} style={{ marginTop: "20px", color: "white" }} onChange={(event) => setIgnoreOptional(event.target.checked)} >Optionale Aufgaben ignorieren</Checkbox>
                             <br />
                             <Row style={{ marginTop: "10px" }} justify="space-between">
                                 <Button
                                     type="primary"
-                                    href={`/task/${props.values.ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
+                                    href={`/task/${ignoreOptional ? nextTaskWithoutOptional : nextTaskWithOptional}`}>
                                     {props.values.gameMode ? "Ergebnis speichern & Tag beenden" : "Ergebnis speichern & Fortsetzen"}
                                 </Button>
                                 {props.values.gameMode == 1 &&
