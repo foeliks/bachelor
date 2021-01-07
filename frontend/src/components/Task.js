@@ -36,7 +36,7 @@ function Task(props) {
     const [loading, setLoading] = useState(true);
     const [task, setTask] = useState({});
     const [hackerMode, setHackerMode] = useState(false);
-    const [textarea, setTextarea] = useState("");
+    const [textarea, setTextarea] = useState(null);
     const [codeFailed, setCodeFailed] = useState(false);
     const [codeResult, setCodeResult] = useState("");
     const [submitted, setSubmitted] = useState(false);
@@ -72,14 +72,14 @@ function Task(props) {
         props.values.unityContent.on("activateTask", (id) => {
             setTaskId(id);
             setActive(true);
-            setWrongAnswer(false);
-            setTextarea("");
-            setCodeFailed(false);
-            setCodeResult("");
-            setSelection({});
         })
         props.values.unityContent.on("deactivateTask", () => {
             setActive(false);
+            setWrongAnswer(false);
+            setTextarea(null);
+            setCodeFailed(false);
+            setCodeResult("");
+            setSelection({});
         })
         props.values.unityContent.on("loaded", () => {
             props.values.unityContent.send("EventSystem", "setInputJson", JSON.stringify(props.values.progress))
@@ -119,15 +119,7 @@ function Task(props) {
                                     setSelection(newSelection)
                                 }
                                 else if (json.specify && json.type === "code") {
-                                    setTextarea(json.specify.placeholder_middle)
-                                    if(props.values.gameMode == 1) {
-                                        try {
-                                            document.getElementById("textarea").value = json.specify.placeholder_middle
-                                        }
-                                        catch (error) {
-                                            console.warn(error)
-                                        }
-                                    }
+                                    setTextarea(json.specify.placeholder_middle);
                                 }
                             })
                             .then(setLoading(false))
@@ -359,7 +351,7 @@ function Task(props) {
                                     <div>
                                         <Card title="Code-Eingabe" headStyle={{ ...hackerStyle() }} style={{ ...hackerStyle(), ...answerStyle() }}>
                                             <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }} >{task.specify.placeholder_before}</p>
-                                            <Input.TextArea
+                                            {textarea !== null && <Input.TextArea
                                                 disabled={success.some((id) => id === taskId)}
                                                 style={{ fontFamily: 'Hack', ...hackerStyle() }}
                                                 onKeyDown={(event) => {
@@ -370,11 +362,11 @@ function Task(props) {
                                                         event.target.selectionEnd = cursor + 1;
                                                     }
                                                 }}
-                                                defaultValue={task.specify.placeholder_middle ? task.specify.placeholder_middle : ""}
+                                                defaultValue={textarea}
                                                 onChange={() => setTextarea(document.getElementById("textarea").value)}
                                                 spellCheck={false}
                                                 id="textarea"
-                                                autoSize={{ minRows: 5}} />
+                                                autoSize={{ minRows: 5}} />}
                                             <p style={{ fontFamily: 'Hack', whiteSpace: "pre-line" }}>{task.specify.placeholder_after}</p>
                                         </Card>
 
