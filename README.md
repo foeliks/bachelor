@@ -5,3 +5,8 @@ sudo sh start.sh
 
 **BEENDEN** (Linux)
 sudo docker-compose down
+
+
+Frontend: localhost:3000
+Backend: localhost:8000
+Database: localhost:5433
